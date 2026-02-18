@@ -75,3 +75,39 @@ function readManifest(manifestPath: string): Manifest {
   const raw = readFileSync(manifestPath, "utf-8");
   return JSON.parse(raw) as Manifest;
 }
+
+// --- GitHub API Helpers ---
+
+function parseRepoUrl(repoUrl: string): { owner: string; repo: string } {
+  // Handles: https://github.com/owner/repo or https://github.com/owner/repo.git
+  const match = repoUrl.match(/github\.com\/([^/]+)\/([^/.]+)/);
+  if (!match) {
+    throw new Error(`Cannot parse repo URL: ${repoUrl}`);
+  }
+  return { owner: match[1], repo: match[2] };
+}
+
+function ghApi(endpoint: string): string {
+  try {
+    return execSync(`gh api "${endpoint}"`, {
+      encoding: "utf-8",
+      stdio: ["pipe", "pipe", "pipe"],
+    }).trim();
+  } catch (err: any) {
+    throw new Error(`GitHub API call failed: ${endpoint}\n${err.stderr || err.message}`);
+  }
+}
+
+function fetchDirectoryContents(owner: string, repo: string, path: string, ref: string): GitHubContentEntry[] {
+  const raw = ghApi(`repos/${owner}/${repo}/contents/${path}?ref=${ref}`);
+  return JSON.parse(raw) as GitHubContentEntry[];
+}
+
+function fetchFileContent(owner: string, repo: string, path: string, ref: string): string {
+  const raw = ghApi(`repos/${owner}/${repo}/contents/${path}?ref=${ref}`);
+  const entry = JSON.parse(raw) as GitHubContentEntry;
+  if (!entry.content || entry.encoding !== "base64") {
+    throw new Error(`Unexpected content format for ${path}`);
+  }
+  return Buffer.from(entry.content, "base64").toString("utf-8");
+}
