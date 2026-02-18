@@ -226,3 +226,79 @@ function checkPrerequisites(source: Source): string[] {
 
   return warnings;
 }
+
+// --- Main ---
+
+function main() {
+  // Check gh is available
+  try {
+    execSync("gh auth status", { stdio: ["pipe", "pipe", "pipe"] });
+  } catch {
+    console.error("Error: gh CLI is not authenticated.");
+    console.error("Run: gh auth login");
+    process.exit(1);
+  }
+
+  const { path: manifestPath, dir: manifestDir } = findManifest();
+  console.log(`Using manifest: ${manifestPath}`);
+
+  const manifest = readManifest(manifestPath);
+  const targetDir = resolve(manifestDir, manifest.target);
+  mkdirSync(targetDir, { recursive: true });
+
+  console.log(`Target directory: ${targetDir}\n`);
+
+  let totalFiles = 0;
+  let totalSkills = 0;
+  const errors: string[] = [];
+  const allWarnings: string[] = [];
+
+  for (const source of manifest.sources) {
+    const { owner, repo } = parseRepoUrl(source.repo);
+    console.log(`Source: ${source.name} (${source.version})`);
+
+    for (const skill of source.skills) {
+      process.stdout.write(`  Pulling ${skill}...`);
+      const result = pullSkill(owner, repo, source.path, skill, source.version, targetDir);
+
+      if ("error" in result) {
+        console.log(` FAILED`);
+        errors.push(`  ${source.name}/${skill}: ${result.error}`);
+      } else {
+        console.log(` ${result.files} files`);
+        totalFiles += result.files;
+        totalSkills++;
+      }
+    }
+
+    // Check prerequisites
+    const warnings = checkPrerequisites(source);
+    allWarnings.push(...warnings);
+
+    console.log();
+  }
+
+  // Summary
+  console.log("---");
+  console.log(`Pulled ${totalSkills} skills (${totalFiles} files) to ${targetDir}`);
+
+  if (errors.length > 0) {
+    console.log(`\nErrors (${errors.length}):`);
+    for (const err of errors) {
+      console.log(err);
+    }
+  }
+
+  if (allWarnings.length > 0) {
+    console.log();
+    for (const warning of allWarnings) {
+      console.log(warning);
+    }
+  }
+
+  if (errors.length > 0) {
+    process.exit(1);
+  }
+}
+
+main();
