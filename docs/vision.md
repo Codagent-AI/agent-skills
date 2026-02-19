@@ -82,23 +82,27 @@ A `skill-manifest.json` file that tracks which skills have been pulled from whic
       "repo": "https://github.com/pacaplan/agent-gauntlet",
       "path": ".claude",
       "version": "v0.15.0",
-      "skills": ["gauntlet-run", "gauntlet-push-pr", "openspec/proposal"],
+      "skills": ["gauntlet-run", "gauntlet-push-pr"],
       "prerequisites": {
         "cli": { "package": "agent-gauntlet", "version": "^0.15.0" }
       }
+    },
+    {
+      "name": "openspec",
+      "type": "generate",
+      "package": "openspec",
+      "version": "^1.2.0",
+      "command": "openspec update --force .",
+      "skills": ["openspec-explore", "openspec-new-change", "openspec-archive-change"]
     }
-  ],
-  "prerequisites": {
-    "@fission-ai/openspec": "^1.0.2"
-  }
+  ]
 }
 ```
 
-Sources fall into two categories:
-- **Pure skill sources** (e.g., Superpowers) — No `prerequisites`. Only skill files are pulled.
-- **Tool-backed sources** (e.g., Agent Gauntlet) — Have a `prerequisites.cli` field specifying the npm package and version range. The skills pulled from these sources assume the CLI is available at runtime.
-
-Prerequisites that aren't tied to a specific source (e.g., OpenSpec, whose CLI is needed but whose skills come through Agent Gauntlet's repo) can be listed at the top-level `prerequisites` field.
+Sources fall into three categories:
+- **Pure skill sources** (e.g., Superpowers) — No prerequisites. Only skill files are pulled from the repo.
+- **Tool-backed sources** (e.g., Agent Gauntlet) — Have a `prerequisites.cli` field specifying the npm package and version range. Skills are pulled from the repo but assume the CLI is available at runtime.
+- **CLI-generated sources** (e.g., OpenSpec) — Have `type: "generate"`. Instead of downloading skills from a repo, `pull` runs the specified `command` to generate skills locally. The `package` and `version` fields identify the CLI that must be installed.
 
 Key design decisions:
 
@@ -112,16 +116,9 @@ The manifest only tracks skills pulled from external sources. **Self-authored sk
 
 This keeps the manifest focused on its core purpose: tracking external dependencies for upstream merging. The complete picture of available skills is simply the contents of the target directory.
 
-### Command-to-Skill Conversion
+### CLI-Generated Sources
 
-Some upstream sources ship functionality as "commands" (single `.md` files in a `.claude/commands/` directory) rather than "skills" (directories with a `SKILL.md` file). Commands are a legacy pattern — skills are a superset of command functionality.
-
-The `pull` skill normalizes everything to skill format automatically:
-
-- **Source is a skill** (directory with `SKILL.md` + optional supporting files) → copy as-is
-- **Source is a command** (single `.md` file) → convert: create a directory, rename to `SKILL.md`, add YAML frontmatter (`name`, `description` parsed from existing content)
-
-The manifest doesn't need to distinguish between skills and commands at the source. It lists what you want by name, and `pull` handles format normalization. For example, `openspec/proposal` in the Agent Gauntlet source is a command — `pull` would produce an `openspec-proposal/SKILL.md` in the target directory.
+Some tools generate their own skills at install time via a CLI command rather than shipping them as static files in a repo. The manifest supports this with `type: "generate"` sources: instead of downloading files, `pull` runs the source's `command` (e.g., `openspec update --force .`) and verifies the expected skills appeared in the target directory. An `installedVersion` field tracks the CLI version that last generated the skills, so `pull` can skip regeneration when the installed version already satisfies the manifest's version range. Generated skills land in the same target directory as repo-pulled skills and can be locally modified like any other skill.
 
 ### Three-Way Merge for Updates
 
@@ -138,7 +135,7 @@ This is a well-understood algorithm — the implementation can shell out to `git
 
 - **`discover`** — Interactive. Takes a GitHub URL (including path), reads the repo structure, shows available skills and commands, lets the user multi-select, and writes/updates the manifest.
 - **`pull`** — Deterministic. Reads the manifest and downloads the specified skill files via GitHub API, copying them to the target directory. During pull:
-  - Normalizes commands to skill format automatically (see Command-to-Skill Conversion above)
+  - For `type: "generate"` sources, runs the specified command and verifies the expected skills appeared in the target directory
   - Checks all `prerequisites` entries in the manifest:
     - Verifies each required CLI is installed (e.g., `which agent-gauntlet`)
     - Verifies the installed version matches the range specified in the manifest
