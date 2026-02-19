@@ -92,7 +92,7 @@ which {tool}
 
 - If `which` fails → tell the user the tool is not installed and stop
 - If `--version` fails → warn, but continue (some tools may not support `--version`)
-- Extract the version number for use in step 4G
+- Extract the version number for use in step 5G
 
 ### 3G. Understand the tool and agree on command
 
