@@ -9,7 +9,8 @@ interface Prerequisite {
   version: string;
 }
 
-interface Source {
+interface RepoSource {
+  type?: "repo";
   name: string;
   repo: string;
   path: string;
@@ -18,6 +19,25 @@ interface Source {
   prerequisites?: {
     cli: Prerequisite;
   };
+}
+
+interface GenerateSource {
+  type: "generate";
+  name: string;
+  package: string;
+  command: string;
+  version: string;
+  skills: string[];
+  installedVersion?: string;
+  prerequisites?: {
+    cli: Prerequisite;
+  };
+}
+
+type Source = RepoSource | GenerateSource;
+
+function isGenerateSource(source: Source): source is GenerateSource {
+  return source.type === "generate";
 }
 
 interface Manifest {
@@ -278,20 +298,25 @@ function main() {
   const allWarnings: string[] = [];
 
   for (const source of manifest.sources) {
-    const { owner, repo } = parseRepoUrl(source.repo);
     console.log(`Source: ${source.name} (${source.version})`);
 
-    for (const skill of source.skills) {
-      process.stdout.write(`  Pulling ${skill}...`);
-      const result = pullSkill(owner, repo, source.path, skill, source.version, targetDir);
+    if (isGenerateSource(source)) {
+      console.log("Skipping generate source (not yet implemented)");
+    } else {
+      const { owner, repo } = parseRepoUrl(source.repo);
 
-      if ("error" in result) {
-        console.log(` FAILED`);
-        errors.push(`  ${source.name}/${skill}: ${result.error}`);
-      } else {
-        console.log(` ${result.files} files`);
-        totalFiles += result.files;
-        totalSkills++;
+      for (const skill of source.skills) {
+        process.stdout.write(`  Pulling ${skill}...`);
+        const result = pullSkill(owner, repo, source.path, skill, source.version, targetDir);
+
+        if ("error" in result) {
+          console.log(` FAILED`);
+          errors.push(`  ${source.name}/${skill}: ${result.error}`);
+        } else {
+          console.log(` ${result.files} files`);
+          totalFiles += result.files;
+          totalSkills++;
+        }
       }
     }
 
