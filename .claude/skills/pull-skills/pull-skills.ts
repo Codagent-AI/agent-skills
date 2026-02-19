@@ -356,35 +356,55 @@ function checkPrerequisites(source: Source): string[] {
 // --- Main ---
 
 function main() {
-  // Check gh is available
-  try {
-    execSync("gh auth status", { stdio: ["pipe", "pipe", "pipe"] });
-  } catch {
-    console.error("Error: gh CLI is not authenticated.");
-    console.error("Run: gh auth login");
-    process.exit(1);
-  }
-
   const { path: manifestPath, dir: manifestDir } = findManifest();
   console.log(`Using manifest: ${manifestPath}`);
 
   const manifest = readManifest(manifestPath);
+
+  // Only check gh auth if there are repo sources
+  const hasRepoSources = manifest.sources.some((s) => !isGenerateSource(s));
+  if (hasRepoSources) {
+    try {
+      execSync("gh auth status", { stdio: ["pipe", "pipe", "pipe"] });
+    } catch {
+      console.error("Error: gh CLI is not authenticated.");
+      console.error("Run: gh auth login");
+      process.exit(1);
+    }
+  }
+
   const targetDir = resolve(manifestDir, manifest.target);
   mkdirSync(targetDir, { recursive: true });
 
   console.log(`Target directory: ${targetDir}\n`);
 
   let totalFiles = 0;
-  let totalSkills = 0;
+  let totalPulled = 0;
+  let totalGenerated = 0;
   const errors: string[] = [];
   const allWarnings: string[] = [];
+  const generatedUpdates: { sourceIndex: number; version: string }[] = [];
 
-  for (const source of manifest.sources) {
-    console.log(`Source: ${source.name} (${source.version})`);
+  for (let i = 0; i < manifest.sources.length; i++) {
+    const source = manifest.sources[i];
 
     if (isGenerateSource(source)) {
-      console.log("Skipping generate source (not yet implemented)");
+      console.log(`Source: ${source.name} (generate, ${source.version})`);
+
+      const result = pullGenerateSource(source, targetDir, manifestDir);
+
+      if ("skipped" in result) {
+        console.log(`  Up to date (${source.installedVersion})`);
+      } else if ("error" in result) {
+        console.log(`  FAILED: ${result.error}`);
+        errors.push(`  ${source.name}: ${result.error}`);
+      } else {
+        console.log(`  Generated ${result.generated} skills`);
+        totalGenerated += result.generated;
+        generatedUpdates.push({ sourceIndex: i, version: result.version });
+      }
     } else {
+      console.log(`Source: ${source.name} (${source.version})`);
       const { owner, repo } = parseRepoUrl(source.repo);
 
       for (const skill of source.skills) {
@@ -397,7 +417,7 @@ function main() {
         } else {
           console.log(` ${result.files} files`);
           totalFiles += result.files;
-          totalSkills++;
+          totalPulled++;
         }
       }
     }
@@ -411,7 +431,17 @@ function main() {
 
   // Summary
   console.log("---");
-  console.log(`Pulled ${totalSkills} skills (${totalFiles} files) to ${targetDir}`);
+  const parts: string[] = [];
+  if (totalFiles > 0) {
+    parts.push(`pulled ${totalPulled} skills (${totalFiles} files)`);
+  }
+  if (totalGenerated > 0) {
+    parts.push(`generated ${totalGenerated} skills`);
+  }
+  if (parts.length === 0) {
+    parts.push("no skills updated");
+  }
+  console.log(`Done: ${parts.join(", ")} in ${targetDir}`);
 
   if (errors.length > 0) {
     console.log(`\nErrors (${errors.length}):`);
