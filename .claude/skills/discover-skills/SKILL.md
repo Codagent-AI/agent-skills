@@ -1,25 +1,30 @@
 ---
 name: discover-skills
-description: Use when adding skills from a GitHub repository to a skill manifest, when setting up a new project with external skills, or when the user says "discover skills" or invokes /discover-skills. Takes an optional GitHub URL argument.
+description: Use when adding skills from a GitHub repository or CLI tool to a skill manifest, when setting up a new project with external skills, or when the user says "discover skills" or invokes /discover-skills. Takes an optional GitHub URL or CLI tool name as argument.
 ---
 
 # Discover Skills
 
-Interactive skill for browsing a GitHub repo's skill directories and adding selected skills to a local `skill-manifest.json`.
+Interactive skill for discovering skills from GitHub repos or CLI tools and adding them to a local `skill-manifest.json`.
 
 ## Input
 
-- Optional argument: a GitHub URL like `https://github.com/obra/superpowers/tree/main/skills`
-- If no argument provided, ask the user for the URL
+- Optional argument: a GitHub URL (e.g., `https://github.com/obra/superpowers/tree/main/skills`) or a CLI tool name (e.g., `openspec`)
+- If no argument provided, ask the user: "Enter a GitHub URL or CLI tool name."
 
 ## Process
 
-### 1. Parse the URL
+### 1. Detect source type
 
-Extract owner, repo, and path from the URL. Supported formats:
+Determine whether the input is a GitHub URL or a CLI tool name:
+- If the input contains `github.com` → **Repo source** (go to step 2)
+- Otherwise → **Generate source** (go to step 2G)
 
+**For repo sources**, parse the URL. Supported formats:
 - `https://github.com/{owner}/{repo}/tree/{ref}/{path}` — use owner, repo, path (ignore ref)
 - `https://github.com/{owner}/{repo}` — use owner, repo; ask user for the subdirectory path
+
+Then continue to step 2.
 
 ### 2. Resolve version
 
