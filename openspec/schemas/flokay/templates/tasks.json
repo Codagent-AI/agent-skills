@@ -1,16 +1,11 @@
 {
   "change": "<!-- change-name -->",
-  "groups": [
+  "tasks": [
     {
-      "name": "<!-- Group Name, or null if ungrouped -->",
-      "tasks": [
-        {
-          "id": 1,
-          "title": "<!-- Task title -->",
-          "file": "tasks/task-1-<!-- slug -->.md",
-          "completed": false
-        }
-      ]
+      "id": 1,
+      "title": "<!-- Task title -->",
+      "file": "tasks/<!-- slug -->.md",
+      "completed": false
     }
   ]
 }

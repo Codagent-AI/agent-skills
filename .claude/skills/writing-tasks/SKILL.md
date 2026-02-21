@@ -14,123 +14,79 @@ Assume the implementing subagent is a skilled developer with zero context about 
 
 **Announce at start:** "I'm using the writing-tasks skill to create the task breakdown."
 
-## Inputs
+---
+
+## 1. Read Your Inputs
 
 The caller (openspec-continue-change) provides:
-- `outputPath`: where to write `tasks.md` — the change directory (e.g. `openspec/changes/<name>/`)
-- `dependencies`: completed artifact files to read — `proposal.md`, `design.md`, and all `specs/**/*.md` from the change directory
+- `outputPath`: the change directory where all output goes (e.g. `openspec/changes/<name>/`)
+- `dependencies`: completed artifact files — `proposal.md`, `design.md`, and all `specs/**/*.md`
 
 Read all dependency files before proceeding.
 
-## Task Granularity
+---
 
-**1 task = 1 meaningful, independently completable unit of work.**
+## 2. Research the Codebase
 
-A good task is something you could write a single, focused git commit message for. Not a TDD micro-step. Not a vague epic.
+Explore the existing code relevant to this change. You need to understand:
+- Which files and modules will be touched
+- Current structure, interfaces, and conventions the implementation must follow
+- Whether any existing code is tangled or poorly abstracted enough that the new work would be significantly harder to implement as-is
 
-- ✅ "Add the ExportService class with the interface defined in design.md §Data Layer"
-- ✅ "Wire the new export endpoint into the router with auth middleware"
-- ✅ "Write integration tests covering the Successful Export and Permission Denied scenarios"
-- ❌ "Write the failing test" (too granular)
-- ❌ "Implement auth system" (too vague)
+**Decide now if a refactoring task is needed.** If implementation would require working around serious structural obstacles in the current code, you'll prepend a standalone refactoring task in Step 5. This task restructures existing code without changing behavior, so the feature work lands cleanly. It is not a default step — add it only when genuinely warranted. When in doubt, skip it; the implementing subagent can refactor inline as needed.
 
-**For small changes: a single task is fine** if the entire change is one coherent unit of work. Don't manufacture fake granularity.
+---
 
-## Task Decomposition
+## 3. Plan the Task Breakdown
 
-Read the proposal, design, and specs. Then decompose the work into tasks:
+Decide how many tasks this change requires and what each one covers. Do not write any files yet.
 
-1. **Identify logical groupings** — infrastructure before business logic, schema before code, dependencies before dependents
-2. **Order by dependency** — what must exist before the next task can start?
-3. **Check task size** — if a task would take more than a few hours for a skilled engineer, split it. If two tasks would always be committed together, merge them.
-4. **Extract relevant context per task** — identify which spec requirements/scenarios, which design decisions, and which proposal motivation apply to each task
+**1 task = 1 meaningful, independently completable unit of work** — something you could describe with a single focused git commit message. Not a TDD micro-step. Not a vague epic.
 
-## Tasks and Scenarios
+Apply these rules to identify your tasks:
 
-Spec scenarios describe *behavior from the outside*. Tasks describe *work from the inside*. The mapping is rarely 1:1 — here's how to handle each case.
+1. **Group by delivery unit** — what would a skilled full-stack engineer naturally commit together? Don't split by layer (don't separate "the config file" from "the code that uses it", or "the schema" from "the feature that requires it"). Requirements that implement the same capability end-to-end belong together even if they touch different layers.
+2. **Apply the merge test** — if two candidate tasks would always be committed together, have no independent value, and aren't separately review-worthy, merge them.
+3. **Check task size** — if a single task would take more than a half-day, consider splitting it at a genuine seam where the first part is independently releasable.
+4. **Check for specialization mismatch** — split only when a task spans domains requiring genuinely different specialists. A full-stack engineer handles most vertical slices.
 
-**Multiple scenarios → one task (common)**
-When scenarios are variations on the same behavioral unit — happy path, edge cases, error cases — they belong in one task. A skilled engineer would write and test them together naturally. Copy all of them into the task's `## Spec` section.
+### Task Splitting Examples and Anti-patterns
 
-**One scenario → multiple tasks (cross-layer)**
-A single scenario often spans multiple tasks. For example, "User can export data" might require a backend service task, an API task, and a frontend task — each partially implementing the same scenario.
+The following examples elaborate on how to apply these rules to avoid inappropriate splitting (particularly concerning infrastructure and vertical slices):
 
-In this case: **include the full scenario in every task that contributes to it**, with a note indicating which layer this task covers. The backend engineer must understand the complete behavioral contract they're building toward — otherwise they'll build the wrong interface. Add a note like:
+Good examples (proper delivery units):
+- ✅ "Add CSV export: ExportService, POST /exports endpoint, permission checks, and size limits"
+- ✅ "Add rate limiting and audit logging to the export endpoint"
+- ✅ "Add user notification preferences: API, persistence, and application to outgoing notifications"
 
-> _This task covers the backend portion. The scenario becomes fully verifiable end-to-end once the frontend task (Task N) is also complete._
+Bad examples (same feature, split too finely):
+- ❌ "Add the ExportService class" (part of a delivery unit that also includes the endpoint and permissions)
+- ❌ "Wire the new export endpoint into the router with auth middleware" (one step inside a larger delivery unit)
+- ❌ "Write integration tests covering the Successful Export and Permission Denied scenarios" (tests ship with the feature, not as a separate task)
 
-**No spec section (infrastructure tasks)**
-A task may omit the `## Spec` section if it is pure infrastructure — a database migration, scaffolding a new module, wiring a dependency — where the work is invisible to end-users and untestable at the behavioral level. The spec simply has nothing to say about it yet.
+For small changes, a single task is fine. Don't manufacture fake granularity. Infrastructure that exists purely to enable another task ("add the module skeleton", "lay the groundwork for X") should be folded into that task — the exception is migrations or dependency changes risky enough to be review-worthy on their own.
 
-If you're tempted to write a task with no scenarios, ask: *is this genuinely prerequisite infrastructure, or did I fail to identify which scenario it serves?* The latter is a decomposition mistake — fix it.
+---
 
+## 4. Write Task Files
 
-## Output Structure
+For each task you identified, write a self-contained `<slug>.md` file in `tasks/`. Write them all before moving on to ordering.
 
-### Directory layout
+**slug**: 2–4 word kebab-case summary (e.g., `export-service-endpoint`, `rate-limiting-audit-log`)
 
-```
-openspec/changes/<name>/
-  tasks.md                  ← index checklist with links
-  tasks/
-    task-1-<slug>.md        ← self-contained task file
-    task-2-<slug>.md
-    ...
-```
-
-### tasks.md (index file)
-
-The index is a JSON file. Each task has a `file` pointing to its self-contained task file and a `completed` boolean that the applying agent updates when the task is done. This is what openspec-apply-change uses to track progress.
-
-**Format:**
-
-```json
-{
-  "change": "<change-name>",
-  "groups": [
-    {
-      "name": "<Group Name>",
-      "tasks": [
-        {
-          "id": 1,
-          "title": "<Task title>",
-          "file": "tasks/task-1-<slug>.md",
-          "completed": false
-        },
-        {
-          "id": 2,
-          "title": "<Task title>",
-          "file": "tasks/task-2-<slug>.md",
-          "completed": false
-        }
-      ]
-    }
-  ]
-}
-```
-
-For ungrouped changes, use a single group with `"name": null` (or omit the name). To mark a task complete, the applying agent sets `"completed": true` on that task object.
-
-### task-N-\<slug\>.md (per-task file)
-
-Each task file is fully self-contained. The implementing subagent will receive only this file — they will not have access to the full proposal, design, or spec files.
-
-**slug**: 2–4 word kebab-case summary of the task (e.g., `add-export-service`, `wire-auth-middleware`)
-
-**Format:**
+### Task file format
 
 ```markdown
-# Task N: <Title>
+# Task: <Title>
 
 ## Goal
 
-<1–3 sentences. What does this task accomplish, and why does it exist? Reference the
-broader change goal only as much as needed to make this task's purpose clear.>
+<1–3 sentences. What does this task accomplish, and why does it exist?>
 
 ## Background
 
-<What the implementing agent needs to know to make good decisions. Pull directly from
-proposal.md and design.md — quote or paraphrase the relevant sections. Include:
+<What the implementing agent needs to know to make good decisions. Pull from
+proposal.md and design.md — quote or paraphrase the relevant parts. Include:
 - The specific design decision(s) that govern this task
 - Key files, modules, or APIs involved
 - Constraints or conventions to follow
@@ -140,7 +96,7 @@ Do NOT include background that doesn't affect this task.
 
 ## Spec
 
-<Copy the relevant spec requirement(s) and scenario(s) verbatim from the spec file(s).
+<Copy the relevant spec requirement(s) and scenario(s) verbatim from the spec files.
 These are the acceptance criteria. Every scenario is a test case.>
 
 ### Requirement: <name>
@@ -158,94 +114,268 @@ These are the acceptance criteria. Every scenario is a test case.>
 
 ## Done When
 
-<Completion criterion — one or two sentences describing the observable state when the
-task is complete. Usually: "Tests covering the above scenarios pass" plus any other
-concrete signal (e.g., "the CLI command works end-to-end", "the migration runs cleanly").>
+<Completion criterion — one or two sentences. Usually: "Tests covering the above
+scenarios pass" plus any concrete signal (e.g., "the CLI command works end-to-end").>
 ```
 
-## Example Task File
+### How spec scenarios map to tasks
 
-This is what a good task file looks like for a hypothetical "CSV export" feature. This
-task covers the backend service layer only — all three scenarios are fully verifiable
-via unit tests at this layer, with no frontend dependency. If a later frontend task also
-contributed to these scenarios, each scenario would appear in that task file too, with
-a corresponding note (see below).
+Spec scenarios describe *behavior from the outside*. Tasks describe *work from the inside*. The mapping is rarely 1:1.
+
+**Multiple scenarios → one task (most common).** Scenarios that are variations on the same behavioral unit — happy path, edge cases, error cases — belong in one task. Copy all of them into the task's `## Spec` section.
+
+**One scenario → multiple tasks (cross-layer, uncommon).** A single scenario can span multiple tasks (backend service task + API task + frontend task). Include the full scenario in every task that contributes to it, with a note:
+
+> Note: This task covers the backend portion. These scenarios become fully verifiable end-to-end once the frontend task is also complete.
+
+**No spec section (pure infrastructure, very uncommon).** A task may omit `## Spec` only if the work is invisible to end-users and untestable at the behavioral level (e.g., a database migration). If you're tempted to write a task with no scenarios, ask: *is this genuinely infrastructure, or did I fail to identify which scenario it serves?* The latter is a decomposition mistake.
+
+---
+
+## 5. Order Tasks
+
+Now that all task files exist, decide their sequence.
+
+Order tasks so each one is ready to start when the previous finishes. A task is ready when everything it depends on already exists. Don't invent ordering to make the list feel structured — if two tasks have no dependency on each other, order doesn't matter; put the one that unblocks more work first.
+
+**If you decided in Step 2 that refactoring is needed**, prepend it as the first task now. Write its task file (`refactor-<slug>.md`) using the same format, describing what structural changes are needed and why, with a `## Done When` stating the code is restructured and all existing tests still pass.
+
+---
+
+## 6. Write tasks.json
+
+With ordering settled, write the JSON index at `<outputPath>/tasks.json`.
+
+```json
+{
+  "change": "<change-name>",
+  "tasks": [
+    {
+      "id": 1,
+      "title": "<Task title>",
+      "file": "tasks/<slug>.md",
+      "completed": false
+    },
+    {
+      "id": 2,
+      "title": "<Task title>",
+      "file": "tasks/<slug>.md",
+      "completed": false
+    }
+  ]
+}
+```
+
+The `id` values reflect the final execution order. The applying agent marks tasks complete by setting `"completed": true`.
+
+---
+
+## 7. Report and Exit
+
+Exit cleanly. Do not ask about execution mode. Do not invoke other skills. The caller (openspec-continue-change) owns what happens next.
+
+Show a brief summary:
+- How many task files were created and their titles
+- The path to tasks.json
+- What's now unlocked
+
+---
+
+## Example: Decomposing a Feature into Tasks
+
+This example shows how 5 spec requirements map to 2 tasks — not 5.
+
+### The specs (summary)
+
+The CSV export feature has 5 requirements:
+
+- **User can export their data** — 3 scenarios: successful export, empty dataset, field selection
+- **Export respects permissions** — 3 scenarios: own data allowed, other user's data 403, admin bypass
+- **Export enforces size limits** — 2 scenarios: within limit proceeds, oversized request rejected with 400
+- **Export is rate-limited** — 2 scenarios: within rate limit proceeds, exceeded returns 429
+- **Export is audit-logged** — 2 scenarios: successful export logged with user + timestamp, denied attempt logged
+
+### The decomposition
+
+Requirements 1–3 (export logic, permissions, size limits) all live in the `ExportService` class and the `POST /exports` endpoint. They're tightly coupled: permissions are checked at service entry, size limits validated before the query runs, and the streaming response is one code path. Shipping these three together delivers a working, permission-aware, size-bounded export API that is independently releasable.
+
+Requirements 4–5 (rate limiting, audit logging) are cross-cutting concerns layered on top: rate limiting via middleware wrapping the endpoint, audit logging via a separate write to the audit log table. They touch different parts of the codebase, are independently review-worthy, and can ship after the core is stable.
+
+**Result: 2 tasks.**
+
+### tasks.json
+
+```json
+{
+  "change": "csv-export",
+  "tasks": [
+    {
+      "id": 1,
+      "title": "ExportService + POST /exports endpoint",
+      "file": "tasks/export-service-endpoint.md",
+      "completed": false
+    },
+    {
+      "id": 2,
+      "title": "Rate limiting and audit logging",
+      "file": "tasks/rate-limiting-audit-log.md",
+      "completed": false
+    }
+  ]
+}
+```
+
+### Task 1 file
 
 ```markdown
-# Task 2: Implement ExportService
+# Task: ExportService + POST /exports endpoint
 
 ## Goal
 
-Add the ExportService class that handles data querying and CSV serialization. This is
-the core business logic layer for the export feature.
+Implement the ExportService class and the POST /exports API endpoint. This delivers the
+core of the export feature: querying a user's data, serializing it as CSV, streaming the
+response, enforcing permissions, and rejecting oversized requests.
 
 ## Background
 
-ExportService is a standalone class (not a middleware) that takes a `userId` and
-`ExportOptions`, queries the database via the existing `UserRepository`, and returns
-a `ReadableStream`. It must not buffer the entire dataset in memory — use streaming
-throughout.
+ExportService is a standalone class (not middleware) that takes a `userId` and
+`ExportOptions`, queries through `UserRepository`, and returns a `ReadableStream<string>`.
+It must stream — do not buffer the full dataset in memory.
+
+The POST /exports endpoint is a new Express route in `src/routes/exports.ts`. It
+authenticates via the existing `requireAuth` middleware, calls ExportService, and pipes
+the stream to the response with `Content-Type: text/csv`.
 
 **Key files:**
-- `src/services/` — place ExportService here, following the pattern in UserService.ts
-- `src/repositories/UserRepository.ts` — existing repo to query through; do not bypass
-- `src/types/export.ts` — ExportOptions type defined here (created in Task 1)
+- `src/services/ExportService.ts` — create here, following the pattern in UserService.ts
+- `src/repositories/UserRepository.ts` — query through this; do not bypass
+- `src/routes/exports.ts` — create new route file, register in src/routes/index.ts
+- `src/types/export.ts` — create ExportOptions type here
 
 **Constraints:**
-- CSV serialization: use the `csv-stringify` library already in package.json (not a
-  new dependency)
-- Null/undefined field values: emit empty string, not "null"
+- CSV serialization: use `csv-stringify` (already in package.json, not a new dependency)
+- Null/undefined field values: emit empty string, not the string "null"
 - Column order: match the order defined in ExportOptions.fields
+- Permissions: ExportService enforces them — the route does not need separate checks
+- Size limit: reject before running the query (use COUNT first, return 400 if > 100k rows)
 
 ## Spec
 
-Note: This task covers the backend service layer. These scenarios become fully verifiable
-end-to-end once the frontend task (Task 5) is also complete.
-
-### Requirement: User can export data
+### Requirement: User can export their data
 The system SHALL allow users to export their personal data in CSV format.
 
 #### Scenario: Successful export
 - **WHEN** user requests an export with valid options
-- **THEN** system returns a CSV stream with a header row and one data row per record
+- **THEN** system returns a 200 response with Content-Type text/csv, a header row, and one data row per record
 
 #### Scenario: Empty dataset
 - **WHEN** user has no data records
-- **THEN** system returns a CSV stream with only the header row (no error)
+- **THEN** system returns a 200 response with a CSV containing only the header row (no error)
 
 #### Scenario: Field selection
-- **WHEN** user specifies a subset of fields in ExportOptions
+- **WHEN** user specifies a subset of fields in ExportOptions.fields
 - **THEN** CSV contains only the selected columns in the specified order
+
+### Requirement: Export respects permissions
+The system SHALL enforce that users can only export their own data, with an exception for admins.
+
+#### Scenario: User exports own data
+- **WHEN** the authenticated user requests an export for their own userId
+- **THEN** the export proceeds normally
+
+#### Scenario: User requests another user's data
+- **WHEN** the authenticated user requests an export for a different userId
+- **THEN** the system returns 403 Forbidden without running the query
+
+#### Scenario: Admin exports any user's data
+- **WHEN** an authenticated admin requests an export for any userId
+- **THEN** the export proceeds normally
+
+### Requirement: Export enforces size limits
+The system SHALL reject export requests that would return more than 100,000 rows.
+
+#### Scenario: Export within row limit
+- **WHEN** the user's dataset has 100,000 rows or fewer
+- **THEN** the export proceeds normally
+
+#### Scenario: Export exceeds row limit
+- **WHEN** the user's dataset has more than 100,000 rows
+- **THEN** the system returns 400 with a message indicating the row count and the limit
 
 ## Done When
 
-Unit tests covering all three scenarios above pass. ExportService can be imported and
-instantiated without errors.
+All eight scenarios above are covered by tests and passing. The POST /exports route is
+registered and reachable. ExportService can be instantiated and called in isolation.
 ```
 
-If this were a cross-layer scenario (e.g., a later Task 5 wired up the UI), that task
-file would also include these same scenarios, with a note added under `## Spec`:
+### Task 2 file
 
-Note: This task covers the frontend portion. These scenarios become fully verifiable
-end-to-end once this task and Task 2 (ExportService) are both complete.
+```markdown
+# Task: Rate limiting and audit logging
 
+## Goal
 
-## After Writing
+Add rate limiting to the POST /exports endpoint and write an audit log entry for every
+export attempt (successful or denied). These are independent additions to the core export
+feature delivered in Task 1.
 
-Exit cleanly. Do not ask about execution mode. Do not invoke other skills. The caller
-(openspec-continue-change) owns what happens next.
+## Background
 
-Show a brief summary:
-- How many task files were created
-- The path to tasks.md
-- What's now unlocked
+Rate limiting is a per-user limit: 10 export requests per hour. Use the `express-rate-limit`
+package already in package.json. Configure it as middleware on the exports router, keyed
+by `req.user.id`. Do not use the default IP-based keying.
+
+Audit logging records export attempts to the existing `audit_log` table via `AuditService`.
+Log both successful exports and 403 denials — not 400 size errors (those are client mistakes,
+not security events). The log entry must include: userId (requester), targetUserId, outcome
+(allowed/denied), timestamp, and ExportOptions.fields.
+
+**Key files:**
+- `src/routes/exports.ts` — add rate limiting middleware (already exists from Task 1)
+- `src/services/ExportService.ts` — add audit log write at permission enforcement point
+- `src/services/AuditService.ts` — existing service, use the `log(entry)` method
+- `src/db/schema.ts` — `audit_log` table schema is already defined, no migration needed
+
+**Constraints:**
+- Rate limit response: 429 with `Retry-After` header set to the window reset time
+- Audit log writes are fire-and-forget — do not await them on the request path
+- Do not audit 400 size rejections (those happen before permission checks)
+
+## Spec
+
+### Requirement: Export is rate-limited
+The system SHALL limit each user to 10 export requests per hour.
+
+#### Scenario: Request within rate limit
+- **WHEN** the user has made fewer than 10 export requests in the past hour
+- **THEN** the request proceeds normally
+
+#### Scenario: Rate limit exceeded
+- **WHEN** the user has made 10 or more export requests in the past hour
+- **THEN** the system returns 429 Too Many Requests with a Retry-After header
+
+### Requirement: Export attempts are audit-logged
+The system SHALL record an audit log entry for every export attempt that reaches the
+permission check, regardless of outcome.
+
+#### Scenario: Successful export logged
+- **WHEN** an export request is permitted and the export runs
+- **THEN** an audit log entry is written with outcome=allowed, requester userId, target userId, fields, and timestamp
+
+#### Scenario: Denied export logged
+- **WHEN** an export request is rejected with 403
+- **THEN** an audit log entry is written with outcome=denied, requester userId, target userId, and timestamp
+
+## Done When
+
+All four scenarios above are covered by tests and passing. Rate limiting is active on the
+POST /exports endpoint and keyed per user. Audit log entries are written for permitted and
+denied requests but not for 400 or 429 responses.
+```
+
+---
 
 ## Key Principles
 
-- **Zero-context audience** — the implementing agent has never seen this codebase
-- **Self-contained tasks** — each task file must stand alone; no "see design.md for details" without quoting the relevant part
-- **Copy spec scenarios verbatim** — don't paraphrase acceptance criteria; copy them exactly so they can be used directly as test cases
-- **No implementation instructions** — describe what to build and why, not how to write each line
-- **Exact file paths** — always give real paths from the codebase, not placeholders
-- **YAGNI ruthlessly** — if a task isn't required by the spec, don't add it
-- **Small changes deserve small task lists** — a single task is fine when appropriate
+- **Copy spec scenarios verbatim** — don't paraphrase; copy them exactly so they serve directly as test cases
+- **Exact file paths** — always use real paths from the codebase, not placeholders like `src/your-service.ts`
