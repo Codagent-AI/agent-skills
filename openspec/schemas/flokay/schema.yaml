@@ -113,7 +113,7 @@ artifacts:
       - design
 
   - id: tasks
-    generates: tasks.md
+    generates: tasks.json
     description: Implementation checklist with trackable tasks
     template: tasks.json
     instruction: Use the writing-tasks skill to create this artifact.
@@ -146,8 +146,8 @@ artifacts:
 
 apply:
   requires: [review]
-  tracks: tasks.md
+  tracks: tasks.json
   instruction: |
-    Read tasks.md (JSON). Iterate tasks in order. For each task where
+    Read tasks.json. Iterate tasks in order. For each task where
     `completed` is false, read its task file, implement the work, then set
-    `"completed": true` in tasks.md. Pause if you hit blockers or need clarification.
+    `"completed": true` in tasks.json. Pause if you hit blockers or need clarification.

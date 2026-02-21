@@ -60,12 +60,16 @@ Good examples (proper delivery units):
 - ✅ "Add user notification preferences: API, persistence, and application to outgoing notifications"
 
 Bad examples (same feature, split too finely):
+- ❌ "Set up the database schema and middleware that the export endpoint will need later" (infrastructure without testable behavioral value; fold it into the endpoint task)
 - ❌ "Add the ExportService class" (part of a delivery unit that also includes the endpoint and permissions)
 - ❌ "Wire the new export endpoint into the router with auth middleware" (one step inside a larger delivery unit)
 - ❌ "Write integration tests covering the Successful Export and Permission Denied scenarios" (tests ship with the feature, not as a separate task)
 
-For small changes, a single task is fine. Don't manufacture fake granularity. Infrastructure that exists purely to enable another task ("add the module skeleton", "lay the groundwork for X") should be folded into that task — the exception is migrations or dependency changes risky enough to be review-worthy on their own.
+For small changes, a single task is fine. Don't manufacture fake granularity. 
 
+**Anti-pattern: "Laying the groundwork"**. Infrastructure that exists purely to enable another task (e.g., "Set up the Gauntlet infra that Task 2 needs," "Add the module skeleton") should be folded into that dependent task. If a task produces no testable behavioral value of its own, it is a sign it should be merged into the task that actually exercises it. The exception is database migrations or dependency changes risky enough to review on their own.
+
+**Litmus test for infrastructure/config-only changes:** If all files being created/modified are prompt files, config files, skill definitions, or other non-compiled artifacts (no application code with runtime behavior), the entire change is likely one task. Prompt/config changes don't have the layer boundaries that justify splitting — they're all "infrastructure" in the same sense. Only split when tasks produce independently valuable, releasable functionality.
 ---
 
 ## 4. Write Task Files
@@ -87,10 +91,12 @@ For each task you identified, write a self-contained `<slug>.md` file in `tasks/
 
 <What the implementing agent needs to know to make good decisions. Pull from
 proposal.md and design.md — quote or paraphrase the relevant parts. Include:
-- The specific design decision(s) that govern this task
+- The specific design decisions that govern this task (state the decision itself, never use arbitrary numbering like "Decision 4")
 - Key files, modules, or APIs involved
 - Constraints or conventions to follow
 - Anything that would surprise a skilled engineer unfamiliar with the codebase>
+
+**Strictly self-contained:** Do NOT reference other tasks (e.g., "built in Task 2" or "required by Task 5"). Tasks operate in total isolation; the agent executing this task won't know those exist.
 
 Do NOT include background that doesn't affect this task.
 
@@ -316,8 +322,7 @@ registered and reachable. ExportService can be instantiated and called in isolat
 ## Goal
 
 Add rate limiting to the POST /exports endpoint and write an audit log entry for every
-export attempt (successful or denied). These are independent additions to the core export
-feature delivered in Task 1.
+export attempt (successful or denied).
 
 ## Background
 
@@ -331,7 +336,7 @@ not security events). The log entry must include: userId (requester), targetUser
 (allowed/denied), timestamp, and ExportOptions.fields.
 
 **Key files:**
-- `src/routes/exports.ts` — add rate limiting middleware (already exists from Task 1)
+- `src/routes/exports.ts` — add rate limiting middleware to the existing route
 - `src/services/ExportService.ts` — add audit log write at permission enforcement point
 - `src/services/AuditService.ts` — existing service, use the `log(entry)` method
 - `src/db/schema.ts` — `audit_log` table schema is already defined, no migration needed
