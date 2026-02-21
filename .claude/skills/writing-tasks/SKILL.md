@@ -384,3 +384,4 @@ denied requests but not for 400 or 429 responses.
 
 - **Copy spec scenarios verbatim** — don't paraphrase; copy them exactly so they serve directly as test cases
 - **Exact file paths** — always use real paths from the codebase, not placeholders like `src/your-service.ts`
+- **No unresolved placeholders** — if the design document contains instructional placeholders (e.g., `<path to the task file>`), do not copy them verbatim. You must resolve them to their actual values or describe them in prose. Never leak `<...>` placeholder syntax into the task file.
