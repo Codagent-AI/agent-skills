@@ -37,7 +37,7 @@ The implement-task skill turns the apply phase from "main agent implements every
 - `.claude/skills/implement-task/SKILL.md` — The orchestrator skill. Front matter follows existing skill patterns (name, description). Body describes the dispatch loop:
   1. Receive the change name and tasks list from the apply skill
   2. Pre-flight: ensure on non-main branch (create `implement/<change-name>` if needed)
-  3. For each pending task (in order): dispatch a fresh Sonnet subagent via `Task` tool, handle success (mark complete in tasks.json JSON, show progress) or failure (pause, ask user)
+  3. For each pending task (in order): dispatch a fresh Sonnet subagent via `Task` tool, handle success (mark complete in tasks.json, show progress) or failure (pause, ask user)
   4. Show final status
 
 - `.claude/skills/implement-task/implementer-prompt.md` — The subagent's full instruction set (prompt template, NOT a skill). Contains:
