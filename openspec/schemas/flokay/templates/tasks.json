@@ -1,0 +1,11 @@
+{
+  "change": "<!-- change-name -->",
+  "tasks": [
+    {
+      "id": 1,
+      "title": "<!-- Task title -->",
+      "file": "tasks/<!-- slug -->.md",
+      "completed": false
+    }
+  ]
+}
