@@ -52,10 +52,7 @@ After self-review passes:
    <the actual path of the task file>
    ```
 
-2. **Run gauntlet**:
-   ```bash
-   agent-gauntlet run
-   ```
+2. **Run gauntlet**: Use the `gauntlet-run` skill to validate changes.
 
 3. **Handle results**:
    - **All gates pass**: Proceed to report
