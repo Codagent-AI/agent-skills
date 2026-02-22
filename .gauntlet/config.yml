@@ -14,14 +14,13 @@ cli:
 
 # entry_points configured by /gauntlet-setup
 entry_points:
-  # Intentionally disabled right now, I will enable before committing
-  # - path: "."
-  #   exclude:
-  #     - "openspec"
-  #   checks: []
-  #   reviews:
-  #     - skill-quality
-  #     - task-compliance
+  - path: "."
+    exclude:
+      - "openspec"
+    checks: []
+    reviews:
+      - skill-quality
+      - task-compliance
 
   - path: "openspec/changes"
     exclude:
