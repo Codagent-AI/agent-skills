@@ -148,6 +148,9 @@ apply:
   requires: [review]
   tracks: tasks.json
   instruction: |
-    Read tasks.json. Iterate tasks in order. For each task where
-    `completed` is false, read its task file, implement the work, then set
-    `"completed": true` in tasks.json. Pause if you hit blockers or need clarification.
+    Delegate implementation to the `implement-task` skill.
+    Follow the `implement-task` skill to dispatch subagents and execute the pending tasks.
+    Read tasks.json for context. For each task where `completed` is false,
+    the implement-task skill will handle dispatching a subagent to implement
+    the work and setting `"completed": true` in tasks.json.
+    Pause if you hit blockers or need clarification.
