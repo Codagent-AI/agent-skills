@@ -1,10 +1,10 @@
 <!-- pulled-skill | source: superpowers | repo: https://github.com/obra/superpowers | path: skills | version: v4.3.0 | forked: true -->
 ---
-name: writing-tasks
+name: plan-tasks
 description: Creates a structured implementation task breakdown for an OpenSpec change, synthesizing proposal, design, and specs into self-contained per-task files. Use when the tasks artifact is the next step in an OpenSpec change.
 ---
 
-# Writing Tasks
+# Plan Tasks
 
 ## Overview
 
@@ -12,7 +12,7 @@ Write a structured task breakdown for an OpenSpec change. Each task gets its own
 
 Assume the implementing subagent is a skilled developer with zero context about this codebase, this decision history, or this feature — they won't know which files to touch, what conventions we've settled on, or why a particular approach was chosen unless you tell them. Give them everything they need — and only what they need — for their specific task. DRY. YAGNI. No line-by-line implementation instructions; describe what to build and the constraints that matter, not how to write each line.
 
-**Announce at start:** "I'm using the writing-tasks skill to create the task breakdown."
+**Announce at start:** "I'm using the plan-tasks skill to create the task breakdown."
 
 ---
 

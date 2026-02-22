@@ -9,9 +9,8 @@ artifacts:
     generates: proposal.md
     description: Initial proposal document outlining the change
     instruction: |
-      Create the proposal document that establishes WHY this change is needed.
-      Keep it concise (1-2 pages). Focus on the "why" not the "how" —
-      implementation details belong in design.md.
+      Use the propose skill to write a proposal document that establishes WHY this change is needed.
+      Keep it concise (1-2 pages). Focus on the "why" not the "how".
       See comments in the template for section details and guidance.
 
   - id: design
@@ -20,8 +19,9 @@ artifacts:
     generates: design.md
     description: Technical design document with implementation details
     instruction: |
-      Use the brainstorming skill to create this artifact,
+      Use the design skill to create this artifact,
       using the proposal as the source of motivation and context.
+      See comments in the template for section details and guidance.
 
   - id: specs
     requires: [design]
@@ -39,7 +39,7 @@ artifacts:
     template: tasks.json
     generates: tasks.json
     description: Implementation checklist with trackable tasks
-    instruction: Use the writing-tasks skill to create this artifact.
+    instruction: Use the plan-tasks skill to create this artifact.
 
   - id: review
     requires: [tasks]
