@@ -53,7 +53,16 @@ schema: flokay
 
 **If `openspec/config.yaml` already exists**, do NOT overwrite it. Warn: "openspec/config.yaml already exists — not overwriting. Verify it contains `schema: flokay` if you want to use the Flokay workflow."
 
-### 4. Print Success
+### 4. Update .gitignore
+
+Ensure `.gauntlet/current-task-context.md` is listed in the consumer project's `.gitignore` (it is a transient working file that should never be committed).
+
+Append it only if not already present:
+```bash
+grep -qxF '.gauntlet/current-task-context.md' .gitignore 2>/dev/null || echo '.gauntlet/current-task-context.md' >> .gitignore
+```
+
+### 5. Print Success
 
 Print a summary:
 
