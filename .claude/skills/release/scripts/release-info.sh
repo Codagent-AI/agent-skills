@@ -10,7 +10,7 @@ PLUGIN_JSON=".claude-plugin/plugin.json"
 # --- Ensure clean main branch ---
 CURRENT_BRANCH=$(git branch --show-current)
 if [ "$CURRENT_BRANCH" != "main" ]; then
-  echo '{"error": "not_on_main", "message": "Must be on main branch. Current branch: '"$CURRENT_BRANCH"'"}' >&2
+  jq -n --arg branch "$CURRENT_BRANCH" '{"error": "not_on_main", "message": "Must be on main branch. Current branch: \($branch)"}' >&2
   exit 1
 fi
 

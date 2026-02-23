@@ -10,7 +10,7 @@ The init skill SHALL verify that `.gauntlet/config.yml` exists before proceeding
 - **THEN** the init skill proceeds past the prerequisite check
 
 ### Requirement: Copy review and check files
-The init skill SHALL copy `artifact-review.md`, `task-compliance.md`, and `openspec-validate.yml` from the plugin to the consumer project's `.gauntlet/` directory.
+The init skill SHALL copy `artifact-review.md` and `task-compliance.md` from the plugin's `.gauntlet/reviews/` into the consumer project's `.gauntlet/reviews/`, and `openspec-validate.yml` from the plugin's `.gauntlet/checks/` into the consumer project's `.gauntlet/checks/`.
 
 #### Scenario: First init — no existing review/check files
 - **WHEN** the consumer project has no `.gauntlet/reviews/` or `.gauntlet/checks/` directories

@@ -67,6 +67,7 @@ Copy review prompts and check definitions from the plugin, then update the consu
 mkdir -p .gauntlet/reviews .gauntlet/checks
 cp "${CLAUDE_PLUGIN_ROOT}/.gauntlet/reviews/artifact-review.md" .gauntlet/reviews/artifact-review.md
 cp "${CLAUDE_PLUGIN_ROOT}/.gauntlet/reviews/task-compliance.md" .gauntlet/reviews/task-compliance.md
+# skill-quality.md intentionally omitted — it is a gauntlet-provided review, not flokay-specific
 cp "${CLAUDE_PLUGIN_ROOT}/.gauntlet/checks/openspec-validate.yml" .gauntlet/checks/openspec-validate.yml
 ```
 
