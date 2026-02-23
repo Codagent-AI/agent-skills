@@ -9,7 +9,7 @@ artifacts:
     generates: proposal.md
     description: Initial proposal document outlining the change
     instruction: |
-      IMPORTANT: You MUST use the `propose` skill for this step.
+      IMPORTANT: You MUST use the `flokay:propose` skill for this step.
       Write a proposal document that establishes WHY this change is needed.
       Keep it concise (1-2 pages). Focus on the "why" not the "how".
       See comments in the template for section details and guidance.
@@ -25,7 +25,7 @@ artifacts:
     generates: design.md
     description: Technical design document with implementation details
     instruction: |
-      IMPORTANT: You MUST use the `design` skill for this step.
+      IMPORTANT: You MUST use the `flokay:design` skill for this step.
       Create this artifact using the proposal as the source of motivation and context.
       See comments in the template for section details and guidance.
       When done, tell the user the relative path of the design file created.
@@ -48,7 +48,7 @@ artifacts:
     generates: tasks.md
     description: Implementation checklist with trackable tasks
     instruction: |
-      IMPORTANT: You MUST use the `plan-tasks` skill for this step.
+      IMPORTANT: You MUST use the `flokay:plan-tasks` skill for this step.
       Create this artifact following the plan-tasks skill protocol.
       When done, tell the user the relative path of tasks.md and all individual task files created.
 
@@ -68,8 +68,8 @@ apply:
   requires: [review]
   tracks: tasks.md
   instruction: |
-    IMPORTANT: You MUST use the `implement-task` skill for this step.
-    Follow the `implement-task` skill to dispatch subagents and execute the pending tasks.
+    IMPORTANT: You MUST use the `flokay:implement-task` skill for this step.
+    Follow the `flokay:implement-task` skill to dispatch subagents and execute the pending tasks.
     Read tasks.md for context. For each unchecked task (`- [ ]`),
     the implement-task skill will handle dispatching a subagent to implement
     the work and marking it complete (`- [x]`) in tasks.md.

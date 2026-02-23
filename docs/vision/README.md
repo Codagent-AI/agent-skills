@@ -1,5 +1,7 @@
 # Vision
 
+> **How the implementation evolved:** This document captures the original vision for Flokay. The core workflow (proposal → design → specs → tasks → review → implement) shipped as designed. Some concepts evolved during implementation: the skill names were simplified (e.g., "brainstorming" became "propose"), the Context Sentinel was deferred in favor of simpler subagent dispatch per task, and skill management (discover/pull) remained internal rather than being part of the plugin. The plugin ships 6 skills (`propose`, `design`, `plan-tasks`, `test-driven-development`, `implement-task`, `init`) with the flokay OPSX schema, and relies on externally-installed OpenSpec and Agent Gauntlet CLIs.
+
 A curated, spec-driven development workflow — assembled from the best upstream skills, orchestrated by [OpenSpec OPSX](https://github.com/fission-ai/OpenSpec), and packaged as an installable Claude Code plugin.
 
 ---

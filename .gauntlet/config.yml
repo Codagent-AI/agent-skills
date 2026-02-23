@@ -2,7 +2,7 @@
 cli:
   default_preference:
     - codex
-    # - claude
+    - claude
   # Recommended settings (see docs/eval-results.md)
   adapters:
     codex:
@@ -14,14 +14,13 @@ cli:
 
 # entry_points configured by /gauntlet-setup
 entry_points:
-  # Intentionally disabled right now, I will enable before committing
-  # - path: "."
-  #   exclude:
-  #     - "openspec"
-  #   checks: []
-  #   reviews:
-  #     - skill-quality
-  #     - task-compliance
+  - path: "."
+    exclude:
+      - "openspec"
+    checks: []
+    reviews:
+      - skill-quality
+      - task-compliance
 
   - path: "openspec/changes"
     exclude:
