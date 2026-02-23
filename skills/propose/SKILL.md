@@ -63,7 +63,7 @@ This is the decision point. Before going further into "how", assess whether this
 
 Be direct about the verdict:
 
-```
+```text
 VERDICT
 ════════════════════════════════════════════
 
@@ -93,7 +93,7 @@ Present options when multiple approaches exist. Give a recommendation with reaso
 
 ### 5. Write the Proposal
 
-Once the idea has been evaluated and the approach has crystallized, write the proposal document follow whatever format instructions you were given.
+Once the idea has been evaluated and the approach has crystallized, write the proposal document following whatever format instructions you were given.
 
 The proposal should be anchored in the "why" — the problem, the motivation, and the impact. Draw heavily from the Understand and Evaluate phases. The "what changes" section should scope the work without prescribing solutions.
 

@@ -33,10 +33,10 @@ Orchestrate subagent-driven task implementation for a structured change.
 
    a. **Announce**: "Working on task N/M: <task title>"
 
-   b. **Read the implementer prompt** at `skills/implement-task/implementer-prompt.md` (relative to the plugin root)
+   b. **Read the implementer prompt** at `${CLAUDE_PLUGIN_ROOT}/skills/implement-task/implementer-prompt.md`
 
    c. **Dispatch subagent** using the Task tool:
-      ```
+      ```yaml
       subagent_type: "general-purpose"
       model: "sonnet"
       prompt: <contents of implementer-prompt.md, with TASK_FILE_PATH replaced by the actual task file path>
@@ -65,7 +65,7 @@ Orchestrate subagent-driven task implementation for a structured change.
 
 **Output Format**
 
-```
+```markdown
 ## Implementing: <change-name>
 
 ### Branch: <branch-name>

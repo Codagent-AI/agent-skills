@@ -30,10 +30,10 @@ This copies the Flokay schema into your project and sets it as the default workf
 
 ## Quick Start
 
-1. **Start a change**: `openspec new "my-feature"`
-2. **Step through artifacts**: `openspec continue` — creates proposal, design, specs, tasks, and review in sequence
-3. **Implement**: `openspec apply` — dispatches subagents to execute each task
-4. **Archive**: `openspec archive` — moves the completed change to history
+1. **Start a change**: `/openspec-new-change "my-feature"`
+2. **Step through artifacts**: `/openspec-continue-change` — creates proposal, design, specs, tasks, and review in sequence
+3. **Implement**: `/openspec-apply-change` — dispatches subagents to execute each task
+4. **Archive**: `/openspec-archive-change` — moves the completed change to history
 
 Each step uses a dedicated skill (`flokay:propose`, `flokay:design`, `flokay:plan-tasks`, etc.) that guides you through the process conversationally.
 

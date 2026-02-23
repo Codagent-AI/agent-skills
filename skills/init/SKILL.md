@@ -14,15 +14,17 @@ Set up the Flokay workflow in the current project. This skill is idempotent — 
 
 ### 1. Check Prerequisites
 
-Check that required CLIs and skills are available. Warn on missing items but do not fail.
+Check that required CLIs are installed. If any are missing, tell the user what to install and stop — do not continue with schema copy or config.
 
 **CLIs:**
-- `openspec` — run `openspec --version`. If not found, warn: "openspec CLI not found. Install from https://github.com/fission-ai/OpenSpec"
-- `agent-gauntlet` — run `agent-gauntlet --version`. If not found, warn: "agent-gauntlet CLI not found. Install from https://github.com/pacaplan/agent-gauntlet"
+- `openspec` — run `openspec --version`. If not found: "openspec CLI is required. Install from https://github.com/fission-ai/OpenSpec, then re-run `/flokay:init`."
+- `agent-gauntlet` — run `agent-gauntlet --version`. If not found: "agent-gauntlet CLI is required. Install from https://github.com/pacaplan/agent-gauntlet, then re-run `/flokay:init`."
 
-**Skills (check for directory existence):**
-- `.claude/skills/openspec-*` — OpenSpec skills. If none found, warn: "OpenSpec skills not found. Run `openspec init` to install them."
-- `.claude/skills/gauntlet-*` — Gauntlet skills. If none found, warn: "Gauntlet skills not found. Run `agent-gauntlet init` to install them."
+If either CLI is missing, list all missing prerequisites and stop. The user must install them first, then resume `/flokay:init`.
+
+**Skills (check for directory existence, after CLIs pass):**
+- `.claude/skills/openspec-*` — OpenSpec skills. If none found: "OpenSpec skills not found. Run `openspec init` to install them, then re-run `/flokay:init`." Stop.
+- `.claude/skills/gauntlet-*` — Gauntlet skills. If none found: "Gauntlet skills not found. Run `agent-gauntlet init` to install them, then re-run `/flokay:init`." Stop.
 
 ### 2. Copy Schema
 
@@ -31,17 +33,15 @@ Copy the flokay schema from the plugin into the consumer's project.
 **Source** (relative to plugin root): `openspec/schemas/flokay/`
 **Destination**: `openspec/schemas/flokay/` in the consumer's project
 
-This copies:
-- `schema.yaml`
-- `templates/proposal.md`
-- `templates/design.md`
-- `templates/spec.md`
-- `templates/tasks.md`
-- `templates/review.md` (if present)
+```bash
+mkdir -p openspec/schemas/flokay/templates
+cp "${CLAUDE_PLUGIN_ROOT}/openspec/schemas/flokay/schema.yaml" openspec/schemas/flokay/schema.yaml
+cp "${CLAUDE_PLUGIN_ROOT}/openspec/schemas/flokay/templates/"*.md openspec/schemas/flokay/templates/
+```
 
-Create the destination directories if they don't exist. Overwrite existing schema files — they are plugin-owned and updated on re-init.
+This copies `schema.yaml` and all template files (`proposal.md`, `design.md`, `spec.md`, `tasks.md`, `review.md`).
 
-Use `${CLAUDE_PLUGIN_ROOT}` to locate the plugin's files.
+Overwrite existing schema files — they are plugin-owned and updated on re-init.
 
 ### 3. Write Config
 
@@ -64,8 +64,8 @@ Schema installed at: openspec/schemas/flokay/
 Config at: openspec/config.yaml
 
 Next steps:
-1. Start a new change: openspec new "my-change"
-2. Continue the workflow: openspec continue
+1. Start a new change: /openspec-new-change "my-change"
+2. Continue the workflow: /openspec-continue-change
 3. See the user guide: docs/guide.md (in the flokay plugin)
 ```
 
@@ -73,7 +73,7 @@ If there were warnings, list them again at the end so the user can address them.
 
 ## Guardrails
 
-- Never fail on missing prerequisites — warn only
+- Stop on missing prerequisites — tell user what to install and resume with `/flokay:init`
 - Never overwrite `openspec/config.yaml` if it exists
 - Always overwrite schema files (they're plugin-owned)
 - Use `${CLAUDE_PLUGIN_ROOT}` to locate plugin files

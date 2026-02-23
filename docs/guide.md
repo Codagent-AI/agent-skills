@@ -76,7 +76,7 @@ This copies the Flokay schema into `openspec/schemas/flokay/` and creates `opens
 ### Starting a Change
 
 ```
-openspec new "my-feature"
+/openspec-new-change "my-feature"
 ```
 
 This creates a change directory at `openspec/changes/my-feature/`.
@@ -84,16 +84,10 @@ This creates a change directory at `openspec/changes/my-feature/`.
 ### Stepping Through Artifacts
 
 ```
-openspec continue
+/openspec-continue-change
 ```
 
-OpenSpec checks what artifacts exist and what's ready next. It invokes the appropriate Flokay skill for each step.
-
-You can also target a specific change:
-
-```
-openspec continue --change "my-feature"
-```
+This checks what artifacts exist and what's ready next, invoking the appropriate Flokay skill for each step. See the [OpenSpec docs](https://github.com/fission-ai/OpenSpec) for more details on change management.
 
 ### The Artifacts in Detail
 
@@ -120,7 +114,7 @@ The `gauntlet-run` skill runs automated quality checks across all artifacts — 
 ### Implementing
 
 ```
-openspec apply
+/openspec-apply-change
 ```
 
 The `flokay:implement-task` skill dispatches one fresh subagent per task. Each subagent reads its task file, follows TDD methodology (via `flokay:test-driven-development`), and runs the gauntlet before reporting back.
@@ -128,7 +122,7 @@ The `flokay:implement-task` skill dispatches one fresh subagent per task. Each s
 ### Archiving
 
 ```
-openspec archive
+/openspec-archive-change
 ```
 
 Once all tasks are complete, archive the change to move it to history.
