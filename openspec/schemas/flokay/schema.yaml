@@ -85,12 +85,12 @@ apply:
     **Step 2: Wait for CI**
     Use `flokay:wait-ci` to poll CI check status at 60-second intervals until all checks complete or a timeout is reached (~10 minutes).
 
-    **Step 3: Fix CI failures or blocking reviews (if any)**
-    If `flokay:wait-ci` reports failures or blocking reviews, use `flokay:fix-pr` to address them.
+    **Step 3: Fix CI failures, blocking reviews, or PR comments (if any)**
+    If `flokay:wait-ci` reports `failed` or `comments` status, use `flokay:fix-pr` to address the issues.
     After `flokay:fix-pr` returns, go back to Step 2 and wait for CI again.
 
     **Loop termination rules (MUST be followed):**
-    - **CI passes, no blocking reviews** → workflow is complete. Report success with the PR URL.
+    - **`passed` status** (CI green, no blocking reviews, no PR comments) → workflow is complete. Report success with the PR URL.
     - **Max 3 fix cycles reached** → pause immediately, show current CI status, and ask the user how to proceed. Do NOT attempt a 4th fix cycle.
     - **Same failure persists after 2 fix attempts** → pause immediately, explain the persistent failure in detail, and ask the user for guidance. Do NOT attempt another fix of the same failure.
 

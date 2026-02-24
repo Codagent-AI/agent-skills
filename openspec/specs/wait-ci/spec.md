@@ -33,6 +33,17 @@ The skill SHALL check for `CHANGES_REQUESTED` reviews via `gh api` and include t
 - **WHEN** `flokay:wait-ci` polls and no reviews have requested changes
 - **THEN** the result reports no blocking reviews
 
+### Requirement: Wait-ci gathers PR comments after checks complete
+After all checks complete (pass or fail), the skill SHALL fetch PR comments (both inline review comments and issue-level comments) and include them in the result. This ensures that feedback from review bots and human reviewers is surfaced even when CI checks pass.
+
+#### Scenario: CI passes but PR has comments to address
+- **WHEN** `flokay:wait-ci` completes and all CI checks pass but the PR has unresolved comments from reviewers or bots
+- **THEN** it returns a `comments` status indicating CI is green but comments need addressing, with the comments listed in the result
+
+#### Scenario: CI passes with no comments
+- **WHEN** `flokay:wait-ci` completes and all CI checks pass and there are no PR comments
+- **THEN** it returns a `passed` status
+
 ### Requirement: Wait-ci is independently invocable
 The `wait-ci` skill SHALL be callable standalone, independent of the post-implementation workflow.
 
