@@ -1,122 +1,111 @@
 ## Context
 
-The flokay workflow currently ends at task implementation. After all tasks in `tasks.md` are checked off, the `apply.instruction` tells the agent to archive. But in practice, the workflow continues: run quality gates, create a PR, wait for CI, fix failures and review comments, and iterate until the PR is green. These steps are handled by separate skills (`gauntlet-run`, user-level `/push-pr`, user-level `/address-pr`) that the user must invoke manually in sequence. The stop hook in agent-gauntlet enforces this reactively but doesn't drive the workflow forward.
+The flokay workflow currently ends at task implementation. After all tasks in `tasks.md` are checked off, the `apply.instruction` tells the agent to archive, and then the user must manually create a PR, wait for CI, and fix any issues. The pieces exist separately — user-level `/push-pr` and `/address-pr` skills, plus `wait-ci` logic in agent-gauntlet — but nothing connects them into a continuous flow.
 
-The existing `gauntlet-push-pr` and `gauntlet-fix-pr` skills in the project are stubs (11-15 lines each, `disable-model-invocation: true`). The real implementations live at the user level (`~/.claude/skills/push-pr/`, `~/.claude/skills/address-pr/`). The `wait-ci` logic exists as a TypeScript command in agent-gauntlet (`src/commands/wait-ci.ts`) but isn't exposed as a skill.
+The existing `gauntlet-push-pr` and `gauntlet-fix-pr` skills in `.claude/skills/` are stubs (11-15 lines each). The real implementations live at the user level. The `wait-ci` logic exists as TypeScript in agent-gauntlet (`src/commands/wait-ci.ts`) but isn't exposed as a skill.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- A single `flokay:finalize-pr` skill that the agent invokes after implementation is done, driving the full verify → push → wait → fix loop
-- Project-level skills (`push-pr`, `wait-ci`, `fix-pr`) in the flokay plugin so the workflow is self-contained
-- The schema's `apply.instruction` references `flokay:finalize-pr` as the step after task completion
-- Each sub-skill is independently invocable (user can call `/push-pr` or `/fix-pr` standalone)
+- Three new standalone skills (`push-pr`, `wait-ci`, `fix-pr`) in the flokay plugin's `skills/` directory
+- The schema's `apply.instruction` sequences them: implement → archive → push → wait → fix → loop
+- Each skill is independently invocable (user can call any one standalone)
+- `fix-pr` dispatches a subagent (like `implement-task` does) with a dedicated `fixer-prompt.md`
 
 **Non-Goals:**
 - Forking OpenSpec or modifying the `openspec-apply-change` orchestrator
+- Creating a `finalize-pr` orchestrator skill — the schema instruction owns the sequencing
 - Replacing or deprecating the user-level skills in `~/.claude/skills/`
 - Modifying the agent-gauntlet stop hook or creating a dependency on it
 - Automating PR merge — the loop ends when CI is green, merge is manual
 
 ## Decisions
 
-### Decision 1: Skill placement — flokay plugin `skills/` directory
+### Decision 1: No orchestrator skill — schema instruction owns the sequence
 
-New skills go in `skills/` (alongside `implement-task`, `design`, etc.) rather than `.claude/skills/`. This follows the existing pattern where content skills live in `skills/` and get discovered by the plugin.
-
-The existing `gauntlet-push-pr` and `gauntlet-fix-pr` stubs in `.claude/skills/` will be replaced by the new project-level skills. The new skills are fuller implementations that supersede the stubs.
-
-### Decision 2: `finalize-pr` is an orchestrator, sub-skills do the work
-
-`finalize-pr` follows the same pattern as `implement-task`: it's an orchestrator that calls other skills in sequence. It does not do PR creation or CI polling itself.
+The `apply.instruction` in `schema.yaml` describes the full workflow:
 
 ```
-finalize-pr (orchestrator)
-    │
-    ├── gauntlet-run       (existing — verify quality)
-    ├── push-pr            (new — commit, push, create/update PR)
-    ├── wait-ci            (new — poll CI, return structured result)
-    └── fix-pr             (new — fix failures, push, loop back)
+1. Use flokay:implement-task for tasks
+2. Archive the change (openspec-archive-change)
+3. Use flokay:push-pr to create the PR
+4. Use flokay:wait-ci to poll CI
+5. If CI fails, use flokay:fix-pr to fix issues
+6. Loop steps 4-5 until CI passes or max iterations reached
 ```
 
-### Decision 3: `wait-ci` is a skill, not a CLI command
+No `finalize-pr` orchestrator skill needed. The agent follows the schema instruction directly, invoking each skill as a discrete step. This keeps the architecture flat — three independent skills plus schema sequencing.
 
-The `wait-ci` logic in agent-gauntlet is a TypeScript CLI command with poll loops and structured JSON output. For the skill-based approach, we translate the same concepts into skill instructions that the agent follows using `gh` CLI commands directly. No TypeScript, no external dependency.
+### Decision 2: Skill placement — flokay plugin `skills/` directory
 
-The skill instructs the agent to:
-1. Run `gh pr checks --json name,state,link` in a loop with delays
-2. On failure: fetch logs via `gh run view <run-id> --log-failed`
-3. On blocking reviews: fetch via `gh api` for review comments
-4. Return a structured summary (what passed, what failed, log excerpts, review comments)
+New skills go in `skills/` alongside `implement-task`, `design`, etc. This follows the existing pattern where content skills live in `skills/` and get referenced with the `flokay:` namespace prefix.
 
-The key concepts ported from `wait-ci.ts`:
-- **Poll with backoff**: Check every 30s, up to a configurable timeout
-- **Log enrichment**: Extract run IDs from check links, fetch `--log-failed` output
-- **Review awareness**: Check for `CHANGES_REQUESTED` reviews, deduplicate to latest per author
-- **Structured output**: The skill returns a clear summary the orchestrator can act on
+The existing `gauntlet-push-pr` and `gauntlet-fix-pr` stubs in `.claude/skills/` will be removed. The new skills supersede them.
 
-### Decision 4: `fix-pr` combines CI fixes and review comment addressing
+### Decision 3: `fix-pr` dispatches a subagent with a dedicated prompt
 
-Rather than separate skills for CI failures vs. review comments, `fix-pr` handles both — they arrive at the same time and the fix flow is identical: read the failures/comments, make changes, commit, push.
+`fix-pr` follows the `implement-task` pattern:
 
-This skill is based on the user-level `/address-pr` skill but adapted for the project context:
-- No PR URL argument needed (operates on current branch's PR)
-- Integrated with the finalize-pr loop (returns structured pass/fail, not just a summary)
-- Lighter — skips the GraphQL thread resolution since the orchestrator will re-check CI anyway
+1. The skill gathers context (CI failure logs, review comments)
+2. Dispatches a fresh subagent via the Task tool with `fixer-prompt.md`
+3. The subagent receives all failures at once and fixes everything in one pass
+4. After the subagent returns, the skill runs `gauntlet-run` to verify the fix
+5. Pushes the fix commit
+
+The `fixer-prompt.md` lives alongside `SKILL.md` in `skills/fix-pr/` and is read by the agent at dispatch time (same pattern as `skills/implement-task/implementer-prompt.md`).
+
+### Decision 4: `wait-ci` polls inline with 60-second intervals
+
+The agent polls CI status directly using `gh pr checks` in a loop with `sleep 60` between polls. No external CLI dependency.
+
+Concepts ported from `agent-gauntlet/src/commands/wait-ci.ts`:
+- **Poll loop**: `gh pr checks --json name,state,link` every 60 seconds
+- **Log enrichment**: On failure, extract run IDs from check links, fetch `gh run view <run-id> --log-failed`
+- **Review awareness**: Check for `CHANGES_REQUESTED` reviews via `gh api`
+- **Timeout**: Default ~10 minutes (10 polls). If CI hasn't completed, report "pending" and let the schema instruction decide
 
 ### Decision 5: `push-pr` adapts the user-level skill
 
 The user-level `/push-pr` handles commit, push, and PR create/update with description generation. The project-level version follows the same logic but:
 - Uses `flokay:` namespace prefix
 - Lives in `skills/push-pr/` in the plugin
-- May be invoked standalone or by the finalize-pr orchestrator
+- Operates on current branch (no arguments needed)
 
-### Decision 6: Schema instruction update — minimal change
+### Decision 6: Loop termination
 
-The `apply.instruction` in `schema.yaml` gets one additional line:
-
-```
-Once ALL tasks are complete, invoke the `flokay:finalize-pr` skill to verify,
-create the PR, and iterate until CI passes.
-```
-
-The existing instruction about `flokay:implement-task` and archiving stays. The finalize-pr skill handles the bridge between "tasks done" and "ready to archive."
-
-### Decision 7: Loop termination and user control
-
-The finalize-pr loop has explicit exit conditions:
-- **CI passes, no blocking reviews** → success, suggest archive
-- **Max iterations reached** (default: 3 fix cycles) → pause, show status, ask user
+The schema instruction includes explicit termination rules:
+- **CI passes, no blocking reviews** → done, report success with PR URL
+- **Max iterations** (default: 3 fix cycles) → pause, show status, ask user
+- **Same failure persists** after 2 attempts → pause, explain, ask user
 - **User interrupts** → pause, show status
-- **Unfixable failure** (infrastructure issue, flaky test) → pause, explain, ask user
 
-The agent does NOT loop forever. After each fix-pr cycle, it evaluates whether progress was made (new failures vs. same failures). If stuck on the same failure after 2 attempts, it pauses.
+The agent does NOT loop forever.
+
+### Decision 7: Archive happens before push
+
+The existing flow is: implement tasks → archive → push PR. Archive merges delta specs into main specs and closes the OpenSpec change. This is a planning concern independent of getting the code merged upstream. The schema instruction preserves this ordering.
 
 ## Risks / Trade-offs
 
-### Risk: CI polling timeout in a skill context
+### Risk: CI polling blocks the agent
 
-Skills run within the agent's turn. Polling CI for 5+ minutes means the agent is blocked. Mitigation: the wait-ci skill uses explicit `sleep` delays between polls (the agent calls `sleep 30` via Bash), keeping the turn alive. The timeout is configurable but defaults to 5 minutes. If CI hasn't completed, the skill returns "pending" and the orchestrator can decide to retry or pause.
-
-### Risk: Skill files get large and complex
-
-The finalize-pr orchestrator and fix-pr skill both have substantial logic. Mitigation: follow the implement-task pattern — keep the orchestrator focused on sequencing, delegate work to sub-skills. Each sub-skill has a single responsibility.
+Polling CI for up to 10 minutes means the agent is idle. Mitigation: 60-second intervals keep the turn alive, and the timeout caps total wait time. If the user needs the agent sooner, they can interrupt.
 
 ### Trade-off: Project-level skills duplicate user-level skills
 
-The project-level `push-pr` and `fix-pr` overlap with user-level `/push-pr` and `/address-pr`. This is intentional — the project-level versions are tailored for the finalize-pr orchestration context and can evolve independently. The user-level skills remain available for ad-hoc use outside of OpenSpec workflows.
+The project-level `push-pr` and `fix-pr` overlap with user-level `/push-pr` and `/address-pr`. This is intentional — the project-level versions are tailored for the flokay plugin context and can evolve independently.
 
-### Trade-off: No structured schema enforcement
+### Trade-off: No structured enforcement
 
-Approach B means the post-implementation workflow is defined in skill instructions, not in the schema's type system. The schema only says "use finalize-pr" — it doesn't enforce that verify happens before push, or that CI must pass before archive. The enforcement lives in the skill's step-by-step instructions. This is acceptable for now and can be graduated to a schema-level definition (Approach A) later if needed.
+The post-implementation workflow is defined in the schema instruction text, not in a type-checked schema structure. The enforcement is "prompt-based" — the agent follows the instruction because it says so. This is acceptable for Approach B and can be graduated to schema-level enforcement (Approach A fork) later if needed.
 
 ## Migration Plan
 
-1. **Add new skills**: Create `finalize-pr`, `push-pr`, `wait-ci`, `fix-pr` in `skills/`
-2. **Replace stubs**: Remove `gauntlet-push-pr` and `gauntlet-fix-pr` from `.claude/skills/` (or replace their content with pointers to the new skills)
-3. **Update schema**: Add `flokay:finalize-pr` reference to `apply.instruction` in `schema.yaml`
-4. **No rollback needed**: Existing workflows unaffected — the new skills are additive. Users can still invoke individual skills manually.
+1. **Add new skills**: Create `push-pr`, `wait-ci`, `fix-pr` in `skills/`
+2. **Remove stubs**: Delete `gauntlet-push-pr` and `gauntlet-fix-pr` from `.claude/skills/`
+3. **Update schema**: Extend `apply.instruction` in `schema.yaml` with the post-implementation sequence
+4. **No rollback needed**: Existing workflows unaffected — the new skills are additive
 
 ## Open Questions
 
-None — the exploration session resolved the key design questions (skill placement, orchestration pattern, fork vs. no-fork).
+None — design questions resolved through collaborative brainstorming.
