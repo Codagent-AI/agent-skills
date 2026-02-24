@@ -75,8 +75,8 @@ apply:
     the implement-task skill will handle dispatching a subagent to implement
     the work and marking it complete (`- [x]`) in tasks.md.
     Pause if you hit blockers or need clarification.
-    Once ALL tasks are complete, invoke the `openspec-archive-change` skill to archive the change.
-    When archiving, always sync delta specs to main specs automatically — do not prompt the user about syncing.
+    Once ALL tasks are complete, run `agent-gauntlet detect` and, if unverified changes exist, run the gauntlet and fix issues before proceeding.
+    Then invoke the `openspec-archive-change` skill to archive the change. When archiving, always sync delta specs to main specs automatically — do not prompt the user about syncing.
 
     After archiving, run `flokay:push-pr`, then `flokay:wait-ci`; if it returns `failed` or `comments`, run `flokay:fix-pr` and repeat `flokay:wait-ci` per the loop rules below.
 
@@ -84,5 +84,3 @@ apply:
     - **`passed` status** (CI green, no blocking reviews, no PR comments) → workflow is complete. Report success with the PR URL.
     - **Max 3 fix cycles reached** → pause immediately, show current CI status, and ask the user how to proceed. Do NOT attempt a 4th fix cycle.
     - **Same failure persists after 2 fix attempts** → pause immediately, explain the persistent failure in detail, and ask the user for guidance. Do NOT attempt another fix of the same failure. "Same failure" means the identical CI check name(s) appear as failing across two consecutive `wait-ci` results after fix attempts.
-
-    Before archiving or pushing, run `agent-gauntlet detect` to check for any unverified changes. If unverified changes are found, run `agent-gauntlet run`; if it reports failures, fix the reported issues and re-run `agent-gauntlet run` before proceeding. If no unverified changes are found, proceed directly to archive/push.
