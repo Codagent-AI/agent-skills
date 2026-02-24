@@ -24,7 +24,7 @@ _(none — these are new behaviors, not changes to existing spec'd capabilities)
 
 ## Impact
 
-- **Schema/skills**: The `apply.instruction` in `schema.yaml` or the push-related skill instructions gain a gauntlet-detect-before-push step. The implementer prompt (`skills/implement-task/implementer-prompt.md`) gains context usage reporting instructions.
+- **Schema/skills**: The `apply.instruction` in `openspec/schemas/flokay/schema.yaml` gains a gauntlet-detect-before-push step. The implementer prompt (`skills/implement-task/implementer-prompt.md`) gains context usage reporting instructions.
 - **Dependencies**: Context usage reporting depends on the StatusLine relay mechanism (user must have the one-line statusLine setup). Feasibility of reading the temp file from a Task tool subagent needs validation. Fallback: transcript-based estimation.
 - **No new CLIs or tools**: Both enhancements use existing infrastructure (`agent-gauntlet detect`, StatusLine relay).
 - **No breaking changes**.
