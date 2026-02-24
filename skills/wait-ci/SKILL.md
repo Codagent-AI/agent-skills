@@ -83,7 +83,7 @@ Poll CI check status for the current branch's PR and report the result, enrichin
 
 Report a structured result:
 
-```
+~~~
 ## CI Status: <passed | failed | pending>
 
 **PR:** <url>
@@ -105,7 +105,7 @@ Report a structured result:
 
 ### Still Running
 - <check-name> (PENDING/IN_PROGRESS)
-```
+~~~
 
 - If `passed` with no blocking reviews: report success
 - If `failed`: list all failed checks with logs and all blocking reviews

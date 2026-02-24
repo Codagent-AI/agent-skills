@@ -15,8 +15,8 @@ Commit all changes, push to the remote, and create or update the pull request fo
    - If there are changes, create a commit:
      - Run `git diff --staged` and `git diff` to see what's changed
      - Generate a concise, descriptive commit message based on the changes
-     - Stage all changes: `git add -A`
-     - Commit with: `git commit -m "message" -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"`
+     - Stage changed files by name (avoid staging sensitive files like `.env` or credentials)
+     - Commit with: `git commit -m "message" -m "Co-Authored-By: Claude <noreply@anthropic.com>"`
    - If there are no changes, proceed to push check
 
 2. **Push to remote**
