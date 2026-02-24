@@ -1,1 +1,0 @@
-- [ ] Post-apply skills and schema update (`tasks/post-apply-skills-and-schema.md`)
