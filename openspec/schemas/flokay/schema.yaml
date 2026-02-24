@@ -76,6 +76,7 @@ apply:
     the work and marking it complete (`- [x]`) in tasks.md.
     Pause if you hit blockers or need clarification.
     Once ALL tasks are complete, invoke the `openspec-archive-change` skill to archive the change.
+    When archiving, always sync delta specs to main specs automatically — do not prompt the user about syncing.
 
     After archiving, run `flokay:push-pr`, then `flokay:wait-ci`; if it returns `failed` or `comments`, run `flokay:fix-pr` and repeat `flokay:wait-ci` per the loop rules below.
 
