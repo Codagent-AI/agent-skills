@@ -49,7 +49,7 @@ Orchestrate subagent-driven task implementation for a structured change.
       - Execute tasks one at a time, in order — NEVER dispatch multiple tasks in parallel
 
    d. **Handle response**:
-      - **Success**: Mark the task complete by changing `- [ ]` to `- [x]` in the tasks file. Show progress: "Task N/M complete"
+      - **Success**: Mark the task complete by changing `- [ ]` to `- [x]` in the tasks file. Read the `### Context Usage` section from the subagent's report. Show progress: "Task N/M complete (context: <percentage>%)" or "Task N/M complete (context: unknown)" if the value is unavailable.
       - **Failure with questions**: Read the task file to understand context, answer what you can from the change artifacts, and retry with a fresh subagent including the answers
       - **Failure (blocker)**: Do NOT mark the task complete. Pause and ask the user for guidance:
         - Skip this task and continue
@@ -81,11 +81,11 @@ Orchestrate subagent-driven task implementation for a structured change.
 
 Working on task 1/3: <task title>
 [...subagent dispatched...]
-Task 1/3 complete
+Task 1/3 complete (context: 42%)
 
 Working on task 2/3: <task title>
 [...subagent dispatched...]
-Task 2/3 complete
+Task 2/3 complete (context: unknown)
 
 ---
 
