@@ -1,32 +1,32 @@
-### Requirement: Subagent reports context usage percentage
+### Requirement: Orchestrator derives subagent context usage from transcript
 
-The implementer subagent SHALL report its context window usage percentage when returning its completion report to the orchestrating agent. The subagent SHALL read the most recently modified `/tmp/claude-context-*` file to obtain the percentage. If no such file exists or the read fails, the subagent SHALL report "unknown" instead of a numeric value.
+The orchestrator SHALL read the subagent's transcript file after the Task tool returns to determine context window consumption. The orchestrator SHALL find the most recently modified `agent-*.jsonl` file under `~/.claude/projects/` subagent directories and extract the `usage` field from the last assistant turn. The total context fill SHALL be calculated as the sum of `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens`. If no transcript file is found, no usage entries exist, or parsing fails, the orchestrator SHALL report "unknown" instead of a numeric value. The subagent SHALL NOT self-report context usage — all context measurement is the orchestrator's responsibility.
 
-#### Scenario: Context file exists
+#### Scenario: Transcript exists with valid usage data
 
-- **WHEN** the subagent completes its work and a `/tmp/claude-context-*` file exists
-- **THEN** the subagent SHALL include the context usage percentage from that file in its implementation report
+- **WHEN** a subagent completes and a recently modified `agent-*.jsonl` transcript exists with a valid `usage` field on the last assistant turn
+- **THEN** the orchestrator SHALL calculate total tokens as the sum of `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens` from that turn
 
-#### Scenario: Context file does not exist
+#### Scenario: No transcript file found
 
-- **WHEN** the subagent completes its work and no `/tmp/claude-context-*` file exists
-- **THEN** the subagent SHALL include "unknown" as the context usage value in its implementation report
+- **WHEN** a subagent completes and the glob for `agent-*.jsonl` in subagent directories matches no files
+- **THEN** the orchestrator SHALL use "unknown" as the context usage value
 
-#### Scenario: Context file contains invalid data
+#### Scenario: Usage field missing or unparseable
 
-- **WHEN** the subagent reads the most recent `/tmp/claude-context-*` file and the contents are not a valid percentage
-- **THEN** the subagent SHALL report "unknown" as the context usage value
+- **WHEN** a subagent completes and the transcript file exists but contains no valid `usage` entries or the JSON parsing fails
+- **THEN** the orchestrator SHALL use "unknown" as the context usage value
 
 ### Requirement: Orchestrator logs context usage per task
 
-The orchestrator skill (`skills/implement-task/SKILL.md`) SHALL display the context usage percentage reported by each subagent alongside the task completion status. This gives the user visibility into per-task context consumption.
+The orchestrator skill (`skills/implement-task/SKILL.md`) SHALL display the subagent's context window consumption in tokens alongside the task completion status. The token count SHALL be abbreviated to the nearest 1k (e.g., `59k tokens`). This gives the user visibility into per-task context consumption to detect oversized tasks.
 
-#### Scenario: Subagent returns numeric context percentage
+#### Scenario: Valid token count available
 
-- **WHEN** a subagent returns a report containing a numeric context usage percentage
-- **THEN** the orchestrator SHALL display the percentage alongside the task completion message (e.g., "Task 1/3 complete (orchestrator context: 42%)")
+- **WHEN** a subagent returns and the orchestrator successfully extracts a token count from the transcript
+- **THEN** the orchestrator SHALL display the abbreviated count alongside the task completion message (e.g., "Task 1/3 complete (59k tokens)")
 
-#### Scenario: Subagent returns unknown context usage
+#### Scenario: Token count unavailable
 
-- **WHEN** a subagent returns a report containing "unknown" as the context usage
-- **THEN** the orchestrator SHALL display "orchestrator context: unknown" alongside the task completion message
+- **WHEN** a subagent returns and the orchestrator cannot determine the token count
+- **THEN** the orchestrator SHALL display "unknown tokens" alongside the task completion message (e.g., "Task 1/3 complete (unknown tokens)")
