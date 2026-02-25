@@ -76,11 +76,20 @@ while [[ $poll -lt $MAX_POLLS ]]; do
   poll=$((poll + 1))
 
   # ── Fetch checks ─────────────────────────────────────────────────────────────
-  # Fail explicitly on error — don't coerce failures into empty arrays, which
-  # could cause the script to falsely report "passed" on auth/network issues.
-  if ! checks_json=$(gh pr checks --json name,state,bucket,link 2>/dev/null); then
-    jq -n --arg error "failed to fetch PR checks" '{error: $error}' >&2
-    exit 1
+  # gh pr checks exits 1 in two distinct cases:
+  #   - "no checks reported" → valid empty state, treat as []
+  #   - any other error (auth, network, rate limit) → fatal
+  _gh_err=$(mktemp)
+  if ! checks_json=$(gh pr checks --json name,state,bucket,link 2>"$_gh_err"); then
+    _err_msg=$(cat "$_gh_err"); rm -f "$_gh_err"
+    if [[ "$_err_msg" == *"no checks reported"* ]]; then
+      checks_json='[]'
+    else
+      jq -n --arg error "failed to fetch PR checks: $_err_msg" '{error: $error}' >&2
+      exit 1
+    fi
+  else
+    rm -f "$_gh_err"
   fi
 
   # ── Fetch reviews ─────────────────────────────────────────────────────────────
