@@ -30,7 +30,7 @@ The script outputs a JSON object with these fields:
 
 | Field | Type | Description |
 |---|---|---|
-| `status` | string | `passed`, `failed`, `pending` (timeout) |
+| `status` | string | `passed`, `failed`, `pending` (timeout), `comments` (set by caller after comment check) |
 | `pr_url` | string | PR URL |
 | `pr_number` | number | PR number |
 | `owner` / `repo` | string | Repo coordinates for subsequent calls |
