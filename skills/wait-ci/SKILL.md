@@ -12,15 +12,19 @@ Poll CI check status for the current branch's PR and report the result, enrichin
 
 Use the bundled scripts for all API calls — they encode the correct field names, jq patterns, and GraphQL queries. Do not rewrite API calls inline.
 
+> **NEVER pause to ask the user for permission to wait.** Always run the full polling duration silently. Asking mid-execution breaks automation and is never needed — the caller already decided to invoke this skill.
+
 ## Steps
 
 ### 1. Run the CI poller
 
 ```bash
-bash skills/wait-ci/scripts/poll-ci.sh
+bash skills/wait-ci/scripts/poll-ci.sh [--max-minutes N] [--interval SECONDS]
 ```
 
-Options: `--max-polls N` (default 10) · `--interval SECONDS` (default 60)
+Options: `--max-minutes N` (default 15) · `--interval SECONDS` (default 60)
+
+The skill accepts an optional `--max-minutes` argument, e.g. `flokay:wait-ci --max-minutes 20`. Pass it through to the script. Do not ask for permission to wait — run silently until the time expires or a terminal result is reached.
 
 The script outputs a JSON object with these fields:
 
@@ -69,7 +73,7 @@ Output fields:
 
 ### 4. Handle timeout
 
-If `poll-ci.sh` exits 1 (timeout after max polls): report `pending`, list which checks are still running, and stop. Do not re-poll.
+If `poll-ci.sh` exits 1 (timed out): report `pending`, list which checks are still running, and stop. Do not re-poll. Do not ask the user whether to wait longer — just report the timeout and return.
 
 ## Output Format
 
@@ -111,7 +115,8 @@ Status meanings:
 
 - Can be invoked standalone without prior workflow state
 - Polls the current branch's PR — no arguments needed for the poller
-- 60-second interval × 10 polls = ~10 minute maximum wait
+- Default: 60-second interval × 15 minutes max wait; pass `--max-minutes N` to override
+- **Never ask the user for permission mid-execution** — always wait the full duration
 - `CHANGES_REQUESTED` is a hard block; `APPROVED` and `COMMENTED` alone do not block
 - Comment gathering runs after checks complete — bots post comments as part of their check, so they're available once the check finishes
 - Log enrichment only works for GitHub Actions checks (not external status checks)

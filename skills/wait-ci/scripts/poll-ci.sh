@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Poll CI check status for the current branch's PR.
 #
-# Usage: ./poll-ci.sh [--max-polls N] [--interval SECONDS]
+# Usage: ./poll-ci.sh [--max-minutes N] [--interval SECONDS]
+#
+#   --max-minutes N    Maximum total wait time in minutes (default: 15)
+#   --interval SECONDS Seconds between polls (default: 60)
 #
 # Outputs a JSON object:
 # {
@@ -24,16 +27,20 @@
 
 set -euo pipefail
 
-MAX_POLLS=10
+MAX_MINUTES=15
 INTERVAL=60
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --max-polls) MAX_POLLS="$2"; shift 2 ;;
-    --interval)  INTERVAL="$2";  shift 2 ;;
+    --max-minutes) MAX_MINUTES="$2"; shift 2 ;;
+    --interval)    INTERVAL="$2";    shift 2 ;;
     *) echo "Unknown argument: $1" >&2; exit 1 ;;
   esac
 done
+
+# Compute max polls from minutes, rounding up, minimum 1
+MAX_POLLS=$(( (MAX_MINUTES * 60 + INTERVAL - 1) / INTERVAL ))
+[[ $MAX_POLLS -lt 1 ]] && MAX_POLLS=1
 
 # ── Find PR ──────────────────────────────────────────────────────────────────
 pr_json=$(gh pr view --json number,url,headRefName 2>/dev/null) || {
