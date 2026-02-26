@@ -10,108 +10,96 @@ allowed-tools: Bash
 
 Poll CI check status for the current branch's PR and report the result, enriching failures with log output and checking for blocking reviews.
 
+Use the bundled scripts for all API calls — they encode the correct field names, jq patterns, and GraphQL queries. Do not rewrite API calls inline.
+
+> **NEVER pause to ask the user for permission to wait.** Always run the full polling duration silently. Asking mid-execution breaks automation and is never needed — the caller already decided to invoke this skill.
+
+## How polling works
+
+`check-ci.sh` is a **single-invocation** script. It polls every 10 seconds for up to 90 seconds, then exits. Claude calls it in a loop to cover the full max wait time. This keeps each Bash call bounded to ~2 minutes rather than blocking the agent for the full duration.
+
+Each Bash call to `check-ci.sh` **must** use `timeout: 120000` (2 minutes).
+
 ## Steps
 
-1. **Find the current PR**
+### 1. Run the polling loop
 
-   ```bash
-   gh pr view --json number,url,headRefName
-   ```
+Compute `max_runs = ceil(max_minutes * 60 / 90)`, defaulting to `max_minutes = 15` → 10 runs.
 
-   - If no PR found: report error and stop
-   - Extract PR number and URL for use in subsequent steps
+The skill accepts an optional `--max-minutes N` argument; pass it through to adjust `max_runs`.
 
-2. **Get repo information** (for review API calls)
+Track `ever_had_checks = false` and `run = 0` across iterations.
 
-   ```bash
-   gh repo view --json owner,name
-   ```
+For each run:
 
-3. **Poll loop** — repeat up to 10 times (approximately 10 minutes total)
+```bash
+bash skills/wait-ci/scripts/check-ci.sh
+```
 
-   At the start of each poll, fetch checks and reviews in parallel:
+Use **`timeout: 120000`** on the Bash call. Check the exit code:
 
-   ```bash
-   # CI checks
-   gh pr checks --json name,state,bucket,link
+| Exit code | Meaning | Action |
+|---|---|---|
+| `0` | Terminal (`passed` or `failed`) | Break out of loop, proceed to Step 2 |
+| `2` | Not yet terminal (`pending` or `no_checks`) | If `run < max_runs`, re-run; else report timeout |
+| `1` | Fatal error | Report error and stop |
 
-   # Blocking reviews
-   gh api "repos/{owner}/{repo}/pulls/{pr-number}/reviews?per_page=100"
-   ```
+After each exit-2 result, set `ever_had_checks = ever_had_checks OR result.had_checks`.
 
-   **Evaluate checks** (use the `bucket` field for classification):
-   - `bucket` = `pending`: check is still running (PENDING, QUEUED, IN_PROGRESS)
-   - `bucket` = `fail`: check has failed (includes FAILURE, TIMED_OUT, ACTION_REQUIRED)
-   - `bucket` = `pass`: check has passed (SUCCESS)
-   - Fall back to the raw `state` value only if `bucket` is absent
+**Timeout handling:** When all runs are exhausted (exit code 2 on the last run):
+- If `ever_had_checks` is false → report `passed` (no CI configured for this repo/PR)
+- Otherwise → report `pending` with the list of still-running checks
 
-   **Evaluate reviews:**
-   - Filter reviews to the latest state per reviewer (later reviews override earlier ones)
-   - A review with state `CHANGES_REQUESTED` is blocking
+The script outputs a JSON object with these fields:
 
-   **Decision after each poll:**
-   - If any check has `bucket` = `fail` OR any reviewer has `CHANGES_REQUESTED`:
-     → **Fetch failure logs** (see Step 4), **gather PR comments** (see Step 5), and **return failed result** immediately
-   - If no checks are pending/queued/in-progress AND no failures:
-     → **Gather PR comments** (see Step 5) and **return result** (see below)
-   - If checks are still pending:
-     → Wait 60 seconds (`sleep 60`) then poll again
-   - If no checks exist yet on the first poll:
-     → Wait 60 seconds and try again
-   - If no checks exist on subsequent polls:
-     → **Return passed result** (no CI configured, treat as passing)
+| Field | Type | Description |
+|---|---|---|
+| `status` | string | `passed`, `failed`, `pending`, `no_checks`, or `comments` (set by caller) |
+| `pr_url` | string | PR URL |
+| `pr_number` | number | PR number |
+| `owner` / `repo` | string | Repo coordinates for subsequent calls |
+| `had_checks` | bool | Whether any checks were seen on this invocation |
+| `failed_checks` | array | Checks with `bucket == "fail"` |
+| `passed_checks` | array | Checks with `bucket == "pass"` |
+| `pending_checks` | array | Checks still running |
+| `blocking_reviews` | array | Reviews with `CHANGES_REQUESTED` (latest per reviewer) |
+| `failed_run_ids` | array | GitHub Actions run IDs extracted from failed check links |
 
-   **After all checks complete, the result depends on PR comments:**
-   - If CI passed AND no blocking reviews AND no PR comments to address → report `passed`
-   - If CI passed but there ARE unresolved PR comments → report `comments` (CI is green but comments need addressing)
+### 2. Fetch failure logs (if `status == "failed"`)
 
-4. **Enrich failures with log output**
+For each run ID in `failed_run_ids`:
 
-   For each failed check:
-   - Extract the GitHub Actions run ID from the check's `link` field:
-     - Link format: `https://github.com/{owner}/{repo}/actions/runs/{RUN_ID}/job/{JOB_ID}`
-     - Extract `{RUN_ID}` with a regex match on `/actions/runs/(\d+)/`
-   - Fetch failed logs for each unique run ID:
-     ```bash
-     gh run view <run-id> --log-failed
-     ```
-   - If log output exceeds 100 lines, keep the last 100 lines (truncate from the top)
-   - Attach the log output to the corresponding failed check(s)
-   - External checks (no GitHub Actions run ID in the link) get no log output
+```bash
+gh run view <run-id> --log-failed
+```
 
-5. **Gather PR comments**
+Keep the last 100 lines if output is longer. External checks (no run ID) get no logs.
 
-   Once all checks have completed (pass or fail), fetch PR comments to include in the result:
+### 3. Gather PR comments (when checks are terminal)
 
-   ```bash
-   # Get review comments (inline code comments)
-   gh api "repos/{owner}/{repo}/pulls/{pr-number}/comments?per_page=100"
+```bash
+bash skills/wait-ci/scripts/get-pr-comments.sh <owner> <repo> <pr-number> [<pr-author-login>]
+```
 
-   # Get issue-level comments on the PR
-   gh api "repos/{owner}/{repo}/issues/{pr-number}/comments?per_page=100"
-   ```
+Uses GraphQL to check `isResolved` on review threads directly — no jq `!=` workarounds needed.
 
-   - Collect all comments from bot and human reviewers
-   - For inline comments: include file path, line number, body
-   - For issue-level comments: include author and body
-   - Exclude comments authored by the PR creator (self-comments)
-   - This step runs AFTER checks complete — review bots post their comments as part of their check, so the comments are available once the check finishes
+Output fields:
 
-6. **Handle timeout**
+| Field | Type | Description |
+|---|---|---|
+| `has_comments` | bool | True if any unaddressed comments exist |
+| `unresolved_threads` | array | `{file, line, author, body}` per unresolved review thread |
+| `issue_comments` | array | `{author, body}` top-level PR comments (excluding PR creator) |
 
-   If 10 polls complete without a terminal result (pass or fail):
-   - Report: `pending` status, list which checks are still running
-   - Do NOT loop further — let the caller decide what to do
+**Status upgrade:** If checks returned `passed` but `get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments`.
 
 ## Output Format
 
-Report a structured result:
-
-~~~markdown
+```markdown
 ## CI Status: <passed | failed | pending | comments>
 
 **PR:** <url>
-**Elapsed:** <N> minutes
+**Elapsed:** ~<N> minutes
 
 ### Failed Checks
 - **<check-name>** (FAILURE)
@@ -133,18 +121,26 @@ Report a structured result:
 
 ### Still Running
 - <check-name> (PENDING/IN_PROGRESS)
-~~~
+```
 
-- `passed`: CI green, no blocking reviews, no PR comments to address
-- `failed`: CI failures or `CHANGES_REQUESTED` reviews (list all with logs)
-- `comments`: CI green but there are PR comments that need addressing (list them)
-- `pending`: checks still running (list which ones and elapsed time)
+Status meanings:
+- `passed` — CI green, no blocking reviews, no PR comments
+- `failed` — CI failures or `CHANGES_REQUESTED` reviews (with logs)
+- `comments` — CI green but unresolved PR comments need addressing
+- `pending` — checks still running after max wait (list which ones)
 
 ## Notes
 
 - Can be invoked standalone without prior workflow state
-- Polls the current branch's PR — no arguments needed
-- 60-second interval × 10 polls = ~10 minute maximum wait
-- Review awareness: `CHANGES_REQUESTED` state is a hard block; `APPROVED` and `COMMENTED` reviews alone do not block
-- Comment awareness: after checks complete, PR comments from bots and reviewers are gathered and reported — CI can be green but still have comments that need addressing
+- Default: 10 runs × 90 seconds = ~15 minutes max wait; pass `--max-minutes N` to override
+- **Never ask the user for permission mid-execution** — always run the full duration
+- `CHANGES_REQUESTED` is a hard block; `APPROVED` and `COMMENTED` alone do not block
+- Comment gathering runs after checks complete — bots post comments as part of their check, so they're available once the check finishes
 - Log enrichment only works for GitHub Actions checks (not external status checks)
+
+## Scripts Reference
+
+| Script | Purpose |
+|---|---|
+| `scripts/check-ci.sh` | Single-invocation poller (90s, 10s interval) — call in a loop from the skill |
+| `scripts/get-pr-comments.sh` | GraphQL comment fetcher — returns unresolved threads and issue comments |
