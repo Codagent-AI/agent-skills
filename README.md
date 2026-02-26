@@ -1,12 +1,11 @@
 # Flokay
 
-[![npm](https://img.shields.io/npm/v/flokay)](https://www.npmjs.com/package/flokay)
-[![npm downloads](https://img.shields.io/npm/dm/flokay)](https://www.npmjs.com/package/flokay)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CodeRabbit](https://img.shields.io/coderabbit/prs/github/pacaplan/flokay)](https://coderabbit.ai)
 
 A curated, spec-driven development workflow for Claude Code. Flokay guides you through a structured sequence — proposal, design, specs, tasks, review, implement — so every change is well-reasoned before code is written.
+
+![Flokay Workflow](docs/images/workflow.png)
 
 ## Prerequisites
 
@@ -22,8 +21,11 @@ Flokay requires two external CLIs and their skills:
 
 ## Installation
 
-```bash
-claude plugin install pacaplan/flokay
+In Claude Code, add the Flokay marketplace and install the plugin:
+
+```
+/plugin marketplace add pacaplan/flokay
+/plugin install flokay
 ```
 
 Then initialize Flokay in your project:
