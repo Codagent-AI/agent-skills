@@ -14,5 +14,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: weAretechnative/openspec-badge-action@main
         with:
-          metric_types: number_of_specs,number_of_requirements,tasks_status,open_changes
+          metric_types: number_of_specs,tasks_status,open_changes
           badge_style: flat
+          show_label: true
