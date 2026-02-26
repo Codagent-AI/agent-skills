@@ -1,5 +1,11 @@
 # Flokay
 
+[![npm](https://img.shields.io/npm/v/flokay)](https://www.npmjs.com/package/flokay)
+[![npm downloads](https://img.shields.io/npm/dm/flokay)](https://www.npmjs.com/package/flokay)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![CodeRabbit](https://img.shields.io/coderabbit/prs/github/pacaplan/flokay)](https://coderabbit.ai)
+
 A curated, spec-driven development workflow for Claude Code. Flokay guides you through a structured sequence — proposal, design, specs, tasks, review, implement — so every change is well-reasoned before code is written.
 
 ## Prerequisites
@@ -26,14 +32,11 @@ Then initialize Flokay in your project:
 /flokay:init
 ```
 
-This copies the Flokay schema into your project and sets it as the default workflow.
-
 ## Quick Start
 
-1. **Start a change**: `/openspec-new-change "my-feature"`
-2. **Step through artifacts**: `/openspec-continue-change` — creates proposal, design, specs, tasks, and review in sequence
-3. **Implement**: `/openspec-apply-change` — dispatches subagents to execute each task
-4. **Archive**: `/openspec-archive-change` — moves the completed change to history
+1. **Design**: `/opsx:explore` → `/opsx:new <name>` → `/opsx:continue`
+2. **Plan**: `/opsx:ff` — generates specs, tasks, and review in one pass
+3. **Develop**: `/opsx:apply` — implements, archives, and finalizes the PR
 
 Each step uses a dedicated skill (`flokay:propose`, `flokay:design`, `flokay:plan-tasks`, etc.) that guides you through the process conversationally.
 
