@@ -29,13 +29,13 @@ Flokay requires two external CLIs and their skills:
 In Claude Code, add the Flokay marketplace and install the plugin:
 
 ```bash
-/plugin marketplace add pacaplan/flokay
-/plugin install flokay
+  claude plugin marketplace add pacaplan/flokay
+  claude plugin install flokay
 ```
 
 Then initialize Flokay in your project:
 
-```
+```text
 /flokay:init
 ```
 
@@ -47,9 +47,19 @@ Then initialize Flokay in your project:
 
 Each step uses a dedicated skill (`flokay:propose`, `flokay:design`, `flokay:plan-tasks`, etc.) that guides you through the process conversationally.
 
-## Documentation
-
 See [`docs/guide.md`](docs/guide.md) for the detailed user guide covering the full workflow, each artifact, and how to use the commands.
+
+## Updating
+
+```bash
+claude plugin marketplace update flokay
+claude plugin update flokay@flokay
+```
+
+Then run to get the latest skills:
+```text
+/flokay:init
+```
 
 ## License
 
