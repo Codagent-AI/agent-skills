@@ -14,34 +14,56 @@ Use the bundled scripts for all API calls — they encode the correct field name
 
 > **NEVER pause to ask the user for permission to wait.** Always run the full polling duration silently. Asking mid-execution breaks automation and is never needed — the caller already decided to invoke this skill.
 
+## How polling works
+
+`check-ci.sh` is a **single-invocation** script. It polls every 10 seconds for up to 90 seconds, then exits. Claude calls it in a loop to cover the full max wait time. This keeps each Bash call bounded to ~2 minutes rather than blocking the agent for the full duration.
+
+Each Bash call to `check-ci.sh` **must** use `timeout: 120000` (2 minutes).
+
 ## Steps
 
-### 1. Run the CI poller
+### 1. Run the polling loop
+
+Compute `max_runs = ceil(max_minutes * 60 / 90)`, defaulting to `max_minutes = 15` → 10 runs.
+
+The skill accepts an optional `--max-minutes N` argument; pass it through to adjust `max_runs`.
+
+Track `ever_had_checks = false` and `run = 0` across iterations.
+
+For each run:
 
 ```bash
-bash skills/wait-ci/scripts/poll-ci.sh [--max-minutes N] [--interval SECONDS]
+bash skills/wait-ci/scripts/check-ci.sh
 ```
 
-Options: `--max-minutes N` (default 15) · `--interval SECONDS` (default 60)
+Use **`timeout: 120000`** on the Bash call. Check the exit code:
 
-The skill accepts an optional `--max-minutes` argument, e.g. `flokay:wait-ci --max-minutes 20`. Pass it through to the script. Do not ask for permission to wait — run silently until the time expires or a terminal result is reached.
+| Exit code | Meaning | Action |
+|---|---|---|
+| `0` | Terminal (`passed` or `failed`) | Break out of loop, proceed to Step 2 |
+| `2` | Not yet terminal (`pending` or `no_checks`) | If `run < max_runs`, re-run; else report timeout |
+| `1` | Fatal error | Report error and stop |
+
+After each exit-2 result, set `ever_had_checks = ever_had_checks OR result.had_checks`.
+
+**Timeout handling:** When all runs are exhausted (exit code 2 on the last run):
+- If `ever_had_checks` is false → report `passed` (no CI configured for this repo/PR)
+- Otherwise → report `pending` with the list of still-running checks
 
 The script outputs a JSON object with these fields:
 
 | Field | Type | Description |
 |---|---|---|
-| `status` | string | `passed`, `failed`, `pending` (timeout), `comments` (set by caller after comment check) |
+| `status` | string | `passed`, `failed`, `pending`, `no_checks`, or `comments` (set by caller) |
 | `pr_url` | string | PR URL |
 | `pr_number` | number | PR number |
 | `owner` / `repo` | string | Repo coordinates for subsequent calls |
-| `elapsed_minutes` | number | Time spent polling |
+| `had_checks` | bool | Whether any checks were seen on this invocation |
 | `failed_checks` | array | Checks with `bucket == "fail"` |
 | `passed_checks` | array | Checks with `bucket == "pass"` |
-| `pending_checks` | array | Checks still running (timeout case) |
+| `pending_checks` | array | Checks still running |
 | `blocking_reviews` | array | Reviews with `CHANGES_REQUESTED` (latest per reviewer) |
 | `failed_run_ids` | array | GitHub Actions run IDs extracted from failed check links |
-
-Exit code 0 = terminal result (passed/failed). Exit code 1 = timeout.
 
 ### 2. Fetch failure logs (if `status == "failed"`)
 
@@ -59,7 +81,7 @@ Keep the last 100 lines if output is longer. External checks (no run ID) get no 
 bash skills/wait-ci/scripts/get-pr-comments.sh <owner> <repo> <pr-number> [<pr-author-login>]
 ```
 
-The script uses GraphQL to check `isResolved` on review threads directly — no jq `!=` workarounds needed.
+Uses GraphQL to check `isResolved` on review threads directly — no jq `!=` workarounds needed.
 
 Output fields:
 
@@ -69,11 +91,7 @@ Output fields:
 | `unresolved_threads` | array | `{file, line, author, body}` per unresolved review thread |
 | `issue_comments` | array | `{author, body}` top-level PR comments (excluding PR creator) |
 
-**Status upgrade:** If `poll-ci.sh` returned `passed` but `get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments`.
-
-### 4. Handle timeout
-
-If `poll-ci.sh` exits 1 (timed out): report `pending`, list which checks are still running, and stop. Do not re-poll. Do not ask the user whether to wait longer — just report the timeout and return.
+**Status upgrade:** If checks returned `passed` but `get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments`.
 
 ## Output Format
 
@@ -81,7 +99,7 @@ If `poll-ci.sh` exits 1 (timed out): report `pending`, list which checks are sti
 ## CI Status: <passed | failed | pending | comments>
 
 **PR:** <url>
-**Elapsed:** <N> minutes
+**Elapsed:** ~<N> minutes
 
 ### Failed Checks
 - **<check-name>** (FAILURE)
@@ -109,14 +127,13 @@ Status meanings:
 - `passed` — CI green, no blocking reviews, no PR comments
 - `failed` — CI failures or `CHANGES_REQUESTED` reviews (with logs)
 - `comments` — CI green but unresolved PR comments need addressing
-- `pending` — checks still running after timeout (list which ones)
+- `pending` — checks still running after max wait (list which ones)
 
 ## Notes
 
 - Can be invoked standalone without prior workflow state
-- Polls the current branch's PR — no arguments needed for the poller
-- Default: 60-second interval × 15 minutes max wait; pass `--max-minutes N` to override
-- **Never ask the user for permission mid-execution** — always wait the full duration
+- Default: 10 runs × 90 seconds = ~15 minutes max wait; pass `--max-minutes N` to override
+- **Never ask the user for permission mid-execution** — always run the full duration
 - `CHANGES_REQUESTED` is a hard block; `APPROVED` and `COMMENTED` alone do not block
 - Comment gathering runs after checks complete — bots post comments as part of their check, so they're available once the check finishes
 - Log enrichment only works for GitHub Actions checks (not external status checks)
@@ -125,5 +142,5 @@ Status meanings:
 
 | Script | Purpose |
 |---|---|
-| `scripts/poll-ci.sh` | Main poller — finds PR, polls checks and reviews, returns JSON |
+| `scripts/check-ci.sh` | Single-invocation poller (90s, 10s interval) — call in a loop from the skill |
 | `scripts/get-pr-comments.sh` | GraphQL comment fetcher — returns unresolved threads and issue comments |
