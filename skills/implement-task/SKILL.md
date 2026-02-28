@@ -51,7 +51,7 @@ Orchestrate subagent-driven task implementation for a structured change.
    d. **Handle response**:
       - **Success**: Mark the task complete by changing `- [ ]` to `- [x]` in the tasks file. Read the subagent's transcript to get its token usage:
         ```bash
-        latest=$(ls -t "$HOME/.claude/projects/$(echo "$PWD" | tr '/' '-')"/*/subagents/agent-*.jsonl 2>/dev/null | head -1)
+        latest=$(ls -t "$HOME/.claude/projects/$(echo "$PWD" | tr '/.' '-')"/*/subagents/agent-*.jsonl 2>/dev/null | head -1)
         tokens=$([ -n "$latest" ] && grep '"usage"' "$latest" 2>/dev/null | tail -1 | \
           jq '.message.usage | (.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)' 2>/dev/null)
         ```
