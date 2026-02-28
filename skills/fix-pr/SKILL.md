@@ -41,10 +41,12 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
    gh api "repos/{owner}/{repo}/pulls/{pr-number}/reviews?per_page=100"
 
    # Get unresolved inline review threads via GraphQL (includes resolution status)
+   # IMPORTANT: Inline owner, repo, and PR number directly into the query.
+   # Do NOT use GraphQL variables ($owner, $repo) — the $ signs get stripped by the shell.
    gh api graphql -f query='
-     query($owner: String!, $repo: String!, $number: Int!) {
-       repository(owner: $owner, name: $repo) {
-         pullRequest(number: $number) {
+     query {
+       repository(owner: "<owner>", name: "<repo>") {
+         pullRequest(number: <pr-number>) {
            reviewThreads(first: 100) {
              nodes {
                id
@@ -62,7 +64,7 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
          }
        }
      }
-   ' -f owner="{owner}" -f repo="{repo}" -F number={pr-number}
+   '
    ```
 
    - Filter reviews to latest state per reviewer
