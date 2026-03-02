@@ -28,7 +28,7 @@ You MUST create a task for each of these items and complete them in order:
 2. **For each capability** — walk through the conversational requirement-discovery process:
    a. **Ask clarifying questions** — one at a time, understand behaviors, boundaries, error conditions, edge cases
    b. **Present spec sections for approval** — show the proposed requirements and scenarios, get user approval
-   c. **Write the spec file** — at `specs/<capability-name>/spec.md` using the WHEN/THEN scenario format
+   c. **Write the spec file** — to the outputPath provided, using the template structure provided
 3. **Write deferred-to-design markers** — for scenarios that depend on unresolved architectural choices
 
 ## Process Flow
@@ -60,7 +60,7 @@ digraph spec {
 
 **Reading the proposal:**
 - Open the proposal's Capabilities section
-- Use the exact capability names (in kebab-case) to determine spec file paths: `specs/<capability-name>/spec.md`
+- Use the capability names to determine which spec files to create (one per capability)
 - Work through capabilities one at a time
 
 **Asking clarifying questions:**
@@ -82,21 +82,13 @@ digraph spec {
 - Be ready to go back and revise if something doesn't look right
 
 **Writing spec files:**
-- Write to `specs/<capability-name>/spec.md`
-- Use the WHEN/THEN scenario format: each scenario is `#### Scenario: <name>` with `- **WHEN** <condition>` and `- **THEN** <outcome>`
-- Use `### Requirement: <name>` headers with SHALL/MUST for normative requirements
+- Write each spec file to the outputPath provided, using the template structure provided
+- The template defines the format rules (headers, scenario structure, delta operations)
 - Every requirement MUST have at least one scenario
 
 ## Deferred-to-Design Scenarios
 
-When a scenario's behavior depends on an unresolved architectural decision, write it as:
-
-```markdown
-#### Scenario: <name>
-<!-- deferred-to-design: <what architectural decision is needed to complete this scenario> -->
-- **WHEN** <best-effort condition>
-- **THEN** <best-effort outcome — provisional pending architectural decision>
-```
+When a scenario's behavior depends on an unresolved architectural decision, write the scenario with a best-effort condition and outcome, and add a `<!-- deferred-to-design: <reason> -->` comment explaining what architectural decision is needed to complete it.
 
 The design skill reads all spec files before starting and will complete or revise these scenarios when it has the architectural context.
 
