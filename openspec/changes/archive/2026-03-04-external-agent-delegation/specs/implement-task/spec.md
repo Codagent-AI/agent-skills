@@ -46,4 +46,4 @@ The implement-task skill SHALL ensure the implementer prompt template and refere
 
 #### Scenario: Non-Claude adapter prompt setup
 - **WHEN** a non-Claude adapter is selected
-- **THEN** the skill reads the TDD and commit skill content from the plugin directory, concatenates them with the implementer prompt, and passes the combined self-contained prompt to the adapter
+- **THEN** the skill reads the TDD and commit skill content, concatenates them with the implementer prompt, and passes the combined self-contained prompt to the adapter
