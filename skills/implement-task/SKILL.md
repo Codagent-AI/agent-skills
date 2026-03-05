@@ -82,12 +82,12 @@ Orchestrate subagent-driven task implementation for a structured change.
 
       **If adapter is `codex`** — build a self-contained prompt and invoke via Bash.
 
-      Read three files from the plugin directory (all paths resolved via `${CLAUDE_PLUGIN_ROOT}`):
-      1. `implementer-prompt.md` — this skill's implementer prompt, with `TASK_FILE_PATH` substituted (relative: `skills/implement-task/implementer-prompt.md`)
-      2. `test-driven-development/SKILL.md` — the TDD methodology skill (relative: `skills/test-driven-development/SKILL.md`)
-      3. `gauntlet-commit/SKILL.md` — the commit skill (relative: `.claude/skills/gauntlet-commit/SKILL.md`)
+      Read the following files and concatenate them into a single self-contained prompt:
+      1. `${CLAUDE_PLUGIN_ROOT}/skills/implement-task/implementer-prompt.md` — this skill's implementer prompt, with `TASK_FILE_PATH` substituted
+      2. `${CLAUDE_PLUGIN_ROOT}/skills/test-driven-development/SKILL.md` — the TDD methodology skill
+      3. The commit skill, if available — check `.claude/skills/gauntlet-commit/SKILL.md` (project-level, installed by plugin system at runtime). If the file does not exist, omit it — the implementer prompt already contains fallback commit instructions.
 
-      Concatenate all three into a single combined self-contained prompt, then invoke the `scripts/invoke-codex.js` helper (relative to this skill directory) via Bash, piping the combined prompt to stdin:
+      Invoke the `scripts/invoke-codex.js` helper via Bash, piping the combined prompt to stdin:
       ```bash
       echo "$combined_prompt" | node ${CLAUDE_PLUGIN_ROOT}/skills/implement-task/scripts/invoke-codex.js \
         --cwd "$PWD" --timeout 600000
