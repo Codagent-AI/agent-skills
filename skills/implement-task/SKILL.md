@@ -110,10 +110,11 @@ Orchestrate subagent-driven task implementation for a structured change.
       ```
 
       - **HEAD moved AND working tree is clean** (`git_status` is empty): proceed normally — the task committed correctly.
-      - **HEAD did not move** (same sha as `pre_dispatch_head`) OR **uncommitted changes exist** (`git_status` is non-empty): attempt intelligent recovery:
+      - **Uncommitted changes exist** (`git_status` is non-empty, regardless of whether HEAD moved): attempt intelligent recovery:
         1. Stage all changes: `git add -A`
         2. Commit with a recovery message: `git commit -m "chore: recovery commit for task N/M"`
         3. Record that recovery was needed; include details in the final summary under a "Commit Recovery" section.
+      - **HEAD did not move AND working tree is clean** (HEAD unchanged, `git_status` is empty): do NOT attempt `git commit` (there is nothing to commit — it would fail). Record this as an anomaly ("adapter reported success but made no changes") and include it in the final summary under a "Commit Recovery" section.
 
    g. **Handle success/failure**:
 

@@ -59,4 +59,7 @@ The adapter SHALL be able to report whether Codex is available (`codex` CLI on P
 
 #### Scenario: SDK auto-install
 - **WHEN** the `codex` CLI is on PATH but the SDK is not installed in the scripts directory
-- **THEN** the adapter auto-runs `npm install` in the scripts directory, logs "Installing Codex SDK...", and reports available after successful install
+- **THEN** the adapter logs "Installing Codex SDK..." to stderr, auto-runs `npm install` in the scripts directory, and reports available after successful install
+- **AND** if `npm install` fails, the adapter reports unavailable with the install error message (stdout + stderr from the failed install command)
+- **AND** if `npm install` succeeds, the adapter proceeds as if the SDK had been installed from the start
+- **NOTE** This auto-install is opt-in by intent: it only triggers when the `codex` CLI is already on PATH (indicating the user has chosen to use Codex), and the install failure is surfaced as a clear, actionable error rather than silently ignored

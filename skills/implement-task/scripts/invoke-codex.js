@@ -7,8 +7,14 @@
  * outputs JSON to stdout.
  *
  * Usage:
- *   echo "<prompt>" | node invoke-codex.js --cwd <dir> [--timeout <ms>]
+ *   echo "<prompt>" | node invoke-codex.js --cwd <dir> [--timeout <ms>] [--verbose]
+ *     [--sandbox-mode <mode>] [--approval-policy <policy>]
  *   node invoke-codex.js --check
+ *
+ * Flags:
+ *   --verbose                 Stream progress events to stderr (default: silent)
+ *   --sandbox-mode <mode>     Codex sandbox mode (default: workspace-write-access)
+ *   --approval-policy <pol>   Codex approval policy (default: auto)
  */
 
 import { execSync, spawnSync } from "child_process";
@@ -29,6 +35,9 @@ function parseArgs(argv) {
     check: false,
     cwd: process.cwd(),
     timeout: 0, // 0 = no timeout
+    verbose: false,
+    sandboxMode: "workspace-write-access",
+    approvalPolicy: "auto",
   };
 
   for (let i = 2; i < argv.length; i++) {
@@ -39,6 +48,12 @@ function parseArgs(argv) {
       args.cwd = argv[++i];
     } else if (arg === "--timeout" && argv[i + 1]) {
       args.timeout = parseInt(argv[++i], 10);
+    } else if (arg === "--verbose") {
+      args.verbose = true;
+    } else if (arg === "--sandbox-mode" && argv[i + 1]) {
+      args.sandboxMode = argv[++i];
+    } else if (arg === "--approval-policy" && argv[i + 1]) {
+      args.approvalPolicy = argv[++i];
     }
   }
 
@@ -108,8 +123,23 @@ function outputJson(obj) {
   process.stdout.write(JSON.stringify(obj) + "\n");
 }
 
-function logProgress(msg) {
-  process.stderr.write(`[codex] ${msg}\n`);
+// logProgress only writes when verbose mode is enabled.
+// Pass the args object so the flag is respected throughout.
+function makeLogger(verbose) {
+  return function logProgress(msg) {
+    if (verbose) {
+      process.stderr.write(`[codex] ${msg}\n`);
+    }
+  };
+}
+
+// Sanitize a shell command string for logging: truncate and strip potential secrets.
+// Only used in verbose mode, but sanitized regardless.
+function sanitizeCommand(cmd) {
+  if (typeof cmd !== "string") return String(cmd);
+  // Replace sequences that look like tokens/keys (long alphanumeric strings)
+  const sanitized = cmd.replace(/\b[A-Za-z0-9_\-]{40,}\b/g, "[REDACTED]");
+  return sanitized.slice(0, 120) + (sanitized.length > 120 ? "…" : "");
 }
 
 // ── Read stdin ─────────────────────────────────────────────────────────────────
@@ -127,6 +157,8 @@ async function readStdin() {
 // ── Main invocation ────────────────────────────────────────────────────────────
 
 async function invoke(args) {
+  const logProgress = makeLogger(args.verbose);
+
   // Ensure SDK is installed before importing it
   if (!isSdkInstalled()) {
     if (!isCodexCliOnPath()) {
@@ -136,7 +168,8 @@ async function invoke(args) {
         filesChanged: [],
         usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0 },
       });
-      process.exit(1);
+      process.exitCode = 1;
+      return;
     }
     try {
       autoInstallSdk();
@@ -147,14 +180,28 @@ async function invoke(args) {
         filesChanged: [],
         usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0 },
       });
-      process.exit(1);
+      process.exitCode = 1;
+      return;
     }
   }
 
-  // Dynamic import after ensuring SDK is installed
-  const { Codex } = await import("@openai/codex-sdk");
-  const { z } = await import("zod");
-  const { zodToJsonSchema } = await import("zod-to-json-schema");
+  // Dynamic import after ensuring SDK is installed — wrapped in try/catch so
+  // any import failure produces JSON output rather than a raw stack trace.
+  let Codex, z, zodToJsonSchema;
+  try {
+    ({ Codex } = await import("@openai/codex-sdk"));
+    ({ z } = await import("zod"));
+    ({ zodToJsonSchema } = await import("zod-to-json-schema"));
+  } catch (err) {
+    outputJson({
+      success: false,
+      summary: `Failed to load required modules: ${err.message}`,
+      filesChanged: [],
+      usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0 },
+    });
+    process.exitCode = 1;
+    return;
+  }
 
   // Define the output schema
   const outputSchema = z.object({
@@ -164,13 +211,38 @@ async function invoke(args) {
   });
 
   // Convert Zod schema to JSON schema for the SDK
-  const outputSchemaJson = zodToJsonSchema(outputSchema, {
-    name: "CodexOutput",
-    $refStrategy: "none",
-  }).definitions?.CodexOutput ?? zodToJsonSchema(outputSchema);
+  let outputSchemaJson;
+  try {
+    outputSchemaJson =
+      zodToJsonSchema(outputSchema, {
+        name: "CodexOutput",
+        $refStrategy: "none",
+      }).definitions?.CodexOutput ?? zodToJsonSchema(outputSchema);
+  } catch (err) {
+    outputJson({
+      success: false,
+      summary: `Failed to convert output schema: ${err.message}`,
+      filesChanged: [],
+      usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0 },
+    });
+    process.exitCode = 1;
+    return;
+  }
 
-  // Read prompt from stdin
-  const prompt = await readStdin();
+  // Read prompt from stdin — wrapped so pipe errors produce JSON output.
+  let prompt;
+  try {
+    prompt = await readStdin();
+  } catch (err) {
+    outputJson({
+      success: false,
+      summary: `Failed to read prompt from stdin: ${err.message}`,
+      filesChanged: [],
+      usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0 },
+    });
+    process.exitCode = 1;
+    return;
+  }
 
   if (!prompt.trim()) {
     outputJson({
@@ -179,7 +251,8 @@ async function invoke(args) {
       filesChanged: [],
       usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0 },
     });
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   // Accumulated usage across all turns
@@ -205,8 +278,8 @@ async function invoke(args) {
     const codex = new Codex();
     const thread = codex.startThread({
       workingDirectory: args.cwd,
-      sandboxMode: "danger-full-access",
-      approvalPolicy: "never",
+      sandboxMode: args.sandboxMode,
+      approvalPolicy: args.approvalPolicy,
     });
 
     logProgress(`Starting thread in ${args.cwd}`);
@@ -250,12 +323,12 @@ async function invoke(args) {
         case "item.started":
           logProgress(`Item started: ${event.item.type}`);
           if (event.item.type === "command_execution") {
-            logProgress(`  cmd: ${event.item.command}`);
+            logProgress(`  cmd: ${sanitizeCommand(event.item.command)}`);
           }
           break;
 
         case "item.updated":
-          // Emit partial command output for visibility
+          // Emit partial command output for visibility (verbose only)
           if (event.item.type === "command_execution" && event.item.aggregated_output) {
             const lines = event.item.aggregated_output.trim().split("\n");
             const lastLine = lines[lines.length - 1];
@@ -274,7 +347,7 @@ async function invoke(args) {
             logProgress(`Files changed: ${filePaths} (${event.item.status})`);
           } else if (event.item.type === "command_execution") {
             logProgress(
-              `Command completed (exit ${event.item.exit_code ?? "?"}: ${event.item.command.slice(0, 60)})`
+              `Command completed (exit ${event.item.exit_code ?? "?"}: ${sanitizeCommand(event.item.command)})`
             );
           }
           break;
@@ -331,7 +404,8 @@ async function invoke(args) {
         filesChanged: [],
         usage,
       });
-      process.exit(1);
+      process.exitCode = 1;
+      return;
     }
 
     logProgress(`Unexpected error: ${err.message}`);
@@ -341,7 +415,7 @@ async function invoke(args) {
       filesChanged: [],
       usage,
     });
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 

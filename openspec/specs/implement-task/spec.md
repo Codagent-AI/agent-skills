@@ -25,12 +25,24 @@ After any adapter completes (regardless of which adapter was used), the implemen
 - **THEN** the skill proceeds to the next task
 
 #### Scenario: No commit detected
-- **WHEN** an adapter reports success but no new commit exists
-- **THEN** the skill intelligently attempts recovery (e.g., staging and committing remaining changes) and reports what happened in the final summary
+- **WHEN** an adapter reports success but HEAD has not moved since before the adapter was dispatched
+- **AND** uncommitted changes exist in the working tree (`git status --porcelain` is non-empty)
+- **THEN** the skill stages all changes (`git add -A`) and creates a recovery commit with the message `chore: recovery commit for task N/M`
+- **AND** records the recovery event and includes it in the final summary under a "Commit Recovery" section
+
+#### Scenario: No commit and clean tree
+- **WHEN** an adapter reports success but HEAD has not moved AND the working tree is clean
+- **THEN** the skill records this as an anomaly (the adapter reported success but made no changes) and includes it in the final summary — it does NOT attempt a `git commit` because there is nothing to commit
 
 #### Scenario: Uncommitted changes remain
-- **WHEN** an adapter reports success but uncommitted changes remain
-- **THEN** the skill intelligently attempts recovery (e.g., staging and committing remaining changes) and reports what happened in the final summary
+- **WHEN** an adapter reports success, HEAD has moved (a commit was made), but uncommitted changes still exist in the working tree
+- **THEN** the skill stages the remaining changes (`git add -A`) and creates a recovery commit with the message `chore: recovery commit for task N/M`
+- **AND** records the recovery event and includes it in the final summary under a "Commit Recovery" section
+
+#### Scenario: Recovery commit fails
+- **WHEN** the recovery commit attempt itself fails (e.g., `git commit` returns a non-zero exit code)
+- **THEN** the skill surfaces the failure message to the user and pauses, offering options: retry recovery manually, skip the task, or abort
+- **AND** does NOT mark the task as complete
 
 ### Requirement: Unified Token Usage Reporting
 The implement-task skill SHALL report token usage for each task regardless of which adapter was used, using a consistent format.
