@@ -42,7 +42,7 @@ Orchestrate subagent-driven task implementation for a structured change.
    - **`claude`**: Always available (built-in Agent tool). No check needed.
    - **`codex`**: Run the availability check via Bash using the `invoke-codex.js` helper script (located at `scripts/invoke-codex.js` relative to this skill):
      ```bash
-     node ${CLAUDE_PLUGIN_ROOT}/skills/implement-task/scripts/invoke-codex.js --check
+     node ${CLAUDE_SKILL_DIR}/scripts/invoke-codex.js --check
      ```
      Parse the JSON output. If `available` is `true`, the adapter is ready. If `available` is `false`, record the `reason` field. If the codex CLI is present but the SDK is missing, the script auto-installs it (logging "Installing Codex SDK...") before reporting available.
 
@@ -58,12 +58,9 @@ Orchestrate subagent-driven task implementation for a structured change.
 
    a. **Announce**: "Working on task N/M: <task title>"
 
-   b. **Record HEAD before dispatch**:
-      ```bash
-      pre_dispatch_head=$(git rev-parse HEAD 2>/dev/null || echo "")
-      ```
+   b. **Record HEAD before dispatch** by running `git rev-parse HEAD` and saving the sha for comparison after the adapter finishes.
 
-   c. **Read the implementer prompt** at `${CLAUDE_PLUGIN_ROOT}/skills/implement-task/implementer-prompt.md`, substituting `TASK_FILE_PATH` with the actual task file path.
+   c. **Read the implementer prompt** at `${CLAUDE_SKILL_DIR}/implementer-prompt.md`, substituting `TASK_FILE_PATH` with the actual task file path.
 
    d. **Dispatch** using the selected adapter:
 
@@ -83,16 +80,16 @@ Orchestrate subagent-driven task implementation for a structured change.
       **If adapter is `codex`** — build a self-contained prompt and invoke via Bash.
 
       Read the following files and concatenate them into a single self-contained prompt:
-      1. `${CLAUDE_PLUGIN_ROOT}/skills/implement-task/implementer-prompt.md` — this skill's implementer prompt, with `TASK_FILE_PATH` substituted
-      2. `${CLAUDE_PLUGIN_ROOT}/skills/test-driven-development/SKILL.md` — the TDD methodology skill
+      1. `${CLAUDE_SKILL_DIR}/implementer-prompt.md` — this skill's implementer prompt, with `TASK_FILE_PATH` substituted
+      2. `${CLAUDE_SKILL_DIR}/../test-driven-development/SKILL.md` — the TDD methodology skill
       3. The commit skill, if available — check `.claude/skills/gauntlet-commit/SKILL.md` (project-level, installed by plugin system at runtime). If the file does not exist, omit it — the implementer prompt already contains fallback commit instructions.
 
-      Invoke the `scripts/invoke-codex.js` helper via Bash, piping the combined prompt to stdin:
+      Invoke the helper via Bash, piping the combined prompt to stdin and capturing the JSON output:
       ```bash
-      echo "$combined_prompt" | node ${CLAUDE_PLUGIN_ROOT}/skills/implement-task/scripts/invoke-codex.js \
-        --cwd "$PWD" --timeout 600000
+      codex_json_output=$(echo "$combined_prompt" | node "${CLAUDE_SKILL_DIR}/scripts/invoke-codex.js" \
+        --cwd "$PWD" --timeout 600000)
       ```
-      The script outputs JSON to stdout. Parse the JSON to get `success`, `summary`, `filesChanged`, and `usage`.
+      Parse `codex_json_output` as JSON to get `success`, `summary`, `filesChanged`, and `usage`.
 
    e. **Handle response**:
 
@@ -103,18 +100,7 @@ Orchestrate subagent-driven task implementation for a structured change.
 
    f. **Commit verification** (run after every adapter, regardless of which was used):
 
-      After the adapter reports success or failure, verify the commit state:
-      ```bash
-      post_dispatch_head=$(git rev-parse HEAD 2>/dev/null || echo "")
-      git_status=$(git status --porcelain 2>/dev/null)
-      ```
-
-      - **HEAD moved AND working tree is clean** (`git_status` is empty): proceed normally — the task committed correctly.
-      - **Uncommitted changes exist** (`git_status` is non-empty, regardless of whether HEAD moved): attempt intelligent recovery:
-        1. Stage all changes: `git add -A`
-        2. Commit with a recovery message: `git commit -m "chore: recovery commit for task N/M"`
-        3. Record that recovery was needed; include details in the final summary under a "Commit Recovery" section.
-      - **HEAD did not move AND working tree is clean** (HEAD unchanged, `git_status` is empty): do NOT attempt `git commit` (there is nothing to commit — it would fail). Record this as an anomaly ("adapter reported success but made no changes") and include it in the final summary under a "Commit Recovery" section.
+      After the adapter returns, compare HEAD to the pre-dispatch sha and check `git status --porcelain`. Use your discretion on what to do — if there are uncommitted changes, try to recover; if nothing changed, note the anomaly. Report any irregularities as either success-with-anomaly or failure in the final summary.
 
    g. **Handle success/failure**:
 
@@ -147,7 +133,6 @@ Orchestrate subagent-driven task implementation for a structured change.
    - Tasks completed this session
    - Overall progress: "N/M tasks complete"
    - Adapter used: "<name>"
-   - If any commit recoveries occurred: list them under a "Commit Recovery" section
    - If all done: "All tasks complete! Ready to archive."
    - If paused: explain why and show options
 
@@ -178,16 +163,12 @@ Task 2/3 complete (unknown tokens)
 ---
 
 **Progress:** 2/3 tasks complete
-
-### Commit Recovery
-- Task 2/3: No commit detected after adapter returned success. Staged and committed remaining changes.
 ```
 
 **Guardrails**
 - One fresh adapter invocation per task — never resume a previous one
 - Check adapter availability before dispatching any task — stop early if unavailable and fallback is disabled
-- Record HEAD before each dispatch; verify HEAD moved and working tree is clean after each dispatch
-- Attempt recovery and report anomalies if commit verification fails — never silently skip
+- Record HEAD before each dispatch; verify commit state after each dispatch
 - Mark completion immediately after successful adapter return and commit verification
 - Pause on any failure — never skip tasks silently
 - Process tasks strictly one at a time, in order — NEVER in parallel
