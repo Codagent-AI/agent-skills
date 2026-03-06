@@ -33,10 +33,6 @@ Example: `version_gte "$installed_version" "1.1"` returns true if `$installed_ve
 
 If any CLI is missing or out of date, list all failures and stop. The user must resolve them first, then resume `/flokay:init`.
 
-**Skills (check for directory existence, after CLIs pass):**
-- `.claude/skills/openspec-*` — OpenSpec skills. If none found: "OpenSpec skills not found. Run `openspec init` to install them, then re-run `/flokay:init`." Stop.
-- `.claude/skills/gauntlet-*` — Gauntlet skills. If none found: "Gauntlet skills not found. Run `agent-gauntlet init` to install them, then re-run `/flokay:init`." Stop.
-
 **Gauntlet config (check after skills pass):**
 - `.gauntlet/config.yml` must exist. If not found: "Gauntlet config not found. Run `/gauntlet-setup` to configure it, then re-run `/flokay:init`." Stop.
 
