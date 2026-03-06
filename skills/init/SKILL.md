@@ -185,6 +185,10 @@ For the adapter preference line, show what was configured in step 5:
 
 If there were warnings, list them again at the end so the user can address them.
 
+### 8. Commit
+
+Invoke `/gauntlet-commit skip` to commit the scaffolding files. Checks are skipped because init only writes plugin-owned boilerplate.
+
 ## Guardrails
 
 - Stop on missing prerequisites (CLIs, skills, `.gauntlet/config.yml`) — tell user what to install/run and resume with `/flokay:init`
