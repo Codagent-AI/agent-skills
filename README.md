@@ -13,13 +13,13 @@ Flokay is a Claude plugin that provides two things:
 
 You can adopt the full workflow, or use the skills individually as you see fit.
 
+![Flokay demo](docs/images/demo.gif)
+
 ## Workflow
 
 The workflow has two stages:
 1. **Planning** — The agent interviews you and creates one artifact at a time — proposal, specs, design, tasks, review — so you think through every decision before code is written.
 2. **Implementation** — The agent takes the wheel. Walk away; come back to a pull request with tested, reviewed code and green CI.
-
-![Flokay workflow diagram](docs/images/workflow.png)
 
 For more details see the [guide](docs/guide.md).
 

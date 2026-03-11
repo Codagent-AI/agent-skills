@@ -4,6 +4,8 @@ Flokay is a spec-driven development workflow for Claude Code. It structures ever
 
 ## The Workflow
 
+![Flokay workflow diagram](images/workflow.png)
+
 The workflow has two stages:
 
 1. **Planning** — The agent interviews you and creates one artifact at a time — proposal, specs, design, tasks, review — so you think through every decision before code is written.
