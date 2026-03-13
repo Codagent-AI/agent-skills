@@ -378,8 +378,6 @@
 
 ⏺ Branch: implement-feature
 
-  Using adapter: claude
-
   Working on task 1/1: Implement TODO list
 
 ⏺ Agent(Implement TODO list task)

@@ -41,7 +41,7 @@ If self-review finds issues, fix them before proceeding to gauntlet.
 
 ## Gauntlet Integration
 
-After self-review passes:
+After self-review passes, run gauntlet directly using the steps below. Do NOT invoke the `gauntlet-run` skill — follow these instructions instead.
 
 1. **Write the task context file** at `.gauntlet/current-task-context.md`:
 
@@ -52,12 +52,36 @@ After self-review passes:
    <the actual path of the task file>
    ```
 
-2. **Run gauntlet**: Use the `gauntlet-run` skill to validate changes. Tell it to enable the `task-compliance` review.
+2. **Clean up stale lock** (safe — tasks are dispatched sequentially, never in parallel):
+   ```bash
+   rm -f gauntlet_logs/.gauntlet-run.lock
+   ```
 
-3. **Handle results**:
-   - **All gates pass**: Proceed to commit
-   - **Failures found**: Fix the issues and re-run gauntlet
-   - **Retry limit exhausted**: Stop and include failure details in your report
+3. **Run gauntlet with output captured to a file** (Bun can drop stdout/stderr during LLM review subprocesses, so always redirect to a file):
+   ```bash
+   agent-gauntlet run --enable-review task-compliance > gauntlet_logs/_subagent-run.log 2>&1; printf 'GAUNTLET_EXIT=%s\n' "$?" >> gauntlet_logs/_subagent-run.log
+   ```
+   Use `Bash` with `timeout: 300000` (5 minutes). Do NOT use `run_in_background`.
+
+4. **Read the captured output** (this is the reliable path — do not rely on the Bash tool's stdout capture):
+   ```bash
+   cat gauntlet_logs/_subagent-run.log
+   ```
+
+   CRITICAL: **Exit code 1 means "violations were found"** — the command ran successfully but detected issues that need fixing. This is NOT an infrastructure failure. Do NOT retry blindly — read the output to understand what needs fixing.
+
+5. **Check the `Status:` line** in the output and act accordingly:
+   - `Status: Passed` or `Status: Passed with warnings` → proceed to commit
+   - `Status: Failed` → read the violation details from the output. For each violation:
+     - **CHECK failures**: follow the fix instructions shown in the output
+     - **REVIEW violations**: fix the code issue described in the violation. If a violation is clearly a false positive, note it in your report but do not block on it.
+     After fixing, re-run gauntlet by going back to step 3. **Maximum 3 retry attempts.**
+   - `Status: Retry limit exceeded` → stop and include the failure details in your report
+   - **No `Status:` line found** → the output file may be empty (known Bun issue). Read the latest console log instead:
+     ```bash
+     ls -t gauntlet_logs/console.*.log 2>/dev/null | head -1 | xargs -r cat
+     ```
+     If no console log exists either, re-run the command once more (go back to step 3).
 
 ## Commit
 
