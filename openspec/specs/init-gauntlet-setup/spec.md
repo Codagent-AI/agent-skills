@@ -1,3 +1,7 @@
+## Purpose
+
+The init-gauntlet-setup capability defines how the flokay init skill configures gauntlet integration in consumer projects, including copying review/check files, adding entry points, and verifying prerequisites.
+## Requirements
 ### Requirement: Gauntlet config is a prerequisite
 The init skill SHALL verify that `.gauntlet/config.yml` exists before proceeding. It SHALL NOT create the config file.
 
@@ -10,7 +14,7 @@ The init skill SHALL verify that `.gauntlet/config.yml` exists before proceeding
 - **THEN** the init skill proceeds past the prerequisite check
 
 ### Requirement: Copy review and check files
-The init skill SHALL copy `artifact-review.md` and `task-compliance.md` from the plugin's `.gauntlet/reviews/` into the consumer project's `.gauntlet/reviews/`, and `openspec-validate.yml` from the plugin's `.gauntlet/checks/` into the consumer project's `.gauntlet/checks/`.
+The init skill SHALL copy `artifact-review.md` and `task-compliance.md` from the plugin's `.gauntlet/reviews/` into the consumer project's `.gauntlet/reviews/`, and `openspec-validate.yml` from the plugin's `.gauntlet/checks/` into the consumer project's `.gauntlet/checks/`. The init skill SHALL locate plugin files using generic prose ("locate the plugin's root directory") without referencing runtime-specific variables.
 
 #### Scenario: First init — no existing review/check files
 - **WHEN** the consumer project has no `.gauntlet/reviews/` or `.gauntlet/checks/` directories
@@ -19,6 +23,10 @@ The init skill SHALL copy `artifact-review.md` and `task-compliance.md` from the
 #### Scenario: Re-init — existing review/check files
 - **WHEN** the consumer project already has these files
 - **THEN** the init skill overwrites them with the plugin's versions
+
+#### Scenario: Plugin file location is runtime-agnostic
+- **WHEN** the init skill copies files from the plugin
+- **THEN** it locates the plugin root using the hosting runtime's native mechanism, not a runtime-specific variable
 
 ### Requirement: Add openspec/changes entry point
 The init skill SHALL add an `openspec/changes` entry point to the consumer's `.gauntlet/config.yml` with the correct exclude, checks, and reviews.
@@ -52,3 +60,4 @@ The init skill's success message SHALL mention the gauntlet reviews and checks t
 #### Scenario: Success output mentions gauntlet
 - **WHEN** init completes successfully
 - **THEN** the success summary includes the review and check names alongside the schema and config paths
+
