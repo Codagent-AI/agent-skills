@@ -1,0 +1,1 @@
+- [x] Add Cursor plugin manifest, portabilize skills, and update docs (`tasks/cursor-manifest-and-skill-portability.md`)

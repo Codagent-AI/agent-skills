@@ -1,5 +1,7 @@
-## ADDED Requirements
+## Purpose
 
+The plugin-packaging capability defines how flokay is packaged and distributed as a plugin, including manifest structure, skill bundling, schema inclusion, documentation, and licensing.
+## Requirements
 ### Requirement: Plugin manifest
 The plugin SHALL have a `.claude-plugin/plugin.json` file containing the plugin name (`flokay`), version (semver), description, and MIT license identifier.
 
@@ -23,11 +25,11 @@ The plugin SHALL include exactly these skills at the plugin root `skills/` direc
 - **THEN** the `gauntlet-push-pr` and `gauntlet-fix-pr` stubs in `.claude/skills/` are removed, superseded by `flokay:push-pr` and `flokay:fix-pr`
 
 ### Requirement: Plugin skills have no name frontmatter
-Plugin skill SKILL.md files SHALL NOT include a `name` field in their YAML frontmatter. Directory names determine skill identity for correct namespace resolution.
+Plugin skill SKILL.md files SHALL NOT include a `name` field in their YAML frontmatter. Directory names determine skill identity for correct namespace resolution in both Claude Code and Cursor.
 
 #### Scenario: Namespace prefix is preserved
 - **WHEN** a plugin skill has no `name` field in frontmatter
-- **THEN** Claude Code resolves it as `flokay:<directory-name>`
+- **THEN** both Claude Code and Cursor resolve it as `flokay:<directory-name>`
 
 ### Requirement: Schema bundled in plugin
 The plugin SHALL include the flokay OPSX schema at `openspec/schemas/flokay/` containing `schema.yaml` and all template files (`proposal.md`, `design.md`, `spec.md`, `tasks.md`).
@@ -81,18 +83,18 @@ The plugin SHALL include a `LICENSE` file at the repo root containing the MIT li
 - **THEN** a `LICENSE` file with MIT license text is present at the root
 
 ### Requirement: User-facing README
-The plugin SHALL include a `README.md` at the repo root documenting: what Flokay is, prerequisites, installation steps, and a quick-start guide with a link to the detailed user guide.
+The plugin SHALL include a `README.md` at the repo root documenting: what Flokay is, prerequisites, installation steps for both Claude Code and Cursor, and a quick-start guide with a link to the detailed user guide.
 
 #### Scenario: README covers essential information
 - **WHEN** a new user reads README.md
-- **THEN** they can understand what Flokay is, what they need to install, and how to get started
+- **THEN** they can understand what Flokay is, what they need to install, and how to get started with either Claude Code or Cursor
 
 ### Requirement: User guide
-The plugin SHALL include a detailed user guide at `docs/guide.md` covering the full workflow, each artifact's purpose, and how to use the openspec commands to drive the workflow.
+The plugin SHALL include a detailed user guide at `docs/guide.md` covering the full workflow, each artifact's purpose, and how to use the openspec commands. The guide SHALL note any runtime-specific differences between Claude Code and Cursor.
 
 #### Scenario: Guide covers the full workflow
 - **WHEN** a user reads docs/guide.md
-- **THEN** they understand the proposal → design → specs → tasks → review → implement sequence and how to execute each step
+- **THEN** they understand the full workflow and any differences between running in Claude Code vs Cursor
 
 ### Requirement: Vision doc updated
 The existing `docs/vision/README.md` SHALL have a note added at the top explaining how the implementation evolved from the original vision.
@@ -100,3 +102,4 @@ The existing `docs/vision/README.md` SHALL have a note added at the top explaini
 #### Scenario: Evolution note is present
 - **WHEN** a user reads docs/vision/README.md
 - **THEN** the top of the document explains how the actual implementation differs from the original vision
+
