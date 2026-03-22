@@ -1,10 +1,10 @@
 ---
 description: >
-  Dispatches one fresh subagent per task with TDD enforcement and gauntlet quality gates.
+  Dispatches the `flokay:implementer` agent per task with TDD enforcement and gauntlet quality gates.
   Use when the user says "implement tasks", "apply change", "execute tasks", or "run implementation".
 ---
 
-Orchestrate subagent-driven task implementation for a structured change.
+Orchestrate agent-driven task implementation for a structured change.
 
 **Input**: Change name and tasks list (provided by the apply skill).
 
@@ -27,38 +27,38 @@ Orchestrate subagent-driven task implementation for a structured change.
 
    Read the tasks file (path provided by the apply skill). Parse the markdown checkbox list to get the ordered list of tasks with their title, file path, and completion status (`- [ ]` = pending, `- [x]` = complete).
 
-3. **Dispatch loop — one fresh subagent per pending task**
+3. **Dispatch loop — one `flokay:implementer` agent per pending task**
 
    For each unchecked task (`- [ ]`), in order:
 
    a. **Announce**: "Working on task N/M: <task title>"
 
-   b. **Read the implementer prompt** from the file `implementer-prompt.md` in this skill's directory.
+   b. **Read the implementer prompt** from the file `implementer-prompt.md` in this skill's directory. Replace `TASK_FILE_PATH` with the actual task file path.
 
-   c. **Spawn a fresh subagent** with the contents of `implementer-prompt.md` as the prompt, replacing `TASK_FILE_PATH` with the actual task file path.
+   c. **Dispatch the `flokay:implementer` agent** with the prepared prompt.
 
       **Important**:
-      - Each task gets a FRESH subagent (do not resume previous ones)
-      - Execute synchronously — wait for the subagent to return before proceeding
+      - Each task gets a FRESH agent invocation (do not resume previous ones)
+      - Execute synchronously — wait for the agent to return before proceeding
       - Execute tasks one at a time, in order — NEVER dispatch multiple tasks in parallel
 
    d. **Handle response**:
 
-      Immediately after the subagent returns (success or failure), announce its full report to the user before taking any other action. Do not summarize or truncate — show everything the subagent returned.
+      Immediately after the agent returns (success or failure), announce its full report to the user before taking any other action. Do not summarize or truncate — show everything the agent returned.
 
-      - **Success**: Mark the task complete by changing `- [ ]` to `- [x]` in the tasks file. Read the subagent's transcript to get its token usage:
+      - **Success**: Mark the task complete by changing `- [ ]` to `- [x]` in the tasks file. Read the agent's transcript to get its token usage:
         ```bash
         latest=$(ls -t "$HOME/.claude/projects/$(echo "$PWD" | tr '/.' '-')"/*/subagents/agent-*.jsonl 2>/dev/null | head -1)
         tokens=$([ -n "$latest" ] && grep '"usage"' "$latest" 2>/dev/null | tail -1 | \
           jq '.message.usage | (.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)' 2>/dev/null)
         ```
         If `tokens` is a valid positive number, abbreviate as `$(( (tokens + 500) / 1000 ))k` and show: "Task N/M complete (<N>k tokens)". If any step fails (no file, no usage entries, jq fails), or if `tokens` is empty or `0`, show: "Task N/M complete (unknown tokens)". Never block task execution for reporting failure.
-      - **Failure with questions**: Read the task file to understand context, answer what you can from the change artifacts, and retry with a fresh subagent including the answers
+      - **Failure with questions**: Read the task file to understand context, answer what you can from the change artifacts, and retry with a fresh `flokay:implementer` agent including the answers
       - **Failure (blocker)**: Do NOT mark the task complete. Pause and ask the user for guidance:
         - Skip this task and continue
-        - Retry with a fresh subagent
+        - Retry with a fresh `flokay:implementer` agent
         - Manual intervention
-        Show the failure details from the subagent's report.
+        Show the failure details from the agent's report.
 
 4. **Show final status**
 
@@ -83,11 +83,11 @@ Orchestrate subagent-driven task implementation for a structured change.
 ### Branch: <branch-name>
 
 Working on task 1/3: <task title>
-[...subagent dispatched...]
+[...implementer agent dispatched...]
 Task 1/3 complete (59k tokens)
 
 Working on task 2/3: <task title>
-[...subagent dispatched...]
+[...implementer agent dispatched...]
 Task 2/3 complete (unknown tokens)
 
 ---
@@ -96,7 +96,7 @@ Task 2/3 complete (unknown tokens)
 ```
 
 **Guardrails**
-- One fresh subagent per task — never resume a previous subagent
-- Mark completion immediately after successful subagent return
+- One fresh `flokay:implementer` agent per task — never resume a previous agent
+- Mark completion immediately after successful agent return
 - Pause on any failure — never skip tasks silently
 - Process tasks strictly one at a time, in order — NEVER in parallel

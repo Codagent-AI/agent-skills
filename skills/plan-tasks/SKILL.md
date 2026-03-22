@@ -92,9 +92,12 @@ For small changes, a single task is fine. Don't manufacture fake granularity.
 
 ## 4. Write Task Files
 
-For each task you identified, write a self-contained `<slug>.md` file in `tasks/`. Write them all before moving on to ordering.
+For each task you identified, write a self-contained `<NN>-<slug>.task.md` file in `tasks/`. The numeric prefix determines execution order (the for-each loop sorts lexicographically). Write them all before moving on to ordering.
 
+**NN**: two-digit zero-padded sequence number starting at `01`, assigned in dependency order (determined in Step 5, but assign provisional numbers now — you'll confirm the order in Step 5)
 **slug**: 2–4 word kebab-case summary (e.g., `export-service-endpoint`, `rate-limiting-audit-log`)
+
+Example filenames: `01-export-service-endpoint.task.md`, `02-rate-limiting-audit-log.task.md`
 
 ### Single-task changes
 
@@ -186,11 +189,11 @@ Spec scenarios describe *behavior from the outside*. Tasks describe *work from t
 
 ## 5. Order Tasks
 
-Now that all task files exist, decide their sequence.
+Now that all task files exist, confirm their sequence.
 
-Order tasks so each one is ready to start when the previous finishes. A task is ready when everything it depends on already exists. Don't invent ordering to make the list feel structured — if two tasks have no dependency on each other, order doesn't matter; put the one that unblocks more work first.
+The numeric prefixes you assigned in Step 4 determine execution order (the for-each loop sorts files lexicographically). Review the ordering now: each task should be ready to start when the previous finishes. A task is ready when everything it depends on already exists. Don't invent ordering to make the list feel structured — if two tasks have no dependency on each other, order doesn't matter; put the one that unblocks more work first.
 
-**If you decided in Step 2 that refactoring is needed**, prepend it as the first task now. Write its task file (`refactor-<slug>.md`) using the same format, describing what structural changes are needed and why, with a `## Done When` stating the code is restructured and all existing tests still pass.
+**If you decided in Step 2 that refactoring is needed**, prepend it as the first task now. Write its task file (`00-refactor-<slug>.task.md`) using the same format, describing what structural changes are needed and why, with a `## Done When` stating the code is restructured and all existing tests still pass. Renumber subsequent task files if needed to maintain the sequence.
 
 ---
 
@@ -199,11 +202,11 @@ Order tasks so each one is ready to start when the previous finishes. A task is 
 With ordering settled, write the task index at `<outputPath>/tasks.md`.
 
 ```markdown
-- [ ] <Task title> (`tasks/<slug>.md`)
-- [ ] <Task title> (`tasks/<slug>.md`)
+- [ ] <Task title> (`tasks/<NN>-<slug>.task.md`)
+- [ ] <Task title> (`tasks/<NN>-<slug>.task.md`)
 ```
 
-One checkbox line per task, in execution order. The parenthesized path links to the detailed task file. The applying agent marks tasks complete by changing `[ ]` to `[x]`.
+One checkbox line per task, in execution order (matching the numeric prefixes). The parenthesized path links to the detailed task file. The applying agent marks tasks complete by changing `[ ]` to `[x]`.
 
 ---
 
@@ -243,8 +246,8 @@ Requirements 4–5 (rate limiting, audit logging) are cross-cutting concerns lay
 ### tasks.md
 
 ```markdown
-- [ ] ExportService + POST /exports endpoint (`tasks/export-service-endpoint.md`)
-- [ ] Rate limiting and audit logging (`tasks/rate-limiting-audit-log.md`)
+- [ ] ExportService + POST /exports endpoint (`tasks/01-export-service-endpoint.task.md`)
+- [ ] Rate limiting and audit logging (`tasks/02-rate-limiting-audit-log.task.md`)
 ```
 
 ### Task 1 file

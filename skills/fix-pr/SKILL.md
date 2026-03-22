@@ -1,13 +1,13 @@
 ---
 description: >
   Fixes CI failures and review comments on the current branch's pull request by dispatching
-  a fixer subagent, verifying with gauntlet, and pushing the fix. Use when the user says
+  the `flokay:fixer` agent, verifying with gauntlet, and pushing the fix. Use when the user says
   "fix pr", "fix CI failures", "address review comments", or invokes "flokay:fix-pr".
 ---
 
 # flokay:fix-pr
 
-Fix CI failures and review comments on the current branch's PR by dispatching a fixer subagent with all failure context, verifying the fix with gauntlet, and pushing.
+Fix CI failures and review comments on the current branch's PR by dispatching the `flokay:fixer` agent with all failure context, verifying the fix with gauntlet, and pushing.
 
 ## Steps
 
@@ -70,7 +70,7 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
    - Collect `CHANGES_REQUESTED` reviews: author, body
    - From the GraphQL result, collect only threads where `isResolved` is `false`: author, file path, line, body
 
-3. **Dispatch fixer subagent**
+3. **Dispatch the `flokay:fixer` agent**
 
    Read the file `fixer-prompt.md` in this skill's directory.
 
@@ -80,15 +80,15 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
    - `FAILED_CHECKS_CONTEXT` — structured list of failed checks with log output
    - `REVIEW_COMMENTS_CONTEXT` — structured list of review comments
 
-   Spawn a fresh subagent with the following prompt (the contents of `fixer-prompt.md` with variables substituted):
+   Dispatch the `flokay:fixer` agent with the prepared prompt (the contents of `fixer-prompt.md` with variables substituted).
 
    **Important:**
-   - Spawn ONE fresh subagent — do NOT resume previous ones
-   - Execute synchronously — wait for the subagent to return
+   - Each invocation gets a FRESH `flokay:fixer` agent — do NOT resume previous ones
+   - Execute synchronously — wait for the agent to return
 
 4. **Verify the fix with gauntlet**
 
-   After the subagent returns successfully:
+   After the `flokay:fixer` agent returns successfully:
    - Run the `gauntlet-run` skill to verify the fix
 
    If gauntlet fails:
@@ -110,8 +110,8 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
    - Blocking reviews: <N>
    - Inline comments: <N>
 
-   ### Subagent Result
-   <summary from subagent>
+   ### Agent Result
+   <summary from fixer agent>
 
    ### Gauntlet
    <passed | failed with details>
@@ -123,6 +123,6 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
 ## Notes
 
 - Can be invoked standalone — gathers its own context from the current branch's PR
-- Addresses CI failures AND review comments in a single subagent pass
+- Addresses CI failures AND review comments in a single `flokay:fixer` agent pass
 - Does NOT push if gauntlet fails — enforces quality gate before updating the PR
 - After pushing, CI will re-run; caller should invoke `flokay:wait-ci` again
