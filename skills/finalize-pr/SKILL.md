@@ -3,10 +3,10 @@ description: >
   Orchestrates the full post-implementation loop: push PR → wait for CI → fix failures → repeat
   until CI passes or termination rules trigger a pause.
   This skill should be used when the user says "ship it", "finalize pr", "push and fix CI",
-  "push pr and wait for CI", or invokes "flokay:finalize-pr".
+  "push pr and wait for CI", or invokes "agent-skills:finalize-pr".
 ---
 
-# flokay:finalize-pr
+# agent-skills:finalize-pr
 
 Push the PR, wait for CI, fix any failures or review comments, and repeat until the PR is green — or pause when termination rules require human input.
 
@@ -14,13 +14,13 @@ Push the PR, wait for CI, fix any failures or review comments, and repeat until 
 
 ### Step 1 — Push the PR
 
-Invoke `flokay:push-pr` to commit, push, and create or update the pull request.
+Invoke `agent-skills:push-pr` to commit, push, and create or update the pull request.
 
 If push-pr fails (e.g. no remote, auth error), report the error and stop.
 
 ### Step 2 — Wait for CI
 
-Invoke `flokay:wait-ci` to poll CI status and gather review comments.
+Invoke `agent-skills:wait-ci` to poll CI status and gather review comments.
 
 The wait-ci skill returns one of four statuses:
 - `passed` — CI green, no blocking reviews, no PR comments
@@ -46,7 +46,7 @@ Check termination rules before attempting a fix:
 
 If neither termination rule applies:
 
-- Invoke `flokay:fix-pr` to address CI failures and/or review comments
+- Invoke `agent-skills:fix-pr` to address CI failures and/or review comments
 - Return to Step 2
 
 ### Failure tracking

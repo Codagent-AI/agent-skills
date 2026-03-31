@@ -42,18 +42,16 @@ Format:
 
 ### Major Changes
 
-- [#<number>](https://github.com/pacaplan/flokay/pull/<number>) <description>
+- [#<number>](https://github.com/Codagent-AI/agent-skills/pull/<number>) <description>
 
 ### Minor Changes
 
-- [#<number>](https://github.com/pacaplan/flokay/pull/<number>) <description>
+- [#<number>](https://github.com/Codagent-AI/agent-skills/pull/<number>) <description>
 
 ### Patch Changes
 
-- [#<number>](https://github.com/pacaplan/flokay/pull/<number>) <description>
+- [#<number>](https://github.com/Codagent-AI/agent-skills/pull/<number>) <description>
 ```
-
-Each entry must have a blank line after it (matching the agent-gauntlet changelog style).
 
 ### 5. Write the changelog section to a temp file
 

@@ -1,6 +1,6 @@
 ---
 description: >
-  Dispatches one fresh subagent per task with TDD enforcement and gauntlet quality gates.
+  Dispatches one fresh subagent per task with TDD enforcement and validator quality gates.
   Use when the user says "implement tasks", "apply change", "execute tasks", or "run implementation".
 ---
 
@@ -70,9 +70,9 @@ Orchestrate subagent-driven task implementation for a structured change.
 
 5. **Cleanup** (only when all tasks are complete)
 
-   Delete the task context file:
+   Delete the validator task context file:
    ```bash
-   rm -f .gauntlet/current-task-context.md
+   rm -f .validator/current-task-context.md
    ```
 
 **Output Format**

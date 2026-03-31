@@ -1,13 +1,13 @@
 ---
 description: >
   Fixes CI failures and review comments on the current branch's pull request by dispatching
-  a fixer subagent, verifying with gauntlet, and pushing the fix. Use when the user says
-  "fix pr", "fix CI failures", "address review comments", or invokes "flokay:fix-pr".
+  a fixer subagent, verifying with the validator, and pushing the fix. Use when the user says
+  "fix pr", "fix CI failures", "address review comments", or invokes "agent-skills:fix-pr".
 ---
 
-# flokay:fix-pr
+# agent-skills:fix-pr
 
-Fix CI failures and review comments on the current branch's PR by dispatching a fixer subagent with all failure context, verifying the fix with gauntlet, and pushing.
+Fix CI failures and review comments on the current branch's PR by dispatching a fixer subagent with all failure context, verifying the fix with the validator, and pushing.
 
 ## Steps
 
@@ -86,19 +86,19 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
    - Spawn ONE fresh subagent — do NOT resume previous ones
    - Execute synchronously — wait for the subagent to return
 
-4. **Verify the fix with gauntlet**
+4. **Verify the fix with the validator**
 
    After the subagent returns successfully:
-   - Run the `gauntlet-run` skill to verify the fix
+   - Run the `agent-validator:validator-run` skill to verify the fix
 
-   If gauntlet fails:
-   - Report the gauntlet failure — do NOT push
+   If the validator fails:
+   - Report the validator failure — do NOT push
    - Let the caller decide whether to retry
 
 5. **Push the fix**
 
-   If gauntlet passes:
-   - Run `flokay:push-pr` to commit and push the fix to the PR branch
+   If the validator passes:
+   - Run `agent-skills:push-pr` to commit and push the fix to the PR branch
 
 6. **Report results**
 
@@ -113,7 +113,7 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
    ### Subagent Result
    <summary from subagent>
 
-   ### Gauntlet
+   ### Validator
    <passed | failed with details>
 
    ### Push
@@ -124,5 +124,5 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
 
 - Can be invoked standalone — gathers its own context from the current branch's PR
 - Addresses CI failures AND review comments in a single subagent pass
-- Does NOT push if gauntlet fails — enforces quality gate before updating the PR
-- After pushing, CI will re-run; caller should invoke `flokay:wait-ci` again
+- Does NOT push if the validator fails — enforces quality gate before updating the PR
+- After pushing, CI will re-run; caller should invoke `agent-skills:wait-ci` again

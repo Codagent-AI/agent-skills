@@ -4,7 +4,7 @@ set -euo pipefail
 # release-info.sh — Gather merged PRs, classify by type, calculate version bump.
 # Output: JSON with current_version, new_version, and PRs grouped by bump type.
 
-REPO="pacaplan/flokay"
+REPO="Codagent-AI/agent-skills"
 PLUGIN_JSON=".claude-plugin/plugin.json"
 
 # --- Ensure clean main branch ---

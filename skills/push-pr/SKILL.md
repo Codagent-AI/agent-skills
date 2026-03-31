@@ -1,18 +1,18 @@
 ---
 description: >
   Commits changes, pushes to remote, and creates or updates a pull request for the current branch.
-  Use when the user says "push pr", "create pr", "push and create pr", or invokes "flokay:push-pr".
+  Use when the user says "push pr", "create pr", "push and create pr", or invokes "agent-skills:push-pr".
 ---
 
-# flokay:push-pr
+# agent-skills:push-pr
 
 Commit all changes, push to the remote, and create or update the pull request for the current branch.
 
 ## Steps
 
-1. **Run gauntlet detection**
-   - Run `agent-gauntlet detect 2>&1`
-   - **Exit 0** → gates would run, invoke `flokay:gauntlet-run` and wait for it to pass before proceeding
+1. **Run validator detection**
+   - Run `agent-validator detect 2>&1`
+   - **Exit 0** → gates would run, invoke `agent-validator:validator-run` skill and wait for it to pass before proceeding
    - **Exit 2** → no gates would run (no changes or no applicable gates), skip to Step 2
    - **Exit 1** → error, report the error to the user and stop
    - **Any other exit code** → treat as error, report output to the user, and stop

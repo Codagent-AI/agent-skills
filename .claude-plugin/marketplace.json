@@ -1,24 +1,24 @@
 {
-  "name": "flokay",
+  "name": "agent-skills",
   "owner": {
     "name": "pacaplan"
   },
   "metadata": {
-    "description": "A curated, spec-driven development workflow — proposal, design, specs, tasks, review, implement."
+    "description": "A curated set of skills for each stage of development — propose, spec, design, plan, implement, ship."
   },
   "plugins": [
     {
-      "name": "flokay",
+      "name": "agent-skills",
       "version": "0.5.0",
       "source": "./",
-      "description": "A curated, spec-driven development workflow — proposal, design, specs, tasks, review, implement.",
+      "description": "A curated set of skills for each stage of development — propose, spec, design, plan, implement, ship.",
       "license": "MIT",
       "keywords": [
         "workflow",
         "spec-driven",
         "development"
       ],
-      "repository": "https://github.com/pacaplan/flokay"
+      "repository": "https://github.com/Codagent-AI/agent-skills"
     }
   ]
 }
