@@ -10,7 +10,7 @@ The task file contains Goal, Background, Spec (with requirements and scenarios),
 
 ### TDD (Test-Driven Development) — mandatory for testable tasks
 
-If the task has behavioral scenarios or produces testable behavior, use the `agent-skills:test-driven-development` skill for TDD methodology.
+If the task has behavioral scenarios or produces testable behavior, use the `codagent:test-driven-development` skill for TDD methodology.
 
 **When to skip TDD**: Pure infrastructure tasks (writing markdown files, config files, prompt templates) where no meaningful automated test exists. You still perform self-review and run the validator even when skipping TDD.
 
@@ -72,7 +72,7 @@ After self-review passes, run the validator directly using the steps below. Do N
      ```bash
      ls -t gauntlet_logs/console.*.log 2>/dev/null | head -1 | xargs -r cat
      ```
-     If no console log exists either, re-run the command once more (go back to step 3).
+     If no console log exists either, re-run the command once more (go back to step 2).
 
 ## Commit
 

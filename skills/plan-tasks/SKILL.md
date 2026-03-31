@@ -196,7 +196,7 @@ Order tasks so each one is ready to start when the previous finishes. A task is 
 
 ## 6. Write tasks.md
 
-With ordering settled, write the task index at `tasks.md` using the Artifact Template below.
+With ordering settled, write the task index at `<change-dir>/tasks.md` (i.e., in the change directory from Step 1) using the Artifact Template below.
 
 ## Artifact Template
 
