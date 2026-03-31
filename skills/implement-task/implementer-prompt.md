@@ -43,7 +43,7 @@ If self-review finds issues, fix them before proceeding to the validator.
 
 After self-review passes, run the validator directly using the steps below. Do NOT invoke the `agent-validator:validator-run` skill — follow these instructions instead.
 
-1. **Write the task context file** at `.gauntlet/current-task-context.md`:
+1. **Write the task context file** at `.validator/current-task-context.md`:
 
    ```markdown
    # Current Task Context
@@ -54,12 +54,12 @@ After self-review passes, run the validator directly using the steps below. Do N
 
 2. **Clean up stale lock** (safe — tasks are dispatched sequentially, never in parallel):
    ```bash
-   rm -f gauntlet_logs/.gauntlet-run.lock
+   rm -f gauntlet_logs/.validator-run.lock
    ```
 
 3. **Run the validator with output captured to a file** (Bun can drop stdout/stderr during LLM review subprocesses, so always redirect to a file):
    ```bash
-   agent-gauntlet run --enable-review task-compliance > gauntlet_logs/_subagent-run.log 2>&1; printf 'GAUNTLET_EXIT=%s\n' "$?" >> gauntlet_logs/_subagent-run.log
+   agent-validator run --enable-review task-compliance > gauntlet_logs/_subagent-run.log 2>&1; printf 'GAUNTLET_EXIT=%s\n' "$?" >> gauntlet_logs/_subagent-run.log
    ```
    Use `Bash` with `timeout: 300000` (5 minutes). Do NOT use `run_in_background`.
 

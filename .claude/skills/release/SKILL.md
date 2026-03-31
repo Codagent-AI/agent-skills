@@ -53,8 +53,6 @@ Format:
 - [#<number>](https://github.com/Codagent-AI/agent-skills/pull/<number>) <description>
 ```
 
-Each entry must have a blank line after it (matching the agent-gauntlet changelog style).
-
 ### 5. Write the changelog section to a temp file
 
 Write the formatted changelog section (from step 4) to a temporary file:

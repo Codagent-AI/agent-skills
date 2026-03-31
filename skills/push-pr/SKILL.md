@@ -11,8 +11,8 @@ Commit all changes, push to the remote, and create or update the pull request fo
 ## Steps
 
 1. **Run validator detection**
-   - Run `agent-gauntlet detect 2>&1`
-   - **Exit 0** → gates would run, invoke `agent-skills:validator-run` and wait for it to pass before proceeding
+   - Run `agent-validator detect 2>&1`
+   - **Exit 0** → gates would run, invoke `agent-validator:validator-run` skill and wait for it to pass before proceeding
    - **Exit 2** → no gates would run (no changes or no applicable gates), skip to Step 2
    - **Exit 1** → error, report the error to the user and stop
    - **Any other exit code** → treat as error, report output to the user, and stop

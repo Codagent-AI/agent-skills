@@ -16,9 +16,9 @@ Set up Agent Skills in the current project. This skill is idempotent — safe to
 
 Check that the Agent Validator CLI is installed. If missing, tell the user what to install and stop.
 
-- `agent-gauntlet` — run `agent-gauntlet --version`.
-  - If not found: "Agent Validator CLI is required. Install with `npm install -g @pacaplan/agent-gauntlet`, then run `agent-gauntlet init` in your project, then re-run `/agent-skills:init`."
-  - If found, extract the version number and verify it is **≥ 0.15**. If too old: "agent-gauntlet 0.15 or higher is required (found \<version\>). Upgrade from https://github.com/pacaplan/agent-gauntlet, then re-run `/agent-skills:init`."
+- `agent-validator` — run `agent-validator --version`.
+  - If not found: "Agent Validator CLI is required. Install with `npm install -g @pacaplan/agent-validator`, then run `agent-validator init` in your project, then re-run `/agent-skills:init`."
+  - If found, extract the version number and verify it is **≥ 0.15**. If too old: "agent-validator 0.15 or higher is required (found \<version\>). Upgrade from https://github.com/pacaplan/agent-validator, then re-run `/agent-skills:init`."
 
 Use this shell snippet to compare versions:
 ```bash
@@ -29,15 +29,15 @@ Example: `version_gte "$installed_version" "0.15"` returns true if `$installed_v
 If the CLI is missing or out of date, stop. The user must resolve it first, then resume `/agent-skills:init`.
 
 **Validator config (check after CLI passes):**
-- `.gauntlet/config.yml` must exist. If not found: "Validator config not found. Run `agent-gauntlet init` in your project first, then re-run `/agent-skills:init`." Stop.
+- `.validator/config.yml` must exist. If not found: "Validator config not found. Run `agent-validator init` in your project first, then re-run `/agent-skills:init`." Stop.
 
 ### 2. Update .gitignore
 
-Ensure `.gauntlet/current-task-context.md` is listed in the consumer project's `.gitignore` (it is a transient working file that should never be committed).
+Ensure `.validator/current-task-context.md` is listed in the consumer project's `.gitignore` (it is a transient working file that should never be committed).
 
 Append it only if not already present:
 ```bash
-grep -qxF '.gauntlet/current-task-context.md' .gitignore 2>/dev/null || echo '.gauntlet/current-task-context.md' >> .gitignore
+grep -qxF '.validator/current-task-context.md' .gitignore 2>/dev/null || echo '.validator/current-task-context.md' >> .gitignore
 ```
 
 ### 3. Print Success
@@ -63,5 +63,5 @@ Invoke `/agent-validator:validator-commit skip` to commit any scaffolding change
 ## Guardrails
 
 - Stop on missing or outdated prerequisites — tell user what to install/run and resume with `/agent-skills:init`
-- Never overwrite `.gauntlet/config.yml` — only add/update entry points and reviews
+- Never overwrite `.validator/config.yml` — only add/update entry points and reviews
 - Use the hosting runtime's native mechanism to locate the plugin's root directory

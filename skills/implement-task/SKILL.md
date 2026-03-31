@@ -72,7 +72,7 @@ Orchestrate subagent-driven task implementation for a structured change.
 
    Delete the validator task context file:
    ```bash
-   rm -f .gauntlet/current-task-context.md
+   rm -f .validator/current-task-context.md
    ```
 
 **Output Format**
