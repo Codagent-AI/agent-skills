@@ -1,7 +1,7 @@
 # Agent Skills
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![CodeRabbit](https://img.shields.io/coderabbit/prs/github/pacaplan/flokay)](https://coderabbit.ai)
+[![CodeRabbit](https://img.shields.io/coderabbit/prs/github/Codagent-AI/agent-skills)](https://coderabbit.ai)
 
 ## Overview
 
@@ -32,7 +32,7 @@ Agent Skills requires the Agent Validator CLI for automated quality verification
 Add the Agent Skills marketplace and install the plugin:
 
 ```bash
-claude plugin marketplace add pacaplan/flokay
+claude plugin marketplace add Codagent-AI/agent-skills
 claude plugin install agent-skills
 ```
 
@@ -41,7 +41,7 @@ claude plugin install agent-skills
 Install the plugin using `/add-plugin` in chat or the CLI:
 
 ```bash
-cursor plugins install pacaplan/flokay
+cursor plugins install Codagent-AI/agent-skills
 ```
 
 ### Initialize

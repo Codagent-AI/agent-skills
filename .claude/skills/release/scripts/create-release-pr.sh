@@ -4,7 +4,7 @@ set -euo pipefail
 # create-release-pr.sh — Update version, prepend changelog, create release PR.
 # Usage: create-release-pr.sh <new-version> <changelog-section-file>
 
-REPO="pacaplan/flokay"
+REPO="Codagent-AI/agent-skills"
 PLUGIN_JSON=".claude-plugin/plugin.json"
 MARKETPLACE_JSON=".claude-plugin/marketplace.json"
 CHANGELOG="CHANGELOG.md"
@@ -23,17 +23,17 @@ jq --arg v "$NEW_VERSION" '.version = $v' "$PLUGIN_JSON" > "${PLUGIN_JSON}.tmp" 
 
 # --- Update marketplace.json version ---
 jq --arg v "$NEW_VERSION" '
-  if any(.plugins[]; .name == "flokay") then
-    .plugins |= map(if .name == "flokay" then .version = $v else . end)
+  if any(.plugins[]; .name == "agent-skills") then
+    .plugins |= map(if .name == "agent-skills" then .version = $v else . end)
   else
-    error("Plugin \"flokay\" not found in marketplace.json")
+    error("Plugin \"agent-skills\" not found in marketplace.json")
   end
 ' "$MARKETPLACE_JSON" > "${MARKETPLACE_JSON}.tmp" \
   && mv "${MARKETPLACE_JSON}.tmp" "$MARKETPLACE_JSON"
 
 # --- Prepend changelog section ---
 if [ -f "$CHANGELOG" ]; then
-  # Insert new section after the "# flokay" header line
+  # Insert new section after the "# agent-skills" header line
   {
     head -1 "$CHANGELOG"
     echo ""
@@ -43,7 +43,7 @@ if [ -f "$CHANGELOG" ]; then
   } > "${CHANGELOG}.tmp" && mv "${CHANGELOG}.tmp" "$CHANGELOG"
 else
   {
-    echo "# flokay"
+    echo "# agent-skills"
     echo ""
     cat "$CHANGELOG_FILE"
   } > "$CHANGELOG"
