@@ -24,11 +24,11 @@ Every capability needs its behavioral contract specified before design begins. E
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Read the proposal** — identify the Capabilities section and the list of capabilities to spec
+1. **Read the proposal** — identify the Capabilities section and the list of capabilities to spec. Skip if you just wrote the proposal in this session.
 2. **For each capability** — walk through the conversational requirement-discovery process:
    a. **Ask clarifying questions** — one at a time, understand behaviors, boundaries, error conditions, edge cases
    b. **Present spec sections for approval** — show the proposed requirements and scenarios, get user approval
-   c. **Write the spec file** — to the outputPath provided, using the template structure provided
+   c. **Write the spec file** — using the Artifact Template below
 3. **Write deferred-to-design markers** — for scenarios that depend on unresolved architectural choices
 
 ## Process Flow
@@ -59,7 +59,8 @@ digraph spec {
 ## The Process
 
 **Reading the proposal:**
-- Open the proposal's Capabilities section
+- If the proposal was written earlier in this session, skip re-reading unless exact wording needs verification
+- Otherwise, open the proposal's Capabilities section
 - Use the capability names to determine which spec files to create (one per capability)
 - Work through capabilities one at a time
 
@@ -82,8 +83,7 @@ digraph spec {
 - Be ready to go back and revise if something doesn't look right
 
 **Writing spec files:**
-- Write each spec file to the outputPath provided, using the template structure provided
-- The template defines the format rules (headers, scenario structure, delta operations)
+- Write each spec file using the Artifact Template below
 - Every requirement MUST have at least one scenario
 
 ## Deferred-to-Design Scenarios
@@ -104,3 +104,62 @@ Tell the user the relative path of each spec file created. This skill does not i
 - **Deferred is valid** — A deferred-to-design marker is better than a forced answer
 - **Incremental validation** — Present spec for each capability, get approval before writing
 - **Be flexible** — Go back and revise when something doesn't look right
+
+## Artifact Template
+
+Use this structure when writing spec files. Create one spec file per capability listed in the proposal's Capabilities section.
+
+- **New capabilities**: use the exact kebab-case name from the proposal (`specs/<capability>/spec.md`).
+- **Modified capabilities**: use the existing spec folder name when creating the delta spec.
+
+### Format rules
+
+- Each requirement: `### Requirement: <name>` followed by description
+- Use SHALL/MUST for normative requirements (avoid should/may)
+- Each scenario: `#### Scenario: <name>` with WHEN/THEN format
+- **Scenarios MUST use exactly 4 hashtags (`####`).** Using 3 or bullets will break parsing.
+- Every requirement MUST have at least one scenario
+
+### Abstraction level
+
+Scenarios describe observable behavioral contracts — what the system does when invoked under specific conditions. Focus on orchestration behavior (dispatch, gating, error handling, control flow), NOT file contents or internal structure.
+
+Write scenarios as behavioral contracts the capability guarantees to its callers:
+- GOOD: "WHEN subagent finds task ambiguous THEN it returns questions without implementing"
+- GOOD: "WHEN gauntlet retry limit is exhausted THEN subagent returns failure to coordinator"
+- BAD:  "WHEN SKILL.md is read THEN it contains TDD instructions"
+- BAD:  "WHEN config file exists THEN it has the correct YAML keys"
+
+### Delta operations
+
+Use `##` headers to categorize changes:
+
+- **ADDED Requirements** — New capabilities
+- **MODIFIED Requirements** — Changed behavior. MUST include full updated content.
+- **REMOVED Requirements** — Deprecated features. MUST include Reason and Migration.
+- **RENAMED Requirements** — Name changes only. Use FROM:/TO: format.
+
+When modifying existing requirements: if a prior spec file exists, copy the ENTIRE requirement block (from `### Requirement:` through all scenarios), paste under `## MODIFIED Requirements`, and edit to reflect new behavior. Using MODIFIED with partial content loses detail. If no prior spec file exists, investigate the existing code to understand current behavior, then write the full modified requirement (including all scenarios) as it should be after the change. If adding new concerns without changing existing behavior, use ADDED instead.
+
+### Template
+
+```markdown
+## ADDED Requirements
+
+### Requirement: <!-- requirement name -->
+<!-- requirement text -->
+
+#### Scenario: <!-- scenario name -->
+- **WHEN** <!-- condition -->
+- **THEN** <!-- expected outcome -->
+
+<!--
+  Example of additional delta sections:
+
+  ## REMOVED Requirements
+
+  ### Requirement: Legacy export
+  **Reason**: Replaced by new export system
+  **Migration**: Use new export endpoint at /api/v2/export
+-->
+```

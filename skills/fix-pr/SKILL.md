@@ -2,10 +2,10 @@
 description: >
   Fixes CI failures and review comments on the current branch's pull request by dispatching
   a fixer subagent, verifying with the validator, and pushing the fix. Use when the user says
-  "fix pr", "fix CI failures", "address review comments", or invokes "agent-skills:fix-pr".
+  "fix pr", "fix CI failures", "address review comments", or invokes "codagent:fix-pr".
 ---
 
-# agent-skills:fix-pr
+# codagent:fix-pr
 
 Fix CI failures and review comments on the current branch's PR by dispatching a fixer subagent with all failure context, verifying the fix with the validator, and pushing.
 
@@ -98,7 +98,7 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
 5. **Push the fix**
 
    If the validator passes:
-   - Run `agent-skills:push-pr` to commit and push the fix to the PR branch
+   - Run `codagent:push-pr` to commit and push the fix to the PR branch
 
 6. **Report results**
 
@@ -125,4 +125,4 @@ Fix CI failures and review comments on the current branch's PR by dispatching a 
 - Can be invoked standalone — gathers its own context from the current branch's PR
 - Addresses CI failures AND review comments in a single subagent pass
 - Does NOT push if the validator fails — enforces quality gate before updating the PR
-- After pushing, CI will re-run; caller should invoke `agent-skills:wait-ci` again
+- After pushing, CI will re-run; caller should invoke `codagent:wait-ci` again

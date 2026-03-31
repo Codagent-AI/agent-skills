@@ -1,13 +1,13 @@
-# Agent Skills
+# Codagent Agent Skills
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CodeRabbit](https://img.shields.io/coderabbit/prs/github/Codagent-AI/agent-skills)](https://coderabbit.ai)
 
 ## Overview
 
-Agent Skills is a plugin for Claude Code and Cursor that provides a set of focused skills for each stage of software development — from evaluating an idea to implementing with subagents to shepherding a PR through CI. Inspired by [obra/superpowers](https://github.com/obra/superpowers).
+Codagent is a plugin for Claude Code and Cursor that provides a set of focused skills for each stage of software development — from evaluating an idea to implementing with subagents to shepherding a PR through CI. Inspired by [obra/superpowers](https://github.com/obra/superpowers).
 
-![Agent Skills demo](docs/images/demo2.gif)
+![Codagent demo](docs/images/demo2.gif)
 
 ## Features
 
@@ -20,20 +20,20 @@ Agent Skills is a plugin for Claude Code and Cursor that provides a set of focus
 
 ## Prerequisites
 
-Agent Skills requires the Agent Validator CLI for automated quality verification:
+Codagent requires the Agent Validator CLI for automated quality verification:
 
-- **Agent Validator CLI** — install: `npm install -g @pacaplan/agent-validator`
+- **Agent Validator CLI** — install: `npm install -g agent-validator`
 - Then run `agent-validator init` in your project to configure the validator
 
 ## Installation
 
 ### Claude Code
 
-Add the Agent Skills marketplace and install the plugin:
+Add the codagent marketplace and install the plugin:
 
 ```bash
 claude plugin marketplace add Codagent-AI/agent-skills
-claude plugin install agent-skills
+claude plugin install codagent
 ```
 
 ### Cursor
@@ -46,22 +46,22 @@ cursor plugins install Codagent-AI/agent-skills
 
 ### Initialize
 
-After installing with either runtime, initialize Agent Skills in your project:
+After installing with either runtime, initialize Codagent in your project:
 
 ```text
-/agent-skills:init
+/codagent:init
 ```
 
 ## Updating
 
 ```bash
-claude plugin marketplace update agent-skills
-claude plugin update agent-skills@agent-skills
+claude plugin marketplace update codagent
+claude plugin update codagent@codagent
 ```
 
 Then run to get the latest skills:
 ```text
-/agent-skills:init
+/codagent:init
 ```
 
 ## License

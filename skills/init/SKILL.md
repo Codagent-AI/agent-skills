@@ -17,8 +17,8 @@ Set up Agent Skills in the current project. This skill is idempotent — safe to
 Check that the Agent Validator CLI is installed. If missing, tell the user what to install and stop.
 
 - `agent-validator` — run `agent-validator --version`.
-  - If not found: "Agent Validator CLI is required. Install with `npm install -g @pacaplan/agent-validator`, then run `agent-validator init` in your project, then re-run `/agent-skills:init`."
-  - If found, extract the version number and verify it is **≥ 0.15**. If too old: "agent-validator 0.15 or higher is required (found \<version\>). Upgrade from https://github.com/pacaplan/agent-validator, then re-run `/agent-skills:init`."
+  - If not found: "Agent Validator CLI is required. Install with `npm install -g agent-validator`, then run `agent-validator init` in your project, then re-run `/codagent:init`."
+  - If found, extract the version number and verify it is **≥ 0.15**. If too old: "agent-validator 0.15 or higher is required (found \<version\>). Upgrade from https://github.com/pacaplan/agent-validator, then re-run `/codagent:init`."
 
 Use this shell snippet to compare versions:
 ```bash
@@ -26,21 +26,12 @@ version_gte() { [ "$(printf '%s\n' "$2" "$1" | sort -V | head -1)" = "$2" ]; }
 ```
 Example: `version_gte "$installed_version" "0.15"` returns true if `$installed_version` ≥ 0.15.
 
-If the CLI is missing or out of date, stop. The user must resolve it first, then resume `/agent-skills:init`.
+If the CLI is missing or out of date, stop. The user must resolve it first, then resume `/codagent:init`.
 
 **Validator config (check after CLI passes):**
-- `.validator/config.yml` must exist. If not found: "Validator config not found. Run `agent-validator init` in your project first, then re-run `/agent-skills:init`." Stop.
+- `.validator/config.yml` must exist. If not found: "Validator config not found. Run `agent-validator init` in your project first, then re-run `/codagent:init`." Stop.
 
-### 2. Update .gitignore
-
-Ensure `.validator/current-task-context.md` is listed in the consumer project's `.gitignore` (it is a transient working file that should never be committed).
-
-Append it only if not already present:
-```bash
-grep -qxF '.validator/current-task-context.md' .gitignore 2>/dev/null || echo '.validator/current-task-context.md' >> .gitignore
-```
-
-### 3. Print Success
+### 2. Print Success
 
 Print a summary:
 
@@ -48,20 +39,20 @@ Print a summary:
 Agent Skills initialized successfully.
 
 Available skills:
-- /agent-skills:propose — evaluate an idea and write a proposal
-- /agent-skills:spec — interview-driven requirement discovery
-- /agent-skills:design — brainstorm architecture and write a design doc
-- /agent-skills:plan-tasks — break a change into scoped task files
-- /agent-skills:implement-task — dispatch subagents to implement tasks
-- /agent-skills:finalize-pr — push PR, wait for CI, fix failures
+- /codagent:propose — evaluate an idea and write a proposal
+- /codagent:spec — interview-driven requirement discovery
+- /codagent:design — brainstorm architecture and write a design doc
+- /codagent:plan-tasks — break a change into scoped task files
+- /codagent:implement-task — dispatch subagents to implement tasks
+- /codagent:finalize-pr — push PR, wait for CI, fix failures
 ```
 
-### 4. Commit
+### 3. Commit
 
 Invoke `/agent-validator:validator-commit skip` to commit any scaffolding changes. Checks are skipped because init only writes boilerplate.
 
 ## Guardrails
 
-- Stop on missing or outdated prerequisites — tell user what to install/run and resume with `/agent-skills:init`
+- Stop on missing or outdated prerequisites — tell user what to install/run and resume with `/codagent:init`
 - Never overwrite `.validator/config.yml` — only add/update entry points and reviews
 - Use the hosting runtime's native mechanism to locate the plugin's root directory

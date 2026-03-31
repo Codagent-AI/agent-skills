@@ -68,13 +68,6 @@ Orchestrate subagent-driven task implementation for a structured change.
    - If all done: "All tasks complete! Ready to archive."
    - If paused: explain why and show options
 
-5. **Cleanup** (only when all tasks are complete)
-
-   Delete the validator task context file:
-   ```bash
-   rm -f .validator/current-task-context.md
-   ```
-
 **Output Format**
 
 ```markdown
