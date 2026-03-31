@@ -17,7 +17,7 @@ Set up Agent Skills in the current project. This skill is idempotent — safe to
 Check that the Agent Validator CLI is installed. If missing, tell the user what to install and stop.
 
 - `agent-validator` — run `agent-validator --version`.
-  - If not found: "Agent Validator CLI is required. Install with `npm install -g @pacaplan/agent-validator`, then run `agent-validator init` in your project, then re-run `/agent-skills:init`."
+  - If not found: "Agent Validator CLI is required. Install with `npm install -g agent-validator`, then run `agent-validator init` in your project, then re-run `/agent-skills:init`."
   - If found, extract the version number and verify it is **≥ 0.15**. If too old: "agent-validator 0.15 or higher is required (found \<version\>). Upgrade from https://github.com/pacaplan/agent-validator, then re-run `/agent-skills:init`."
 
 Use this shell snippet to compare versions:
@@ -31,16 +31,7 @@ If the CLI is missing or out of date, stop. The user must resolve it first, then
 **Validator config (check after CLI passes):**
 - `.validator/config.yml` must exist. If not found: "Validator config not found. Run `agent-validator init` in your project first, then re-run `/agent-skills:init`." Stop.
 
-### 2. Update .gitignore
-
-Ensure `.validator/current-task-context.md` is listed in the consumer project's `.gitignore` (it is a transient working file that should never be committed).
-
-Append it only if not already present:
-```bash
-grep -qxF '.validator/current-task-context.md' .gitignore 2>/dev/null || echo '.validator/current-task-context.md' >> .gitignore
-```
-
-### 3. Print Success
+### 2. Print Success
 
 Print a summary:
 
@@ -56,7 +47,7 @@ Available skills:
 - /agent-skills:finalize-pr — push PR, wait for CI, fix failures
 ```
 
-### 4. Commit
+### 3. Commit
 
 Invoke `/agent-validator:validator-commit skip` to commit any scaffolding changes. Checks are skipped because init only writes boilerplate.
 
