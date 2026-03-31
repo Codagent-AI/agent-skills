@@ -1,9 +1,15 @@
 {
   "name": "codagent",
   "displayName": "Codagent Agent Skills",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A curated set of skills for each stage of development — propose, spec, design, plan, implement, ship.",
   "author": "pacaplan",
   "license": "MIT",
-  "keywords": ["workflow", "spec-driven", "tdd", "planning", "implementation"]
+  "keywords": [
+    "workflow",
+    "spec-driven",
+    "tdd",
+    "planning",
+    "implementation"
+  ]
 }
