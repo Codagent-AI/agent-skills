@@ -22,7 +22,7 @@ Agent Skills is a plugin for Claude Code and Cursor that provides a set of focus
 
 Agent Skills requires the Agent Validator CLI for automated quality verification:
 
-- **Agent Validator CLI** — install: `npm install -g @pacaplan/agent-validator`
+- **Agent Validator CLI** — install: `npm install -g agent-validator`
 - Then run `agent-validator init` in your project to configure the validator
 
 ## Installation
