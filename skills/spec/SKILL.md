@@ -59,7 +59,7 @@ digraph spec {
 ## The Process
 
 **Reading the proposal:**
-- If you wrote the proposal earlier in this session, you already have context — skip re-reading it
+- If the proposal was written earlier in this session, skip re-reading unless exact wording needs verification
 - Otherwise, open the proposal's Capabilities section
 - Use the capability names to determine which spec files to create (one per capability)
 - Work through capabilities one at a time

@@ -63,7 +63,7 @@ digraph design {
 ## The Process
 
 **Reading the specs:**
-- If you wrote the specs earlier in this session, you already have context — only re-read if you need to check exact wording
+- If specs were written earlier in this session, re-read only to confirm exact wording
 - Otherwise, read all `specs/**/*.md` files in the change directory
 - Understand the settled requirements and any `<!-- deferred-to-design: ... -->` markers
 - Deferred markers are explicit invitations to complete or revise those scenarios once you have architectural context
