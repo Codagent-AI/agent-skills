@@ -93,7 +93,7 @@ Present options when multiple approaches exist. Give a recommendation with reaso
 
 ### 5. Write the Proposal
 
-Once the idea has been evaluated and the approach has crystallized, write the proposal document following whatever format instructions you were given.
+Once the idea has been evaluated and the approach has crystallized, write `proposal.md` using the Artifact Template below.
 
 The proposal should be anchored in the "why" — the problem, the motivation, and the impact. Draw heavily from the Understand and Evaluate phases. The "what changes" section should scope the work without prescribing solutions.
 
@@ -104,4 +104,45 @@ The proposal should be anchored in the "why" — the problem, the motivation, an
 - **Do not go deep on implementation** — The proposal answers "why" and scopes "what". The "how" belongs entirely in design.md. Resist the urge to solve the problem in the proposal.
 - **Do not auto-transition** — Confirm with the user before writing the proposal. A "no-go" verdict means no proposal.
 - **Do visualize** — Diagrams help clarify thinking. Use them for architecture, comparisons, and flows.
-- **Proposal format lives in the template** — Do not hardcode proposal structure in this skill. Read and follow the template.
+- **Follow the template** — Use the Artifact Template section below for proposal structure.
+
+## Artifact Template
+
+Use this structure when writing `proposal.md`. Replace comments with actual content.
+
+```markdown
+## Why
+
+<!-- 1-2 sentences on the problem or opportunity. What problem does this solve? Why now? -->
+
+## What Changes
+
+<!-- Bullet list of changes. Be specific about new capabilities, modifications, or removals.
+     Mark breaking changes with **BREAKING**. -->
+
+## Capabilities
+
+<!-- This section is critical. It creates the contract between the proposal and specs phases.
+     Research existing specs before filling this in. Each capability listed here will need a
+     corresponding spec file. -->
+
+### New Capabilities
+<!-- Capabilities being introduced. Replace <name> with kebab-case identifier
+     (e.g., user-auth, data-export, api-rate-limiting). Each creates specs/<name>/spec.md -->
+- `<name>`: <brief description of what this capability covers>
+
+### Modified Capabilities
+<!-- Existing capabilities whose REQUIREMENTS are changing (not just implementation).
+     Only list here if spec-level behavior changes. Each needs a delta spec file.
+     Leave empty if no requirement changes. -->
+- `<existing-name>`: <what requirement is changing>
+
+## Out of Scope
+
+<!-- What is explicitly out of scope for this change. Be specific — vague exclusions
+     don't prevent scope creep. -->
+
+## Impact
+
+<!-- Affected code, APIs, dependencies, systems -->
+```

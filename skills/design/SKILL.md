@@ -30,13 +30,13 @@ If you discover a gap in the specs during the design conversation, surface it as
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Read all spec files** — read every file in the change's `specs/` directory before asking any architecture questions
-2. **Explore project context** — check files, docs, recent commits
+1. **Read all spec files** — read every file in the change's `specs/` directory before asking any architecture questions. Skip any you just wrote in this session.
+2. **Explore project context** — read the specific files, modules, and interfaces that the spec requirements will touch. Skip areas you already explored during earlier steps in this session.
 3. **Ask clarifying questions** — one at a time, about architecture, patterns, and technical trade-offs only
 4. **Track spec implications** — when an architectural decision reveals a new requirement or changes a scenario, note it
 5. **Propose 2-3 approaches** — with trade-offs and a recommendation
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
-7. **Write the design document and apply spec edits** — write design.md to the outputPath provided, then edit any spec files identified during the conversation
+7. **Write the design document and apply spec edits** — write `design.md` in the change directory, then edit any spec files identified during the conversation
 
 ## Process Flow
 
@@ -63,12 +63,14 @@ digraph design {
 ## The Process
 
 **Reading the specs:**
-- Before asking any questions, read all `specs/**/*.md` files in the change directory
+- If you wrote the specs earlier in this session, you already have context — only re-read if you need to check exact wording
+- Otherwise, read all `specs/**/*.md` files in the change directory
 - Understand the settled requirements and any `<!-- deferred-to-design: ... -->` markers
 - Deferred markers are explicit invitations to complete or revise those scenarios once you have architectural context
 
 **Understanding the context:**
-- Check out the current project state (files, docs, recent commits)
+- Focus on the specific files, modules, and interfaces that the spec requirements will touch
+- Skip areas you already explored in earlier steps of this session
 - Use the spec files as the authoritative source of requirements
 
 **Asking clarifying questions:**
@@ -97,7 +99,7 @@ digraph design {
 
 ## After Approval
 
-Write the design document to the outputPath provided. Use the template structure provided.
+Write the design document using the Artifact Template below.
 
 Then apply any spec edits identified during the conversation: add new scenarios, revise existing ones, or complete deferred-to-design scenarios. Edit the relevant spec files directly. Only add or revise scenarios — do not restructure the file.
 
@@ -114,3 +116,42 @@ This skill does not invoke other skills or manage sequencing.
 - **Explore alternatives** — Always propose 2-3 approaches before settling
 - **Incremental validation** — Present design, get approval before moving on
 - **Be flexible** — Go back and clarify when something doesn't make sense
+
+## Artifact Template
+
+Use this structure when writing `design.md`. Scale each section to its complexity — omit sections that don't apply, keep simple sections to a few sentences.
+
+```markdown
+## Context
+
+<!-- Background and current state -->
+
+## Goals / Non-Goals
+
+**Goals:**
+<!-- What this design aims to achieve -->
+
+**Non-Goals:**
+<!-- What is explicitly out of scope -->
+
+## Approach
+
+<!-- The design itself: components, how they interact, data flow.
+     Use diagrams where they help. This is the "what are we building" section. -->
+
+## Decisions
+
+<!-- Key design decisions and rationale -->
+
+## Risks / Trade-offs
+
+<!-- Known risks and trade-offs -->
+
+## Migration Plan
+
+<!-- Steps to deploy, rollback strategy (if applicable) -->
+
+## Open Questions
+
+<!-- Outstanding decisions or unknowns to resolve -->
+```

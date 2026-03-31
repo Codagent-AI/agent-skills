@@ -17,20 +17,20 @@ Assume the implementing subagent is a skilled developer with zero context about 
 ## 1. Read Your Inputs
 
 The following are provided:
-- `outputPath`: the change directory where all output goes (e.g. `changes/<name>/`)
-- `dependencies`: completed artifact files — `proposal.md`, `design.md`, and all `specs/**/*.md`
+- The change directory where all output goes (e.g. `changes/<name>/`)
+- Completed artifact files — `proposal.md`, `design.md`, and all `specs/**/*.md`
 
-Read all dependency files before proceeding.
+Read all artifact files before proceeding. Skip any you wrote earlier in this session — you already have that context.
 
 ---
 
 ## 2. Research the Codebase
 
-Explore the existing code relevant to this change. You need to understand:
-- Which files and modules will be touched
-- Current structure, interfaces, and conventions the implementation must follow
-- Whether any existing code is tangled or poorly abstracted enough that the new work would be significantly harder to implement as-is
-- Whether any existing documentation (README, guides, config references, etc.) will need updating as a result of this change
+Skip areas you already explored in earlier steps of this session. Focus on what's new or what you need to look at more closely for task planning. You need to understand:
+- Which specific files and modules will be touched by the change (use the design's Approach section to guide where to look)
+- Current structure, interfaces, and conventions in those files that the implementation must follow
+- Whether any of the affected code is tangled or poorly abstracted enough that the new work would be significantly harder to implement as-is
+- Whether any existing documentation (README, guides, config references, etc.) covering the affected areas will need updating
 
 **Decide now if a refactoring task is needed.** If implementation would require working around serious structural obstacles in the current code, you'll prepend a standalone refactoring task in Step 5. This task restructures existing code without changing behavior, so the feature work lands cleanly. It is not a default step — add it only when genuinely warranted. When in doubt, skip it; the implementing subagent can refactor inline as needed.
 
@@ -196,7 +196,9 @@ Order tasks so each one is ready to start when the previous finishes. A task is 
 
 ## 6. Write tasks.md
 
-With ordering settled, write the task index at `<outputPath>/tasks.md`.
+With ordering settled, write the task index at `tasks.md` using the Artifact Template below.
+
+## Artifact Template
 
 ```markdown
 - [ ] <Task title> (`tasks/<slug>.md`)
