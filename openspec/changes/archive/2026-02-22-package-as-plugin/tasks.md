@@ -1,1 +1,0 @@
-- [x] Plugin packaging, skill decoupling, and documentation (`tasks/plugin-packaging.md`)

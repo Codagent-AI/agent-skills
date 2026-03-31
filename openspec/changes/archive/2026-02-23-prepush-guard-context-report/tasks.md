@@ -1,1 +1,0 @@
-- [x] Pre-push gauntlet guard and context usage reporting (`tasks/prepush-guard-context-reporting.md`)

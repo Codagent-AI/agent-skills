@@ -1,58 +1,39 @@
-# Flokay
+# Agent Skills
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CodeRabbit](https://img.shields.io/coderabbit/prs/github/pacaplan/flokay)](https://coderabbit.ai)
-[![OpenSpec](https://raw.githubusercontent.com/pacaplan/flokay/gh-pages/badges/number_of_specs.svg)](https://github.com/pacaplan/flokay)
 
 ## Overview
 
-Flokay is a plugin for Claude Code and Cursor that provides two things:
+Agent Skills is a plugin for Claude Code and Cursor that provides a set of focused skills for each stage of software development — from evaluating an idea to implementing with subagents to shepherding a PR through CI. Inspired by [obra/superpowers](https://github.com/obra/superpowers).
 
-1. **Agent Skills** — a set of focused skills for each stage of development, from evaluating an idea to implementing with subagents (or Codex) to shepherding a PR through CI. Inspired by [obra/superpowers](https://github.com/obra/superpowers).
-2. **A structured workflow** — an opinionated, spec-driven workflow powered by those skills, [OpenSpec](https://github.com/fission-ai/OpenSpec), and the [Agent Gauntlet](https://github.com/pacaplan/agent-gauntlet) validation tool.
-
-You can adopt the full workflow, or use the skills individually as you see fit.
-
-![Flokay demo](docs/images/demo2.gif)
-
-## Workflow
-
-The workflow has two stages:
-1. **Planning** — The agent interviews you and creates one artifact at a time — proposal, specs, design, tasks, review — so you think through every decision before code is written.
-2. **Implementation** — The agent takes the wheel. Walk away; come back to a pull request with tested, reviewed code and green CI.
-
-For more details see the [guide](docs/guide.md).
+![Agent Skills demo](docs/images/demo2.gif)
 
 ## Features
 
 - **Evaluate before building** — the agent critiques your idea, researches alternatives, and decides if it's worth pursuing
 - **Interview-driven specs & design** — the agent grills you to flesh out requirements, edge cases, and architectural decisions
 - **Right-sized tasks** — breaks work into self-contained task files, each scoped for a single subagent to implement
-- **Multi-agent implementation** — dispatches tasks to be implemented via TDD by Claude Code subagents or Codex
-- **Automated quality gates** — Agent Gauntlet runs static checks and AI code reviews for each task before moving on
+- **Multi-agent implementation** — dispatches tasks to be implemented via TDD by Claude Code subagents
+- **Automated quality gates** — Agent Validator runs static checks and AI code reviews for each task before moving on
 - **End-to-end PR lifecycle** — creates the PR, waits for CI, fixes failures, and addresses reviewer comments automatically
 
 ## Prerequisites
 
-Flokay requires two external CLIs and their skills:
+Agent Skills requires the Agent Validator CLI for automated quality verification:
 
-1. **OpenSpec CLI** — workflow engine that manages changes and artifacts
-   - Install: `npm install -g @fission-ai/openspec`
-   - Then run `openspec init` in your project to install OpenSpec skills
-
-2. **Agent Gauntlet CLI** — automated quality verification
-   - Install: `npm install -g @pacaplan/agent-gauntlet`
-   - Then run `agent-gauntlet init` in your project to install Gauntlet skills
+- **Agent Validator CLI** — install: `npm install -g @pacaplan/agent-gauntlet`
+- Then run `agent-gauntlet init` in your project to configure the validator
 
 ## Installation
 
 ### Claude Code
 
-Add the Flokay marketplace and install the plugin:
+Add the Agent Skills marketplace and install the plugin:
 
 ```bash
 claude plugin marketplace add pacaplan/flokay
-claude plugin install flokay
+claude plugin install agent-skills
 ```
 
 ### Cursor
@@ -65,31 +46,22 @@ cursor plugins install pacaplan/flokay
 
 ### Initialize
 
-After installing with either runtime, initialize Flokay in your project:
+After installing with either runtime, initialize Agent Skills in your project:
 
 ```text
-/flokay:init
+/agent-skills:init
 ```
-
-## Quick Start
-
-1. **Plan**: `/opsx:explore` → `/opsx:new <name>` → `/opsx:continue` (through specs, design, tasks, and review)
-2. **Implement**: `/opsx:apply` — implements, archives, and finalizes the PR
-
-Each step uses a dedicated skill (`flokay:propose`, `flokay:design`, `flokay:plan-tasks`, etc.) that guides you through the process conversationally.
-
-See [`docs/guide.md`](docs/guide.md) for the detailed user guide, or the [annotated example](docs/example.md) for a full walkthrough.
 
 ## Updating
 
 ```bash
-claude plugin marketplace update flokay
-claude plugin update flokay@flokay
+claude plugin marketplace update agent-skills
+claude plugin update agent-skills@agent-skills
 ```
 
 Then run to get the latest skills:
 ```text
-/flokay:init
+/agent-skills:init
 ```
 
 ## License

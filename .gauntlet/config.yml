@@ -20,20 +20,9 @@ cli:
 # entry_points configured by /gauntlet-setup
 entry_points:
   - path: "."
-    exclude:
-      - "openspec"
     checks: []
     reviews:
       - skill-quality
-      - task-compliance
-
-  - path: "openspec/changes"
-    exclude:
-      - "openspec/changes/archive"
-    checks:
-      - openspec-validate
-    reviews:
-      - artifact-review
 
 # -------------------------------------------------------------------
 # All settings below are optional. Uncomment and change as needed.

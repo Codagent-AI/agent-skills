@@ -17,7 +17,7 @@ Assume the implementing subagent is a skilled developer with zero context about 
 ## 1. Read Your Inputs
 
 The following are provided:
-- `outputPath`: the change directory where all output goes (e.g. `openspec/changes/<name>/`)
+- `outputPath`: the change directory where all output goes (e.g. `changes/<name>/`)
 - `dependencies`: completed artifact files — `proposal.md`, `design.md`, and all `specs/**/*.md`
 
 Read all dependency files before proceeding.
@@ -68,7 +68,7 @@ Bad examples (same feature, split too finely):
 
 For small changes, a single task is fine. Don't manufacture fake granularity.
 
-**Anti-pattern: "Laying the groundwork"**. Infrastructure that exists purely to enable another task (e.g., "Set up the Gauntlet infra that Task 2 needs," "Add the module skeleton") should be folded into that dependent task. If a task produces no testable behavioral value of its own, it is a sign it should be merged into the task that actually exercises it. The exception is database migrations or dependency changes risky enough to review on their own.
+**Anti-pattern: "Laying the groundwork"**. Infrastructure that exists purely to enable another task (e.g., "Set up the validator infra that Task 2 needs," "Add the module skeleton") should be folded into that dependent task. If a task produces no testable behavioral value of its own, it is a sign it should be merged into the task that actually exercises it. The exception is database migrations or dependency changes risky enough to review on their own.
 
 **Anti-pattern: Separate doc-update tasks.** Don't create standalone tasks for documentation updates (README, guides, license files, etc.) when the docs are part of the same change as code or config. Update docs in the same task that introduces the related functionality. Only split docs into their own task when the documentation work is substantial and independent of any code change (e.g., a docs-only change).
 

@@ -1,1 +1,0 @@
-- [x] Add gauntlet setup step to init skill (`tasks/add-gauntlet-setup-to-init.md`)
