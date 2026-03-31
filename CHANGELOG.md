@@ -1,5 +1,17 @@
 # agent-skills
 
+## 0.6.0
+
+### Minor Changes
+
+- [#21](https://github.com/Codagent-AI/agent-skills/pull/21) Added Cursor IDE plugin support with portable skills that work across editor environments.
+- [#23](https://github.com/Codagent-AI/agent-skills/pull/23) Renamed the plugin to `codagent` and embedded artifact templates directly into the plugin for self-contained distribution.
+
+### Patch Changes
+
+- [#20](https://github.com/Codagent-AI/agent-skills/pull/20) Reverted the removal of the codex adapter from `implement-task` to restore previous behavior.
+- [#22](https://github.com/Codagent-AI/agent-skills/pull/22) Renamed the project and removed outdated items to reflect the new `codagent` branding.
+
 ## 0.5.0
 
 ### Minor Changes

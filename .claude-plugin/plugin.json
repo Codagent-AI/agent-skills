@@ -1,6 +1,6 @@
 {
   "name": "agent-skills",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A curated set of skills for each stage of development — propose, spec, design, plan, implement, ship.",
   "license": "MIT"
 }
