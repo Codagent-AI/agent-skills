@@ -50,7 +50,7 @@ After self-review passes, run the validator directly using the steps below. Do N
 
 2. **Run the validator with output captured to a file** (Bun can drop stdout/stderr during LLM review subprocesses, so always redirect to a file):
    ```bash
-   agent-validator run --enable-review task-compliance > gauntlet_logs/_subagent-run.log 2>&1; printf 'GAUNTLET_EXIT=%s\n' "$?" >> gauntlet_logs/_subagent-run.log
+   agent-validator run > gauntlet_logs/_subagent-run.log 2>&1; printf 'GAUNTLET_EXIT=%s\n' "$?" >> gauntlet_logs/_subagent-run.log
    ```
    Use `Bash` with `timeout: 300000` (5 minutes). Do NOT use `run_in_background`.
 
