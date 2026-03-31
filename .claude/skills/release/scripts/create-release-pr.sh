@@ -23,10 +23,10 @@ jq --arg v "$NEW_VERSION" '.version = $v' "$PLUGIN_JSON" > "${PLUGIN_JSON}.tmp" 
 
 # --- Update marketplace.json version ---
 jq --arg v "$NEW_VERSION" '
-  if any(.plugins[]; .name == "agent-skills") then
-    .plugins |= map(if .name == "agent-skills" then .version = $v else . end)
+  if any(.plugins[]; .name == "codagent") then
+    .plugins |= map(if .name == "codagent" then .version = $v else . end)
   else
-    error("Plugin \"agent-skills\" not found in marketplace.json")
+    error("Plugin \"codagent\" not found in marketplace.json")
   end
 ' "$MARKETPLACE_JSON" > "${MARKETPLACE_JSON}.tmp" \
   && mv "${MARKETPLACE_JSON}.tmp" "$MARKETPLACE_JSON"
