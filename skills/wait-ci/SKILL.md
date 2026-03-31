@@ -2,10 +2,10 @@
 description: >
   Polls CI check status for the current branch's pull request and reports pass/fail/pending/comments,
   surfacing PR review comments even when CI is green.
-  Use when the user says "wait for CI", "check CI", "poll CI", or invokes "agent-skills:wait-ci".
+  Use when the user says "wait for CI", "check CI", "poll CI", or invokes "codagent:wait-ci".
 ---
 
-# agent-skills:wait-ci
+# codagent:wait-ci
 
 Poll CI check status for the current branch's PR and report the result, enriching failures with log output and checking for blocking reviews.
 

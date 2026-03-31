@@ -1,10 +1,10 @@
 ---
 description: >
   Commits changes, pushes to remote, and creates or updates a pull request for the current branch.
-  Use when the user says "push pr", "create pr", "push and create pr", or invokes "agent-skills:push-pr".
+  Use when the user says "push pr", "create pr", "push and create pr", or invokes "codagent:push-pr".
 ---
 
-# agent-skills:push-pr
+# codagent:push-pr
 
 Commit all changes, push to the remote, and create or update the pull request for the current branch.
 
