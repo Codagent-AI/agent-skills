@@ -73,7 +73,7 @@ test('expired session returns 401 with login redirect', async () => {
 });
 ```
 
-One test per scenario, one scenario per behavior. If a scenario needs multiple assertions, that's fine — but if it needs multiple *setups*, split it. If the spec numbers its criteria (AC-1, R-001, etc.), reference the ID in the test name or comment for traceability.
+One test per scenario, one scenario per behavior. If a scenario needs multiple assertions, that's fine — but if it needs multiple *setups*, split it. If the spec numbers its criteria (AC-1, R-001, etc.), reference the ID in the test name or comment for traceability. (Note: the spec skill does not generate IDs by default — IDs are an optional custom extension you may add to your spec for traceability.)
 
 ## Red-Green-Refactor
 
