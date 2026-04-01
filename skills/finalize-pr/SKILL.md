@@ -32,7 +32,7 @@ The wait-ci skill returns one of four statuses:
 
 **On `passed`:** Workflow is complete. Report success with the PR URL. Stop.
 
-**On `pending`:** Report which checks are still running. Ask the user whether to wait longer or proceed.
+**On `pending`:** Report which checks are still running. Use the appropriate tool for asking the user a question or requesting input to ask whether to wait longer or proceed.
 
 **On `failed` or `comments`:** Record the failure signature (the set of failing CI check names, or `comments-only` if CI passed but comments exist), then proceed to Step 4.
 
@@ -40,9 +40,9 @@ The wait-ci skill returns one of four statuses:
 
 Check termination rules before attempting a fix:
 
-1. **Max 3 fix cycles.** If this would be the 4th fix attempt, pause immediately — show current CI status and ask the user how to proceed. Do NOT attempt a 4th cycle.
+1. **Max 3 fix cycles.** If this would be the 4th fix attempt, pause immediately — show current CI status and use the appropriate tool for asking the user a question or requesting input to ask how to proceed. Do NOT attempt a 4th cycle.
 
-2. **Same failure persists after 2 fix attempts.** If the failure signature from Step 3 matches the previous cycle's failure signature AND this is the 2nd consecutive attempt at the same failure, pause immediately — explain the persistent failure in detail and ask the user for guidance. "Same failure" means the identical CI check name(s) appear as failing across two consecutive wait-ci results after fix attempts.
+2. **Same failure persists after 2 fix attempts.** If the failure signature from Step 3 matches the previous cycle's failure signature AND this is the 2nd consecutive attempt at the same failure, pause immediately — explain the persistent failure in detail and use the appropriate tool for asking the user a question or requesting input to ask for guidance. "Same failure" means the identical CI check name(s) appear as failing across two consecutive wait-ci results after fix attempts.
 
 If neither termination rule applies:
 

@@ -76,7 +76,7 @@ For small changes, a single task is fine. Don't manufacture fake granularity.
 
 ### Confirm with the User Before Writing
 
-**Do not write any task files yet.** Present the user with a brief overview of your planned breakdown:
+**Do not write any task files yet.** Present the user with a brief overview of your planned breakdown, then use the appropriate tool for asking the user a question or requesting input to get confirmation:
 
 1. State the number of tasks.
 2. For each task, give the title and a 1-sentence summary of its scope — what it delivers, not implementation details.

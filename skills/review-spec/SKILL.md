@@ -40,14 +40,18 @@ Compare artifacts that discuss overlapping topics (e.g. proposal vs spec).
 For any artifact containing behavioral requirements or scenarios:
 
 - Every requirement has at least one testable scenario
+- Scenarios cover edge cases and error conditions, not just the happy path
 - Placeholder markers (TBD, TODO, etc.) that should have been resolved by a later artifact already present
 
 #### Task Quality
 
 For any artifact breaking work into implementation tasks:
 
-- Tasks are self-contained — no cross-task references
+- Tasks are self-contained — a task may list other tasks as dependencies but must not require reading them to understand what to do
+- References to other artifacts (e.g., design, spec) must include the file path and the specific section or line being referenced, not just the filename
 - Acceptance criteria carried into tasks match the source faithfully
+- Tasks describe what to build, not how to write each line — brief code or pseudocode for key points is fine, but the task should not spell out the full implementation
+- No unresolved placeholders (`<path>`, `<your-service>`, etc.) — all values must be concrete
 - No standalone infrastructure, test-only, or docs-only tasks with no independent behavioral value
 
 #### Internal Coherence

@@ -23,12 +23,12 @@ Evaluate whether an idea is worth formalizing, and if so, write the proposal doc
 
 ### 1. Understand
 
-First understand the idea. If the user's invocation didn't include enough context, ask:
+First understand the idea. If the user's invocation didn't include enough context, use the appropriate tool for asking the user a question or requesting input to ask:
 - What is the idea? What does it do from the user's perspective?
 - What problem does it solve? Who has this problem?
 - What triggered this? (bug report, user request, personal itch, competitive pressure)
 
-Get clarity on the idea. Ask one or two questions at a time — don't barrage. Prefer multiple-choice questions when possible, but open-ended is fine too. Focus on purpose, constraints, and success criteria.
+Get clarity on the idea. Ask one or two questions at a time — don't barrage. Prefer multiple-choice questions when possible, but open-ended is fine too. Focus on purpose, constraints, and success criteria. Always use the appropriate tool for asking the user a question or requesting input when you need a response.
 
 Do not proceed until you have a concrete understanding of the idea.
 
@@ -102,7 +102,7 @@ The proposal should be anchored in the "why" — the problem, the motivation, an
 - **Do not skip the evaluation** — Even for "obvious" ideas, the evaluation surfaces risks and shapes scope. Speed through it, but don't skip it.
 - **Do not cheerlead** — Honest assessment over enthusiasm. Every idea has trade-offs; name them.
 - **Do not go deep on implementation** — The proposal answers "why" and scopes "what". The "how" belongs entirely in design.md. Resist the urge to solve the problem in the proposal.
-- **Do not auto-transition** — Confirm with the user before writing the proposal. A "no-go" verdict means no proposal.
+- **Do not auto-transition** — Use the appropriate tool for asking the user a question or requesting input to confirm before writing the proposal. A "no-go" verdict means no proposal.
 - **Do visualize** — Diagrams help clarify thinking. Use them for architecture, comparisons, and flows.
 - **Follow the template** — Use the Artifact Template section below for proposal structure.
 
