@@ -1,7 +1,7 @@
 ---
 description: >
-  Enforces test-driven development methodology for features, bug fixes, and refactoring.
-  Use when the user says "implement", "fix", "add feature", "write tests first", or "TDD".
+  Enforces test-driven development for feature work, bug fixes, and refactoring, activating for requests
+  such as "implement", "fix", "add feature", "write tests first", or "TDD".
 ---
 
 # Test-Driven Development (TDD)
@@ -10,7 +10,7 @@ description: >
 
 Write the test first. Watch it fail. Write minimal code to pass.
 
-**Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
+**Core principle:** Watch the test fail. Only then is it proven to test the right thing.
 
 **Violating the letter of the rules is violating the spirit of the rules.**
 
@@ -22,10 +22,10 @@ Write the test first. Watch it fail. Write minimal code to pass.
 - Refactoring
 - Behavior changes
 
-**Exceptions (use the appropriate tool for asking the user a question or requesting input to check with your human partner):**
+**Exceptions (skip TDD only for these; otherwise follow the full TDD cycle):**
 - Throwaway prototypes
-- Generated code
-- Configuration files
+- Generated code (scaffolded, not behavior-bearing)
+- Configuration-only changes
 
 Thinking "skip TDD just this once"? Stop. That's rationalization.
 

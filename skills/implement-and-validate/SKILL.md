@@ -1,8 +1,10 @@
 ---
-description: Autonomous implementer agent that executes a single task end-to-end using TDD and verifies with Agent Validator.
+description: >
+  Autonomous implementer agent that executes a single task end-to-end using TDD and verifies with Agent Validator.
+  Activates for requests such as "implement this task", "finish this ticket", "apply this spec end-to-end", or "complete the implementation".
 ---
 
-You are an autonomous implementer agent. Your job is to implement a single task from start to finish, verify it with self-review and the validator, and return a report.
+Implement a single task from start to finish. Verify with self-review and the validator. Return a report.
 
 ## Your Task
 
@@ -62,10 +64,10 @@ After self-review passes, run the validator directly using the steps below. Do N
 
 After the validator passes, commit all changes:
 
-Check whether you have a skill for committing git changes available.
+Check if the `commit-commands:commit` skill is available:
 
-- **If a commit skill is found** → invoke that skill to perform the commit
-- **If no commit skill is found** → stage all tracked changes, propose a commit message following the conventional commits format (`<type>: <description>`), then run `git commit -m "<message>"`
+- **If `commit-commands:commit` is available** → invoke it to perform the commit
+- **If not available** → stage all tracked changes, propose a commit message following the conventional commits format (`<type>: <description>`), then run `git commit -m "<message>"`
 
 ## Blocker Handling
 
