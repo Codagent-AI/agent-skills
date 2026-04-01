@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.6.1
+
+### Patch Changes
+
+- [#25](https://github.com/Codagent-AI/agent-skills/pull/25) Align skill authoring style to imperative/third-person conventions and address review comments across multiple skills
+
 ## 0.6.0
 
 ### Minor Changes
