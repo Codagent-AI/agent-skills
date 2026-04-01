@@ -18,7 +18,7 @@ Check that the Agent Validator CLI is installed. If missing, tell the user what 
 
 - `agent-validator` — run `agent-validator --version`.
   - If not found: "Agent Validator CLI is required. Install with `npm install -g agent-validator`, then run `agent-validator init` in your project, then re-run `/codagent:init`."
-  - If found, extract the version number and verify it is **≥ 0.15**. If too old: "agent-validator 0.15 or higher is required (found \<version\>). Upgrade from https://github.com/pacaplan/agent-validator, then re-run `/codagent:init`."
+  - If found, extract the version number and verify it is **≥ 0.15**. If too old: "agent-validator 0.15 or higher is required (found \<version\>). Upgrade from https://github.com/Codagent-AI/agent-validator, then re-run `/codagent:init`."
 
 Use this shell snippet to compare versions:
 ```bash
@@ -43,7 +43,7 @@ Available skills:
 - /codagent:spec — interview-driven requirement discovery
 - /codagent:design — brainstorm architecture and write a design doc
 - /codagent:plan-tasks — break a change into scoped task files
-- /codagent:implement-task — dispatch subagents to implement tasks
+- /codagent:implement-and-validate — implement a single task and verify with the validator
 - /codagent:finalize-pr — push PR, wait for CI, fix failures
 ```
 
