@@ -23,7 +23,7 @@ Write the test first. Watch it fail. Write minimal code to pass.
 - Behavior changes
 
 **Exceptions (skip TDD only for these; otherwise follow the full TDD cycle):**
-- Throwaway prototypes
+- Throwaway spikes that will never be merged (branch must be deleted before implementation begins; any code carried forward requires full TDD)
 - Generated code (scaffolded, not behavior-bearing)
 - Configuration-only changes
 

@@ -67,7 +67,7 @@ After the validator passes, commit all changes:
 Check if the `commit-commands:commit` skill is available:
 
 - **If `commit-commands:commit` is available** → invoke it to perform the commit
-- **If not available** → stage all tracked changes, propose a commit message following the conventional commits format (`<type>: <description>`), then run `git commit -m "<message>"`
+- **If not available** → stage all changes (including new files), propose a commit message following the conventional commits format (`<type>: <description>`), then run `git commit -m "<message>"`
 
 ## Blocker Handling
 
