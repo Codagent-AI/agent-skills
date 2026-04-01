@@ -13,7 +13,7 @@ Help turn specs into fully formed technical designs through natural collaborativ
 Start by reading all spec files in the change's `specs/` directory to understand settled requirements, then brainstorm architecture by asking questions one at a time. Once the architecture is clear, present the design and get user approval. When writing the design doc, also apply any spec edits identified during the conversation.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. Use the appropriate tool for asking the user a question or requesting input to get this approval. This applies to EVERY project regardless of perceived simplicity.
 </HARD-GATE>
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
@@ -74,6 +74,7 @@ digraph design {
 - Use the spec files as the authoritative source of requirements
 
 **Asking clarifying questions:**
+- Use the appropriate tool for asking the user a question or requesting input for all questions and confirmations
 - Ask questions one at a time to clarify architecture, patterns, and trade-offs
 - Prefer multiple-choice questions when possible, but open-ended is fine too
 - Only one question per message — if a topic needs more exploration, break it into multiple questions
@@ -93,7 +94,7 @@ digraph design {
 **Presenting the design:**
 - Once the architecture is well understood, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
+- Use the appropriate tool for asking the user a question or requesting input to ask after each section whether it looks right so far
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 

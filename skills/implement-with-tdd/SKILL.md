@@ -1,7 +1,7 @@
 ---
 description: >
-  Enforces test-driven development methodology for features, bug fixes, and refactoring.
-  Use when the user says "implement", "fix", "add feature", "write tests first", or "TDD".
+  Enforces test-driven development for feature work, bug fixes, and refactoring, activating for requests
+  such as "implement", "fix", "add feature", "write tests first", or "TDD".
 ---
 
 # Test-Driven Development (TDD)
@@ -10,7 +10,7 @@ description: >
 
 Write the test first. Watch it fail. Write minimal code to pass.
 
-**Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
+**Core principle:** Watch the test fail. Only then is it proven to test the right thing.
 
 **Violating the letter of the rules is violating the spirit of the rules.**
 
@@ -22,10 +22,10 @@ Write the test first. Watch it fail. Write minimal code to pass.
 - Refactoring
 - Behavior changes
 
-**Exceptions (ask your human partner):**
-- Throwaway prototypes
-- Generated code
-- Configuration files
+**Exceptions (skip TDD only for these; otherwise follow the full TDD cycle):**
+- Throwaway spikes that will never be merged (branch must be deleted before implementation begins; any code carried forward requires full TDD)
+- Generated code (scaffolded, not behavior-bearing)
+- Configuration-only changes
 
 Thinking "skip TDD just this once"? Stop. That's rationalization.
 
@@ -44,6 +44,36 @@ Write code before the test? Delete it. Start over.
 - Delete means delete
 
 Implement fresh from tests. Period.
+
+## Choosing Test Type
+
+Default to unit tests. Escalate only when the thing you're testing can't be isolated:
+
+- **Unit** — pure logic, validation, transformations, calculations. No I/O, no wiring. Fast (<100ms).
+- **Integration** — components wired together: database queries, middleware chains, API clients, config reaching runtime. If the bug would only manifest when components connect, it needs an integration test.
+- **E2E** — critical user flows only (login, checkout, onboarding). Expensive, slow, flaky-prone. Don't use for logic that can be tested at a lower level.
+
+When in doubt: can you test it with a function call and an assertion? Unit test. Does it require spinning up real infrastructure or connecting real components? Integration test.
+
+## From Spec to Tests
+
+Each scenario in the spec becomes one test. Write the test name and assertion from the scenario before writing any implementation.
+
+**Spec scenario:**
+> **WHEN** a user with an expired session requests a protected resource
+> **THEN** they receive a 401 and a redirect to login
+
+**Test:**
+```typescript
+test('expired session returns 401 with login redirect', async () => {
+  const session = createExpiredSession();
+  const response = await requestProtectedResource(session);
+  expect(response.status).toBe(401);
+  expect(response.headers.location).toBe('/login');
+});
+```
+
+One test per scenario, one scenario per behavior. If a scenario needs multiple assertions, that's fine — but if it needs multiple *setups*, split it. If the spec numbers its criteria (AC-1, R-001, etc.), reference the ID in the test name or comment for traceability. (Note: the spec skill does not generate IDs by default — IDs are an optional custom extension you may add to your spec for traceability.)
 
 ## Red-Green-Refactor
 
@@ -160,7 +190,7 @@ async function retryOperation<T>(
 ```
 _Over-engineered_
 
-Don't add features, refactor other code, or "improve" beyond the test.
+Don't add features, refactor other code, or "improve" beyond the test. Never add test-only methods to production classes — put test helpers in test utilities.
 
 ### Verify GREEN - Watch It Pass
 
@@ -192,97 +222,21 @@ Keep tests green. Don't add behavior.
 
 Next failing test for next feature.
 
-## Good Tests
+## Why Order Matters (Common Rationalizations)
 
-| Quality | Good | Bad |
-|---------|------|-----|
-| **Minimal** | One thing. "and" in name? Split it. | `test('validates email and domain and whitespace')` |
-| **Clear** | Name describes behavior | `test('test1')` |
-| **Shows intent** | Demonstrates desired API | Obscures what code should do |
+**"I'll write tests after"** — Tests written after pass immediately. That proves nothing. Tests-after are biased by your implementation: you test what you built, not what's required. Test-first forces you to see failure, proving the test catches something real.
 
-## Why Order Matters
+**"Already manually tested"** — Ad-hoc, no record, can't re-run, can't prove edge cases. Automated tests are systematic and repeatable.
 
-**"I'll write tests after to verify it works"**
+**"Deleting X hours of work is wasteful"** — Sunk cost fallacy. Keeping unverified code is the real waste. Delete and rewrite with TDD gives high confidence; bolting tests onto existing code gives false confidence.
 
-Tests written after code pass immediately. Passing immediately proves nothing:
-- Might test wrong thing
-- Might test implementation, not behavior
-- Might miss edge cases you forgot
-- You never saw it catch the bug
+**"TDD is dogmatic / too slow"** — TDD is faster than debugging in production. It finds bugs before commit, prevents regressions, documents behavior, and enables safe refactoring.
 
-Test-first forces you to see the test fail, proving it actually tests something.
+**"Keep as reference, write tests first"** — You'll adapt it. That's testing after with extra steps. Delete means delete.
 
-**"I already manually tested all the edge cases"**
+**"Hard to test"** — Listen to the test. Hard to test = hard to use. Simplify the design.
 
-Manual testing is ad-hoc. You think you tested everything but:
-- No record of what you tested
-- Can't re-run when code changes
-- Easy to forget cases under pressure
-- "It worked when I tried it" ≠ comprehensive
-
-Automated tests are systematic. They run the same way every time.
-
-**"Deleting X hours of work is wasteful"**
-
-Sunk cost fallacy. The time is already gone. Your choice now:
-- Delete and rewrite with TDD (X more hours, high confidence)
-- Keep it and add tests after (30 min, low confidence, likely bugs)
-
-The "waste" is keeping code you can't trust. Working code without real tests is technical debt.
-
-**"TDD is dogmatic, being pragmatic means adapting"**
-
-TDD IS pragmatic:
-- Finds bugs before commit (faster than debugging after)
-- Prevents regressions (tests catch breaks immediately)
-- Documents behavior (tests show how to use code)
-- Enables refactoring (change freely, tests catch breaks)
-
-"Pragmatic" shortcuts = debugging in production = slower.
-
-**"Tests after achieve the same goals - it's spirit not ritual"**
-
-No. Tests-after answer "What does this do?" Tests-first answer "What should this do?"
-
-Tests-after are biased by your implementation. You test what you built, not what's required. You verify remembered edge cases, not discovered ones.
-
-Tests-first force edge case discovery before implementing. Tests-after verify you remembered everything (you didn't).
-
-30 minutes of tests after ≠ TDD. You get coverage, lose proof tests work.
-
-## Common Rationalizations
-
-| Excuse | Reality |
-|--------|---------|
-| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
-| "I'll test after" | Tests passing immediately prove nothing. |
-| "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
-| "Already manually tested" | Ad-hoc ≠ systematic. No record, can't re-run. |
-| "Deleting X hours is wasteful" | Sunk cost fallacy. Keeping unverified code is technical debt. |
-| "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
-| "Need to explore first" | Fine. Throw away exploration, start with TDD. |
-| "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
-| "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
-| "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
-| "Existing code has no tests" | You're improving it. Add tests for existing code. |
-
-## Red Flags - STOP and Start Over
-
-- Code before test
-- Test after implementation
-- Test passes immediately
-- Can't explain why test failed
-- Tests added "later"
-- Rationalizing "just this once"
-- "I already manually tested it"
-- "Tests after achieve the same purpose"
-- "It's about spirit not ritual"
-- "Keep as reference" or "adapt existing code"
-- "Already spent X hours, deleting is wasteful"
-- "TDD is dogmatic, I'm being pragmatic"
-- "This is different because..."
-
-**All of these mean: Delete code. Start over with TDD.**
+If you catch yourself rationalizing, delete code and start over with TDD.
 
 ## Example: Bug Fix
 
@@ -325,6 +279,7 @@ Extract validation for multiple fields if needed.
 
 Before marking work complete:
 
+- [ ] Every spec scenario has a test
 - [ ] Every new function/method has a test
 - [ ] Watched each test fail before implementing
 - [ ] Each test failed for expected reason (feature missing, not typo)
@@ -340,23 +295,10 @@ Can't check all boxes? You skipped TDD. Start over.
 
 | Problem | Solution |
 |---------|----------|
-| Don't know how to test | Write wished-for API. Write assertion first. Ask your human partner. |
 | Test too complicated | Design too complicated. Simplify interface. |
 | Must mock everything | Code too coupled. Use dependency injection. |
 | Test setup huge | Extract helpers. Still complex? Simplify design. |
-
-## Debugging Integration
-
-Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
-
-Never fix bugs without a test.
-
-## Testing Anti-Patterns
-
-When adding mocks or test utilities, read [testing-anti-patterns.md](testing-anti-patterns.md) to avoid common pitfalls:
-- Testing mock behavior instead of real behavior
-- Adding test-only methods to production classes
-- Mocking without understanding dependencies
+| Mock setup > test logic | Understand real method's side effects before mocking. Mock at the lowest level necessary. Consider integration tests instead. |
 
 ## Final Rule
 
@@ -364,5 +306,3 @@ When adding mocks or test utilities, read [testing-anti-patterns.md](testing-ant
 Production code → test exists and failed first
 Otherwise → not TDD
 ```
-
-No exceptions without your human partner's permission.

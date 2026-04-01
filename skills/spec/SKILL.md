@@ -13,7 +13,7 @@ Help turn proposals into fully specified requirements through natural collaborat
 Start by reading the proposal's Capabilities section to know which spec files to create, then walk through each capability conversationally — asking questions one at a time to elicit behaviors, boundaries, error conditions, and edge cases. Once you have enough information for a capability, present the proposed requirements and scenarios for user approval, then write the spec file.
 
 <HARD-GATE>
-Do NOT write any spec files until you have presented the proposed requirements and scenarios to the user and received approval for that capability. This applies to EVERY capability regardless of perceived simplicity.
+Do NOT write any spec files until you have presented the proposed requirements and scenarios to the user and received approval for that capability. Use the appropriate tool for asking the user a question or requesting input to get this approval. This applies to EVERY capability regardless of perceived simplicity.
 </HARD-GATE>
 
 ## Anti-Pattern: "The Design Will Figure It Out"
@@ -65,6 +65,7 @@ digraph spec {
 - Work through capabilities one at a time
 
 **Asking clarifying questions:**
+- Use the appropriate tool for asking the user a question or requesting input for all questions and confirmations
 - Ask questions one at a time to understand the behavioral contract for each capability
 - Prefer multiple-choice questions when possible, but open-ended is fine too
 - Only one question per message — if a topic needs more exploration, break it into multiple questions
@@ -79,7 +80,7 @@ digraph spec {
 
 **Presenting for approval:**
 - Once you have enough for a capability, present the full set of proposed requirements and scenarios
-- Ask after presenting whether it looks right before writing the file
+- Use the appropriate tool for asking the user a question or requesting input to ask whether it looks right before writing the file
 - Be ready to go back and revise if something doesn't look right
 
 **Writing spec files:**
