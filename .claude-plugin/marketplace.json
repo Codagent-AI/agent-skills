@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "codagent",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "source": "./",
       "description": "A curated set of skills for each stage of development — propose, spec, design, plan, implement, ship.",
       "license": "MIT",
