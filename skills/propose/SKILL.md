@@ -93,7 +93,16 @@ Present options when multiple approaches exist. Give a recommendation with reaso
 
 ### 5. Write the Proposal
 
-Once the idea has been evaluated and the approach has crystallized, write `proposal.md` using the Artifact Template below.
+Once the idea has been evaluated and the approach has crystallized, determine where to write `proposal.md`, then write it using the Artifact Template below.
+
+**Determining the output location:**
+
+1. If the user has already specified a path, use it.
+2. If a project configuration (e.g., AGENTS.md, openspec config, or similar conventions) specifies where proposals should live, use that.
+3. Otherwise:
+   - Generate a short kebab-case slug that captures what the change is about (e.g., `user-auth-improvements`, `rate-limit-api`).
+   - Default path: `~/.agent-skills/changes/<slug>/proposal.md`
+   - Use the appropriate tool for asking the user a question or requesting input to confirm the location. Offer exactly two choices: the default generated path, and "Somewhere else" (user specifies). Do not proceed until the user responds.
 
 The proposal should be anchored in the "why" — the problem, the motivation, and the impact. Draw heavily from the Understand and Evaluate phases. The "what changes" section should scope the work without prescribing solutions.
 
