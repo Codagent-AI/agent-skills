@@ -30,9 +30,10 @@ Tasks run sequentially rather than in parallel because each one typically builds
 parallel execution risks conflicts, ordering issues, and subagents stepping on each other's work.
 Wait for each subagent to complete and review its report before moving to the next task.
 
-If a subagent reports failure:
-- If the issue is fixable (environment problem, missing context), resolve it and retry.
-- If it's a genuine blocker that cannot be resolved, stop and surface it to the user.
+If a subagent reports failure, check the failure report for the root cause:
+- **Missing context or clarification needed**: Provide the additional information and re-invoke the subagent.
+- **Retry limit exceeded after multiple attempts**: Review the failure details. If you can address the root cause (e.g., environment setup, a prerequisite task that wasn't complete), fix it and re-invoke once. Otherwise, surface it to the user.
+- **Immediate blocker** (contradictory requirements, missing dependency): Surface to the user immediately with the full blocker details.
 
 Mark each task complete before moving on.
 
@@ -48,7 +49,8 @@ implementation.
 ### Step 3: Archive change (if applicable)
 
 If using OpenSpec, invoke the `openspec-archive-change` skill to sync delta specs back to the main
-spec directory — do this automatically without prompting the user. Then run `agent-validator skip`.
+spec directory — do this automatically without prompting the user. Then run `agent-validator skip`
+(archiving is a file-reorganization operation that doesn't introduce code changes requiring validation).
 
 ### Step 4: Finalize PR
 
