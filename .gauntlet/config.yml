@@ -1,3 +1,6 @@
+debug_log:
+  enabled: true
+
 # Ordered list of CLI agents to try for reviews
 cli:
   default_preference:

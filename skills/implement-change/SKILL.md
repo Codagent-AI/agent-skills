@@ -39,12 +39,11 @@ Mark each task complete before moving on.
 
 ### Step 2: Run validator
 
-Run `agent-validator detect` to check for any code quality or compliance issues introduced during
-implementation.
+Run `agent-validator detect 2>&1` and branch on the exit code:
 
-- If the only unverified change is a task-tracking file (e.g. checkbox edits), run
-  `agent-validator skip`.
-- Otherwise, run the full validator and fix any issues before proceeding.
+- **Exit 0** → gates would run; invoke `agent-validator:validator-run` and wait for it to pass before proceeding.
+- **Exit 2** → no gates would run (no changes or no applicable gates, e.g. only task-tracking file edits); run `agent-validator skip` and proceed.
+- **Any other exit code** → error; surface the error output to the user and stop.
 
 ### Step 3: Archive change (if applicable)
 
