@@ -176,7 +176,7 @@ Read the failed check log output carefully. Identify:
 
 Read the review comments carefully. For each:
 1. **Fixable** — clear code change requested → fix it
-2. **Debatable** — disagree or out of scope → note why, do not fix
+2. **Debatable** — default to trusting that reviewers (human or bot) know more than you about what they're asking for. Only push back if you genuinely believe the suggestion is wrong or harmful. If so, phrase your disagreement conservatively, possibly as a question (e.g. "I think I should not do this because X — okay?"). Watch for their response on the next round. If a reviewer asked for it, treat it as in scope.
 
 ### Step 2: Read the relevant files
 
@@ -250,9 +250,8 @@ gh api "repos/{owner}/{repo}/pulls/{pr-number}/comments/{comment-id}/replies" \
   -f body="<your response explaining why not fixing>"
 ```
 
-Keep replies professional and constructive:
-- "I respectfully disagree because [reason]. Happy to discuss further."
-- "This seems out of scope for this PR. I'll create a follow-up issue."
+Keep replies conservative and deferential — assume the reviewer knows more than you:
+- "The author specifically asked me to do it this way — should I still change it?"
 - "Could you clarify what you mean by [X]?"
 
 Do NOT resolve threads for comments you didn't fix.
