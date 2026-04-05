@@ -37,12 +37,12 @@
 
 - Schema improvements to the apply workflow steps and finalize-pr skill notes for clarity and correctness.
 
-- Validator commit skill now uses exit code 2 from `agent-gauntlet detect` to determine whether gates would run, replacing fragile output text parsing.
+- Validator commit skill now uses exit code 2 from `agent-validator detect` to determine whether gates would run, replacing fragile output text parsing.
 
 
 ## 0.3.0
 
 ### Minor Changes
 
-- [#12](https://github.com/Codagent-AI/agent-skills/pull/12) Improve the implementor skill with better task dispatch and update the agent-gauntlet dependency.
+- [#12](https://github.com/Codagent-AI/agent-skills/pull/12) Improve the implementor skill with better task dispatch and update the agent-validator dependency.
 

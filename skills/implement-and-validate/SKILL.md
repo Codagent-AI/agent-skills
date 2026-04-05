@@ -31,18 +31,18 @@ After self-review passes, run the validator directly using the steps below. Do N
 
 1. **Clean up stale lock** (safe — tasks are dispatched sequentially, never in parallel):
    ```bash
-   rm -f gauntlet_logs/.validator-run.lock
+   rm -f validator_logs/.validator-run.lock
    ```
 
 2. **Run the validator with output captured to a file** (Bun can drop stdout/stderr during LLM review subprocesses, so always redirect to a file):
    ```bash
-   agent-validator run > gauntlet_logs/_subagent-run.log 2>&1; printf 'GAUNTLET_EXIT=%s\n' "$?" >> gauntlet_logs/_subagent-run.log
+   agent-validator run > validator_logs/_subagent-run.log 2>&1; printf 'GAUNTLET_EXIT=%s\n' "$?" >> validator_logs/_subagent-run.log
    ```
    Use `Bash` with `timeout: 300000` (5 minutes). Do NOT use `run_in_background`.
 
 3. **Read the captured output** (this is the reliable path — do not rely on the Bash tool's stdout capture):
    ```bash
-   cat gauntlet_logs/_subagent-run.log
+   cat validator_logs/_subagent-run.log
    ```
 
    CRITICAL: **Exit code 1 means "violations were found"** — the command ran successfully but detected issues that need fixing. This is NOT an infrastructure failure. Do NOT retry blindly — read the output to understand what needs fixing.
@@ -56,7 +56,7 @@ After self-review passes, run the validator directly using the steps below. Do N
    - `Status: Retry limit exceeded` → stop and include the failure details in your report
    - **No `Status:` line found** → the output file may be empty (known Bun issue). Read the latest console log instead:
      ```bash
-     ls -t gauntlet_logs/console.*.log 2>/dev/null | head -1 | xargs -r cat
+     ls -t validator_logs/console.*.log 2>/dev/null | head -1 | xargs -r cat
      ```
      If no console log exists either, re-run the command once more (go back to step 2).
 

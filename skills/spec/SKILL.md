@@ -127,7 +127,7 @@ Scenarios describe observable behavioral contracts — what the system does when
 
 Write scenarios as behavioral contracts the capability guarantees to its callers:
 - GOOD: "WHEN subagent finds task ambiguous THEN it returns questions without implementing"
-- GOOD: "WHEN gauntlet retry limit is exhausted THEN subagent returns failure to coordinator"
+- GOOD: "WHEN validator retry limit is exhausted THEN subagent returns failure to coordinator"
 - BAD:  "WHEN SKILL.md is read THEN it contains TDD instructions"
 - BAD:  "WHEN config file exists THEN it has the correct YAML keys"
 
