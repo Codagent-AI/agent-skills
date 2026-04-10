@@ -43,7 +43,7 @@ For every item classified as **Missed** or **Partially addressed**:
 
 Present your findings:
 
-```
+```markdown
 ## Self-Review
 
 ### Addressed

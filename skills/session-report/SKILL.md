@@ -50,7 +50,7 @@ For each genuine context gap:
 
 ## Output Format
 
-```
+```markdown
 ## Assumption Audit
 
 | Ambiguity | Choice | Impact | Notes |
