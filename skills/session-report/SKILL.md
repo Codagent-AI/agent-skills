@@ -18,13 +18,15 @@ Work through each dimension in order. For every finding, cite specific evidence.
 Identify every place you made a decision that was not dictated by the task file or spec. For each assumption:
 
 - **Ambiguity** — what the spec didn't say
-- **Choice** — what you decided
+- **Choice** — what you decided and why (the reasoning, not just the outcome)
+- **Risk** — what could go wrong if this choice is wrong. Be specific: name the scenario, the affected code path, and what would break. "Could surprise future workflows" is not specific enough — say which workflow shape triggers it and what the symptom would be.
 - **Impact classification**:
   - `benign` — reasonable default, no real consequence
   - `notable` — meaningful choice that could have gone differently
   - `risky` — could cause problems, warrants review
+- **Recommendation** (for `notable` and `risky` only) — what the reviewer should do: verify behavior, add a test, clarify the spec, or approve as-is with rationale.
 
-Surface all assumptions. Do not filter out benign ones.
+Surface all assumptions. Do not filter out benign ones. Sort by impact: `risky` first, then `notable`, then `benign`.
 
 ### Dimension 2: Context Gaps
 
@@ -53,15 +55,30 @@ For each genuine context gap:
 ```markdown
 ## Assumption Audit
 
-| Ambiguity | Choice | Impact | Notes |
-|-----------|--------|--------|-------|
-| [What spec didn't say] | [What you chose] | benign/notable/risky | [Consequence or implication] |
+### Risky
+
+1. **[What the spec didn't say]**
+   - **Choice:** [What you decided and why]
+   - **Risk:** [Specific scenario that breaks — name the code path, workflow shape, and symptom]
+   - **Recommendation:** [What the reviewer should do]
+
+### Notable
+
+1. **[What the spec didn't say]**
+   - **Choice:** [What you decided and why]
+   - **Risk:** [Specific scenario that breaks — name the code path, workflow shape, and symptom]
+   - **Recommendation:** [What the reviewer should do]
+
+### Benign
+
+1. **[What the spec didn't say]** — [What you decided and why]
 
 ## Context Gaps
 
 - [What happened] — Missing context: [what was needed]
-- [What happened] — Missing context: [what was needed]
 ```
+
+Omit any section (`Risky`, `Notable`, `Benign`) that has zero items.
 
 ## Guardrails
 
