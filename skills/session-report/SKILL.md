@@ -28,17 +28,25 @@ Surface all assumptions. Do not filter out benign ones.
 
 ### Dimension 2: Context Gaps
 
-Identify moments where you struggled because the task file or project context (CLAUDE.md, AGENTS.md, etc.) was missing information it could have provided. Only report gaps that are **actionable** — information that was knowable upfront and should have been in the task file. Do not report things that are inherently only discoverable at runtime (e.g., iterative validator failures, unexpected test output).
+A context gap is a **major, avoidable hole** in the task file or project context that sent you down a fundamentally wrong path, caused you to build the wrong thing, or wasted significant effort that better upfront information would have prevented entirely.
 
-Signs of an actionable context gap:
-- You had to search for something the task file could have pointed you to
-- You hit a constraint (naming convention, test pattern, linter rule) that was known but not documented in the task or project context
-- You made repeated attempts because neither the task nor project context mentioned a prerequisite or dependency
-- The task file or project context could have answered a question you had to figure out yourself
+The bar is high. Most sessions have zero context gaps. Fixing a linter warning is not a context gap. Searching for a convention is not a context gap. Iterating on validator feedback is not a context gap — it is the normal development loop.
 
-For each observation:
-- **What happened** — the observable struggle
-- **What context was missing** — what the task file or project context should have included
+**Examples of real context gaps:**
+- The task said to extend module X, but module X was deleted last week and replaced by module Y — you built against a nonexistent target
+- The task required integrating with service A but didn't mention that service A requires an auth token from a separate provisioning step — you couldn't have known this without tribal knowledge
+- The task file pointed you to the wrong directory or package, wasting significant effort before you found the right one
+- A critical requirement was completely absent from the task file and no automated check caught it — you only learned about it from the user after delivering
+
+**Things that are NOT context gaps (do not report these):**
+- Anything the validator caught (lint, security, permissions, test failures) — the validator's entire purpose is to catch what the task doesn't enumerate
+- Quick searches for conventions, patterns, or existing code — that is normal development
+- Iterative fix cycles of any kind — fixing things the first pass missed is expected, not a gap
+- Learning something new about the codebase during implementation
+
+For each genuine context gap:
+- **What happened** — the concrete wasted effort or wrong direction
+- **What was missing** — the specific information that, if present, would have prevented it entirely
 
 ## Output Format
 
