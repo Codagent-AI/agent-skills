@@ -25,17 +25,19 @@ Every capability needs its behavioral contract specified before design begins. E
 You MUST create a task for each of these items and complete them in order:
 
 1. **Read the proposal** — identify the Capabilities section and the list of capabilities to spec. Skip if you just wrote the proposal in this session.
-2. **For each capability** — walk through the conversational requirement-discovery process:
+2. **Survey related existing specs** — before asking questions, scan any existing spec files in neighboring or overlapping capabilities. Identify: requirements this change might conflict with, behaviors already specified that this change depends on, and naming/terminology conventions to stay consistent with. For modified capabilities, locate the existing spec file now so you can copy its requirement blocks verbatim when writing the delta. Skip specs you already read earlier in this session.
+3. **For each capability** — walk through the conversational requirement-discovery process:
    a. **Ask clarifying questions** — one at a time, understand behaviors, boundaries, error conditions, edge cases
    b. **Present spec sections for approval** — show the proposed requirements and scenarios, get user approval
    c. **Write the spec file** — using the Artifact Template below
-3. **Write deferred-to-design markers** — for scenarios that depend on unresolved architectural choices
+4. **Write deferred-to-design markers** — for scenarios that depend on unresolved architectural choices
 
 ## Process Flow
 
 ```dot
 digraph spec {
     "Read proposal capabilities" [shape=box];
+    "Survey existing specs" [shape=box];
     "Pick next capability" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Present spec sections" [shape=box];
@@ -44,7 +46,8 @@ digraph spec {
     "More capabilities?" [shape=diamond];
     "Done" [shape=box];
 
-    "Read proposal capabilities" -> "Pick next capability";
+    "Read proposal capabilities" -> "Survey existing specs";
+    "Survey existing specs" -> "Pick next capability";
     "Pick next capability" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Present spec sections";
     "Present spec sections" -> "User approves?";

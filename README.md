@@ -26,6 +26,7 @@ Each skill is invoked with `/codagent:<skill-name>`.
 - **`design`** — Creates a technical design through collaborative brainstorming. Proposes 2-3 approaches with trade-offs, presents the design incrementally for approval, and writes `design.md`.
 - **`review-spec`** — Reviews design artifacts (proposal, specs, design, tasks) for internal consistency, cross-artifact alignment, and gaps. Reports findings with exact citations.
 - **`plan-tasks`** — Creates a structured task breakdown from the proposal, design, and specs. Each task file is self-contained with everything a subagent needs to implement it.
+- **`simple-plan`** — Lightweight alternative to `propose` + `spec` + `design` + `plan-tasks` for small, quick changes. One conversation, clarifying questions asked one at a time, then writes the proposal, specs, an optional design doc, and a placeholder `tasks.md` so the change still slots into OpenSpec.
 - **`implement-change`** — Autonomous tech lead that implements a full change end-to-end. Dispatches one `implement-and-validate` subagent per task (sequentially, never in parallel), runs the validator, archives the change, and finalizes the PR.
 - **`implement-with-tdd`** — Enforces test-driven development: write a failing test, watch it fail, write minimal code to pass, refactor. No production code without a failing test first.
 - **`implement-and-validate`** — Autonomous implementer that executes a single task end-to-end. Calls `implement-with-tdd` to build the code, performs self-review, runs the Agent Validator, and commits on success.

@@ -174,9 +174,17 @@ Read the failed check log output carefully. Identify:
 - Build errors with relevant output
 - Any other actionable error details
 
-Read the review comments carefully. For each:
-1. **Fixable** — clear code change requested → fix it
-2. **Debatable** — default to trusting that reviewers (human or bot) know more than you about what they're asking for. Only push back if you genuinely believe the suggestion is wrong or harmful. If so, phrase your disagreement conservatively, possibly as a question (e.g. "I think I should not do this because X — okay?"). Watch for their response on the next round. If a reviewer asked for it, treat it as in scope.
+Read the review comments carefully and decide for each whether to fix or skip it.
+
+**Valid reasons to skip a comment:**
+- Purely stylistic or subjective preference with no clear correctness argument
+- You genuinely believe the suggestion is wrong or harmful — push back conservatively instead (e.g. "I think I should not do this because X — okay?")
+
+**Do not skip for these reasons:**
+- "Issue is pre-existing" — fix it unless another valid reason applies
+- "Issue is out of scope" — address valid reviewer feedback even if it requires refactoring or non-trivial changes
+
+Default to trusting reviewers. If a reviewer asked for it, treat it as in scope.
 
 ### Step 2: Read the relevant files
 
@@ -193,8 +201,6 @@ For each fixable CI failure:
 For each fixable review comment:
 - Read the file at the specified path and line
 - Make the requested change
-
-Do NOT fix comments you disagree with. Note them in your report.
 
 ### Step 4: Resolve fixed review threads via GraphQL
 
