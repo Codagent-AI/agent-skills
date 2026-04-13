@@ -1,5 +1,17 @@
 # agent-skills
 
+## 0.7.0
+
+### Minor Changes
+
+- [#27](https://github.com/Codagent-AI/agent-skills/pull/27) Adds the `implement-change` skill, which autonomously dispatches subagents to implement a full change end-to-end.
+- [#29](https://github.com/Codagent-AI/agent-skills/pull/29) Adds the `session-report` and `task-compliance` (formerly self-review) skills for auditing session assumptions and verifying implementation against task requirements.
+- [#30](https://github.com/Codagent-AI/agent-skills/pull/30) Adds the `simple-plan` skill, a lightweight planning tool for small changes that combines propose, spec, and design into a single step.
+
+### Patch Changes
+
+- [#28](https://github.com/Codagent-AI/agent-skills/pull/28) Renames all internal references from "gauntlet" to "validator" for consistency with the updated tool naming.
+
 ## 0.6.1
 
 ### Patch Changes
