@@ -1,4 +1,5 @@
 ---
+name: handoff
 description: >
   Summarizes a specific aspect of the current conversation so another agent can resume.
   Use when the user says "handoff", "summarize for handoff", "write a handoff", or wants to

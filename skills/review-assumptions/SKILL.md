@@ -1,15 +1,16 @@
 ---
+name: review-assumptions
 description: >
-  Review the risky/notable assumptions and context gaps surfaced by implementor session reports.
-  Fix high-confidence issues directly; ask the user one clarifying question at a time for
-  ambiguous ones.
+  Reviews risky/notable assumptions and context gaps surfaced by implementor session reports,
+  fixes high-confidence issues directly, and asks one clarifying question at a time for
+  ambiguous findings.
   Use when the user says "review assumptions", "audit implementor assumptions", or when invoked
   by a workflow's assumption-review step.
 ---
 
 # Review Assumptions
 
-The implementor(s) produced session report(s) (via `codagent:session-report`) listing `risky` / `notable` assumptions and context gaps. They did not have the plan's intent — you do. Audit the findings, act on what you're confident about, ask the user about what you're not.
+The implementor(s) produced session report(s) (via `codagent:session-report`) listing `risky` / `notable` assumptions and context gaps. Assume the implementors did not have the plan's intent; audit the findings against that intent, act on confident fixes, and ask about ambiguous cases.
 
 ## Checklist
 
