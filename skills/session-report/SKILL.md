@@ -21,12 +21,12 @@ Identify every place you made a decision that was not dictated by the task file 
 - **Choice** — what you decided and why (the reasoning, not just the outcome)
 - **Risk** — what could go wrong if this choice is wrong. Be specific: name the scenario, the affected code path, and what would break. "Could surprise future workflows" is not specific enough — say which workflow shape triggers it and what the symptom would be.
 - **Impact classification**:
-  - `benign` — reasonable default, no real consequence
+  - `benign` — reasonable default, no real consequence (do not report)
   - `notable` — meaningful choice that could have gone differently
   - `risky` — could cause problems, warrants review
-- **Recommendation** (for `notable` and `risky` only) — what the reviewer should do: verify behavior, add a test, clarify the spec, or approve as-is with rationale.
+- **Recommendation** — what the reviewer should do: verify behavior, add a test, clarify the spec, or approve as-is with rationale.
 
-Surface all assumptions. Do not filter out benign ones. Sort by impact: `risky` first, then `notable`, then `benign`.
+Report only `risky` and `notable` assumptions. Drop `benign` entirely — they dilute the signal. Sort `risky` first, then `notable`.
 
 ### Dimension 2: Context Gaps
 
@@ -38,7 +38,6 @@ The bar is high. Most sessions have zero context gaps. Fixing a linter warning i
 - The task said to extend module X, but module X was deleted last week and replaced by module Y — you built against a nonexistent target
 - The task required integrating with service A but didn't mention that service A requires an auth token from a separate provisioning step — you couldn't have known this without tribal knowledge
 - The task file pointed you to the wrong directory or package, wasting significant effort before you found the right one
-- A critical requirement was completely absent from the task file and no automated check caught it — you only learned about it from the user after delivering
 
 **Things that are NOT context gaps (do not report these):**
 - Anything the validator caught (lint, security, permissions, test failures) — the validator's entire purpose is to catch what the task doesn't enumerate
@@ -69,16 +68,12 @@ For each genuine context gap:
    - **Risk:** [Specific scenario that breaks — name the code path, workflow shape, and symptom]
    - **Recommendation:** [What the reviewer should do]
 
-### Benign
-
-1. **[What the spec didn't say]** — [What you decided and why]
-
 ## Context Gaps
 
 - [What happened] — Missing context: [what was needed]
 ```
 
-Omit any section (`Risky`, `Notable`, `Benign`) that has zero items.
+Omit any section (`Risky`, `Notable`) that has zero items. Do not include a `Benign` section.
 
 ## Guardrails
 
