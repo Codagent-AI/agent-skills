@@ -115,6 +115,8 @@ This skill does not invoke other skills or manage sequencing.
 - **Explore alternatives** — Always propose 2–3 approaches before settling
 - **Incremental validation** — Present design, get approval before moving on
 - **Be flexible** — Go back and clarify when something doesn't make sense
+- **Capture implementation details** — Implementation details that came up in conversation but don't belong in behavioral specs (algorithms, data-structure choices, integration points, migration steps, error-handling strategies, etc.) **must** be captured here
+- **Write for a different agent** — A separate implementing agent will read this design with no shared context from this conversation. Every decision, constraint, and technical detail must be in the written artifact
 
 ## Artifact Template
 
