@@ -19,7 +19,7 @@ Rapid, lightweight planning for small changes. One conversation produces a `prop
    - **Related existing specs** — scan spec files in neighboring or overlapping capabilities for conflicts, dependencies, and naming conventions. For modified capabilities, locate the existing spec now.
    - **Code, when appropriate** — if the change touches existing code, skim the relevant files/modules to understand current behavior. Skip this for greenfield work, pure doc changes, or anything where reading code wouldn't change what you ask.
    Keep it light — this is a quick orientation, not the deep research pass from `propose` or `design`.
-3. **Clarify** — Ask clarifying questions **one at a time**. Prefer multiple-choice when it fits. Keep the conversation tight — a handful of questions, not a full interview. Focus on:
+3. **Clarify** — Follow the `codagent:ask-questions` skill to gather information. Keep the conversation tight — a handful of questions total, not a full interview. Focus on:
    - Behaviors, boundaries, and error/edge cases (for the specs — this is the load-bearing part)
    - Scope boundaries (what's in, what's out)
    - Any architectural question that would actually change the specs — otherwise skip it
@@ -64,7 +64,7 @@ Use relative paths from the change directory. Include every spec file. Include `
 - **Do NOT cheerlead.** If you spot a real problem with the idea, say so — but don't run a full GO/NO-GO evaluation.
 - **Do NOT pad with unused sections.** Omit sections of the templates that don't apply.
 - **Do NOT write `design.md` by default.** The bar is "someone will re-litigate this later without a written rationale." If that's not true, skip it.
-- **Do ask one question at a time.** The only process discipline that matters here.
+- **Follow `codagent:ask-questions`.** For tool choice and batching strategy whenever you need user input.
 
 ---
 

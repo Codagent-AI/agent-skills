@@ -43,7 +43,7 @@ If a finding makes a claim about code ("I fixed X", "already handles Y"), have a
 If you're guessing, it's ambiguous. Calibrate your confidence bar honestly.
 
 <HARD-GATE>
-For ambiguous findings, ask **one question at a time** via the appropriate tool for requesting user input. Never batch. Finish one finding fully — including applying the user's answer — before raising the next.
+For ambiguous findings, ask **one question at a time** via the `codagent:ask-questions` skill. This skill intentionally overrides the default batching strategy: each finding must be fully resolved (including applying the user's answer) before raising the next.
 </HARD-GATE>
 
 Each clarifying question should:

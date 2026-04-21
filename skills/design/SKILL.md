@@ -74,11 +74,9 @@ digraph design {
 - Use the spec files as the authoritative source of requirements
 
 **Asking clarifying questions:**
-- Use the appropriate tool for asking the user a question or requesting input for all questions and confirmations
-- Ask questions one at a time to clarify architecture, patterns, and trade-offs
-- Prefer multiple-choice questions when possible, but open-ended is fine too
-- Only one question per message — if a topic needs more exploration, break it into multiple questions
+- Follow the `codagent:ask-questions` skill for how to ask questions (tool to use, batching strategy, question quality)
 - Focus on: technical approach, architecture, patterns, trade-offs, constraints
+- Prefer multiple-choice questions when possible, but open-ended is fine too
 - Do NOT ask about what the system should do — that is settled in the specs
 
 **Tracking spec implications:**
@@ -111,10 +109,10 @@ This skill does not invoke other skills or manage sequencing.
 - **Read specs first** — Requirements are settled before this conversation begins
 - **Architecture only** — Ask about "how", not "what"
 - **Surface spec implications** — Don't silently ignore new requirements revealed by architecture
-- **One question at a time** — Don't overwhelm with multiple questions
+- **Use `codagent:ask-questions`** — For tool choice and batching strategy when gathering information
 - **Multiple choice preferred** — Easier to answer than open-ended when possible
 - **YAGNI ruthlessly** — Remove unnecessary features from all designs
-- **Explore alternatives** — Always propose 2-3 approaches before settling
+- **Explore alternatives** — Always propose 2–3 approaches before settling
 - **Incremental validation** — Present design, get approval before moving on
 - **Be flexible** — Go back and clarify when something doesn't make sense
 
