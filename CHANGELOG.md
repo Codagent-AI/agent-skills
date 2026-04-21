@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.7.1
+
+### Patch Changes
+
+- [#32](https://github.com/Codagent-AI/agent-skills/pull/32) Add `handoff` and `review-assumptions` skills for summarizing session context for another agent and auditing implementor assumptions, and update `session-report` with improved output
+- [#33](https://github.com/Codagent-AI/agent-skills/pull/33) Add `ask-questions` skill for structured user interaction, and include `handoff` and `review-assumptions` skills with guidance for writing context handoffs to other agents
+
 ## 0.7.0
 
 ### Minor Changes
