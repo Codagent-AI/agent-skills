@@ -68,11 +68,9 @@ digraph spec {
 - Work through capabilities one at a time
 
 **Asking clarifying questions:**
-- Use the appropriate tool for asking the user a question or requesting input for all questions and confirmations
-- Ask questions one at a time to understand the behavioral contract for each capability
-- Prefer multiple-choice questions when possible, but open-ended is fine too
-- Only one question per message — if a topic needs more exploration, break it into multiple questions
+- Follow the `codagent:ask-questions` skill for how to ask questions (tool to use, batching strategy, question quality)
 - Focus on: what the system does (behaviors), what it rejects (boundaries), what goes wrong (error conditions), unusual situations (edge cases)
+- Prefer multiple-choice questions when possible, but open-ended is fine too
 - Do NOT ask about architecture, patterns, or technical approach — that belongs in design
 
 **When a requirement depends on architectural knowledge:**
@@ -102,7 +100,7 @@ Tell the user the relative path of each spec file created. This skill does not i
 
 ## Key Principles
 
-- **One question at a time** — Don't overwhelm with multiple questions
+- **Use `codagent:ask-questions`** — For tool choice and batching strategy when gathering information
 - **Multiple choice preferred** — Easier to answer than open-ended when possible
 - **Focus on "what", not "how"** — Behaviors, boundaries, and error conditions — not architecture
 - **Deferred is valid** — A deferred-to-design marker is better than a forced answer

@@ -1,9 +1,11 @@
 ---
 description: >-
-  Creates a release PR from merged PRs — gathers merged PRs since last tag,
-  calculates semver bump from conventional commit titles, generates changelog
-  entries, and opens a release PR. Use when the user says "release", "cut a
-  release", "create a release PR", "prepare a release", or "bump version".
+  Creates a release PR from merged PRs — gathers merged PRs since last tag
+  (plus any unmerged current-branch PR), calculates semver bump from
+  conventional commit titles, generates changelog entries, and opens a release
+  PR. Works from any branch: includes both main and current branch changes.
+  Use when the user says "release", "cut a release", "create a release PR",
+  "prepare a release", or "bump version".
 ---
 
 Create a release PR by gathering merged PRs, calculating the version bump, writing changelog entries, and opening the PR.
