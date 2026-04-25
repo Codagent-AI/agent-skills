@@ -11,6 +11,7 @@ cli:
   # Recommended settings (see docs/eval-results.md)
   adapters:
     codex:
+      model: gpt-5.3-codex
       allow_tool_use: false
       thinking_budget: low
     claude:
