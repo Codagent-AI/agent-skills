@@ -1,0 +1,20 @@
+{
+  "name": "codagent",
+  "interface": {
+    "displayName": "Codagent"
+  },
+  "plugins": [
+    {
+      "name": "codagent",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codagent"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

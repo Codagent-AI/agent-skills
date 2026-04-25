@@ -1,2 +1,9 @@
 validator_logs
 .agents
+!.agents/
+!.agents/plugins/
+!.agents/plugins/marketplace.json
+!.codex-plugin/
+!plugins/codagent/
+!plugins/codagent/.codex-plugin/
+!plugins/codagent/.codex-plugin/plugin.json

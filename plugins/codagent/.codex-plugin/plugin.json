@@ -1,0 +1,32 @@
+{
+  "name": "codagent",
+  "version": "0.7.1",
+  "description": "A curated set of skills for each stage of development - propose, spec, design, plan, implement, ship.",
+  "author": {
+    "name": "Codagent-AI",
+    "url": "https://github.com/Codagent-AI"
+  },
+  "homepage": "https://github.com/Codagent-AI/agent-skills",
+  "repository": "https://github.com/Codagent-AI/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "spec-driven",
+    "tdd",
+    "planning",
+    "implementation"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codagent",
+    "shortDescription": "Structured development workflow skills",
+    "longDescription": "A curated set of skills for each stage of development - propose, spec, design, plan, implement, ship.",
+    "developerName": "Codagent-AI",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/Codagent-AI/agent-skills"
+  }
+}

@@ -5,7 +5,7 @@
 
 ## Overview
 
-Codagent is a plugin for Claude Code and Cursor that provides a set of focused skills for spec driven development — from evaluating an idea to implementing with subagents to shepherding a PR through CI. Inspired by [obra/superpowers](https://github.com/obra/superpowers) and [OpenSpec](https://github.com/Fission-AI/OpenSpec).
+Codagent is a plugin for Claude Code, Codex, and Cursor that provides a set of focused skills for spec driven development — from evaluating an idea to implementing with subagents to shepherding a PR through CI. Inspired by [obra/superpowers](https://github.com/obra/superpowers) and [OpenSpec](https://github.com/Fission-AI/OpenSpec).
 
 ## Features
 
@@ -18,7 +18,7 @@ Codagent is a plugin for Claude Code and Cursor that provides a set of focused s
 
 ## Skills
 
-Each skill is invoked with `/codagent:<skill-name>`.
+Claude Code invokes skills with `/codagent:<skill-name>`. Codex invokes them by name in chat, for example `use the codagent:propose skill`.
 
 - **`init`** — Initializes Codagent in your project. Checks that the Agent Validator CLI is installed and configured. Safe to re-run.
 - **`propose`** — Evaluates whether an idea is worth building. Researches the codebase and web, delivers a GO / GO WITH CAVEATS / NO-GO verdict, and writes `proposal.md`.
@@ -55,6 +55,24 @@ claude plugin marketplace add Codagent-AI/agent-skills
 claude plugin install codagent
 ```
 
+#### Codex
+
+This repo includes a Codex marketplace at `.agents/plugins/marketplace.json` and a packaged Codex plugin at `plugins/codagent/`.
+
+Add the marketplace to Codex:
+
+```bash
+codex plugin marketplace add .
+```
+
+Then restart Codex, open the plugin directory with:
+
+```text
+/plugins
+```
+
+Select the `Codagent` marketplace and enable/install the `codagent` plugin.
+
 #### Cursor
 
 ```bash
@@ -63,8 +81,16 @@ cursor plugins install Codagent-AI/agent-skills
 
 ### 3. Initialize
 
+#### Claude Code
+
 ```text
 /codagent:init
+```
+
+#### Codex
+
+```text
+use the codagent:init skill
 ```
 
 ## Updating
@@ -74,7 +100,7 @@ claude plugin marketplace update codagent
 claude plugin update codagent@codagent
 ```
 
-Then run to get the latest skills:
+Then run to get the latest skills in Claude Code:
 ```text
 /codagent:init
 ```
