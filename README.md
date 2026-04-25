@@ -57,7 +57,7 @@ claude plugin install codagent
 
 #### Codex
 
-This repo includes a Codex marketplace at `.agents/plugins/marketplace.json` and a packaged Codex plugin at `plugins/codagent/`.
+This repo includes a Codex marketplace at `.agents/plugins/marketplace.json` and a Codex plugin manifest at `.codex-plugin/plugin.json`.
 
 Add the marketplace to Codex:
 

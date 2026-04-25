@@ -7,8 +7,9 @@
     {
       "name": "codagent",
       "source": {
-        "source": "local",
-        "path": "./plugins/codagent"
+        "source": "url",
+        "url": "https://github.com/Codagent-AI/agent-skills.git",
+        "ref": "main"
       },
       "policy": {
         "installation": "AVAILABLE",
