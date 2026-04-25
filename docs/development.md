@@ -27,7 +27,7 @@ This repo includes a Codex marketplace at `.agents/plugins/marketplace.json` and
 To register the local marketplace with Codex:
 
 ```bash
-codex plugin marketplace add /path/to/agent-skills
+codex plugin marketplace add Codagent-AI/agent-skills
 ```
 
 Then restart Codex, open the plugin directory with `/plugins`, choose the `Codagent` marketplace, and enable/install the `codagent` plugin.
@@ -42,7 +42,7 @@ For marketplace development, re-add or upgrade the marketplace after changing `.
 
 ```bash
 codex plugin marketplace remove codagent
-codex plugin marketplace add /path/to/agent-skills
+codex plugin marketplace add Codagent-AI/agent-skills
 ```
 
 Then restart Codex so the plugin directory reloads the local marketplace and plugin metadata.

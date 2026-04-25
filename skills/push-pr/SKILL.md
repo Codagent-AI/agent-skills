@@ -22,7 +22,7 @@ Commit all changes, push to the remote, and create or update the pull request fo
      - Run `git diff --staged` and `git diff` to see what's changed
      - Generate a concise, descriptive commit message based on the changes
      - Stage changed files by name (avoid staging sensitive files like `.env` or credentials)
-     - Commit with: `git commit -m "message" -m "Co-Authored-By: Claude <noreply@anthropic.com>"`
+     - Commit with: `git commit -m "message"`; add `-m "Co-Authored-By: <Name> <email>"` only when the co-author identity is explicitly configured or provided by the user
    - If there are no changes, proceed to push check
 
 3. **Push to remote**
@@ -31,8 +31,10 @@ Commit all changes, push to the remote, and create or update the pull request fo
    - If push fails, show the error and stop
 
 4. **Check if PR exists**
-   - Run `gh pr view --json url,title,state,number,headRefOid || true` to check for an existing PR; the command exits non-zero when no PR exists, so `|| true` prevents the step from stopping
-   - If the output is empty or the command produced no JSON, treat it as no PR existing and proceed to creation
+   - Run `gh pr view --json url,title,state,number,headRefOid` while capturing stdout, stderr, and exit code
+   - If the command exits non-zero and stderr indicates no pull requests were found for the branch, treat it as no PR existing and proceed to creation
+   - If the command exits non-zero for auth, network, API, or other errors, report stderr and stop
+   - If the command succeeds but output is empty or invalid JSON, report the unexpected output and stop
    - Otherwise, parse the `state` field from the JSON response
    - **If PR exists and is OPEN:**
      - Check if there are new commits by comparing current HEAD with PR's `headRefOid`

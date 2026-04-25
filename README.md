@@ -62,7 +62,7 @@ This repo includes a Codex marketplace at `.agents/plugins/marketplace.json` and
 Add the marketplace to Codex:
 
 ```bash
-codex plugin marketplace add .
+codex plugin marketplace add Codagent-AI/agent-skills
 ```
 
 Then restart Codex, open the plugin directory with:
