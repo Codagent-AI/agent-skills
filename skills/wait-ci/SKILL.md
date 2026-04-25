@@ -46,7 +46,7 @@ Use **`timeout: 120000`** on the Bash call. Check the exit code:
 After each exit-2 result, set `ever_had_checks = ever_had_checks OR result.had_checks`.
 
 **Timeout handling:** When all runs are exhausted (exit code 2 on the last run):
-- If `ever_had_checks` is false → report `passed` (no CI configured for this repo/PR)
+- If `ever_had_checks` is false → treat CI as non-blocking, then still run Step 3 before reporting a final status
 - Otherwise → report `pending` with the list of still-running checks
 
 The script outputs a JSON object with these fields:
@@ -74,7 +74,7 @@ gh run view <run-id> --log-failed
 
 Keep the last 100 lines if output is longer. External checks (no run ID) get no logs.
 
-### 3. Gather PR comments (when checks are terminal)
+### 3. Gather PR comments (when checks are terminal or no checks exist)
 
 ```bash
 bash skills/wait-ci/scripts/get-pr-comments.sh <owner> <repo> <pr-number> [<pr-author-login>]
@@ -91,6 +91,8 @@ Output fields:
 | `issue_comments` | array | `{author, body}` top-level PR comments (excluding PR creator) |
 
 **Status upgrade:** If checks returned `passed` but `get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments`.
+
+**No-checks handling:** If polling timed out with no checks ever observed, run `get-pr-comments.sh` before reporting success. Report `comments` when `has_comments` is true; otherwise report `passed`.
 
 ## Output Format
 

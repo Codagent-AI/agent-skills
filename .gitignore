@@ -1,2 +1,2 @@
 validator_logs
-.agents
+!.codex-plugin/

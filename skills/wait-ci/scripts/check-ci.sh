@@ -21,8 +21,8 @@
 #   owner / repo    Repo coordinates for subsequent calls
 #   had_checks      bool — whether any checks were seen on this invocation
 #   checks          all checks from the last poll
-#   failed_checks   checks with bucket == "fail"
-#   passed_checks   checks with bucket == "pass"
+#   failed_checks   checks with bucket == "fail" or cancellation states
+#   passed_checks   checks with bucket == "pass" or non-blocking skip states
 #   pending_checks  checks still running
 #   blocking_reviews reviews with CHANGES_REQUESTED (latest per reviewer)
 #   failed_run_ids  GitHub Actions run IDs from failed check links
@@ -94,15 +94,19 @@ while [[ $poll -lt $MAX_POLLS ]]; do
   fi
 
   # ── Fetch reviews ─────────────────────────────────────────────────────────────
-  if ! reviews_json=$(gh api --paginate "repos/${owner}/${repo}/pulls/${pr_number}/reviews?per_page=100" 2>/dev/null | jq -s 'add'); then
-    jq -n --arg error "failed to fetch PR reviews" '{error: $error}' >&2
+  _reviews_err=$(mktemp)
+  if ! reviews_json=$(gh api --paginate "repos/${owner}/${repo}/pulls/${pr_number}/reviews?per_page=100" 2>"$_reviews_err" | jq -s 'add // []'); then
+    _err_msg=$(cat "$_reviews_err"); rm -f "$_reviews_err"
+    jq -n --arg error "failed to fetch PR reviews: $_err_msg" '{error: $error}' >&2
     exit 1
+  else
+    rm -f "$_reviews_err"
   fi
 
   # ── Classify checks ───────────────────────────────────────────────────────────
-  pending_checks=$(echo "$checks_json" | jq '[.[] | select((.bucket // .state) == "pending" or (.bucket // .state) == "in_progress" or (.bucket // .state) == "queued")]')
-  failed_checks=$(echo "$checks_json" | jq '[.[] | select((.bucket // .state) == "fail" or (.bucket // .state) == "failure")]')
-  passed_checks=$(echo "$checks_json" | jq '[.[] | select((.bucket // .state) == "pass" or (.bucket // .state) == "success")]')
+  pending_checks=$(echo "$checks_json" | jq '[.[] | select((.bucket // .state) as $s | $s == "pending" or $s == "in_progress" or $s == "queued")]')
+  failed_checks=$(echo "$checks_json" | jq '[.[] | select((.bucket // .state) as $s | $s == "fail" or $s == "failure" or $s == "cancel" or $s == "cancelled")]')
+  passed_checks=$(echo "$checks_json" | jq '[.[] | select((.bucket // .state) as $s | $s == "pass" or $s == "success" or $s == "skipping" or $s == "skipped" or $s == "neutral")]')
 
   total_checks=$(echo "$checks_json" | jq 'length')
   failed_count=$(echo "$failed_checks" | jq 'length')
