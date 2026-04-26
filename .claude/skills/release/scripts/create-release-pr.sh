@@ -8,6 +8,7 @@ set -euo pipefail
 
 REPO="Codagent-AI/agent-skills"
 PLUGIN_JSON=".claude-plugin/plugin.json"
+CODEX_PLUGIN_JSON=".codex-plugin/plugin.json"
 CURSOR_PLUGIN_JSON=".cursor-plugin/plugin.json"
 MARKETPLACE_JSON=".claude-plugin/marketplace.json"
 CHANGELOG="CHANGELOG.md"
@@ -25,6 +26,10 @@ CURRENT_BRANCH=$(git branch --show-current)
 # --- Update plugin.json version ---
 jq --arg v "$NEW_VERSION" '.version = $v' "$PLUGIN_JSON" > "${PLUGIN_JSON}.tmp" \
   && mv "${PLUGIN_JSON}.tmp" "$PLUGIN_JSON"
+
+# --- Update codex plugin.json version ---
+jq --arg v "$NEW_VERSION" '.version = $v' "$CODEX_PLUGIN_JSON" > "${CODEX_PLUGIN_JSON}.tmp" \
+  && mv "${CODEX_PLUGIN_JSON}.tmp" "$CODEX_PLUGIN_JSON"
 
 # --- Update cursor plugin.json version ---
 jq --arg v "$NEW_VERSION" '.version = $v' "$CURSOR_PLUGIN_JSON" > "${CURSOR_PLUGIN_JSON}.tmp" \
@@ -60,7 +65,7 @@ fi
 
 if [ "$CURRENT_BRANCH" != "main" ]; then
   # --- Non-main branch: commit and push to existing branch/PR ---
-  git add "$PLUGIN_JSON" "$CURSOR_PLUGIN_JSON" "$MARKETPLACE_JSON" "$CHANGELOG"
+  git add "$PLUGIN_JSON" "$CODEX_PLUGIN_JSON" "$CURSOR_PLUGIN_JSON" "$MARKETPLACE_JSON" "$CHANGELOG"
   git commit -m "chore: release v${NEW_VERSION}"
   git push
 
@@ -70,7 +75,7 @@ else
   # --- Main branch: create release branch and PR ---
   git checkout -B "release/v${NEW_VERSION}"
 
-  git add "$PLUGIN_JSON" "$CURSOR_PLUGIN_JSON" "$MARKETPLACE_JSON" "$CHANGELOG"
+  git add "$PLUGIN_JSON" "$CODEX_PLUGIN_JSON" "$CURSOR_PLUGIN_JSON" "$MARKETPLACE_JSON" "$CHANGELOG"
   git commit -m "chore: release v${NEW_VERSION}"
 
   git push -u origin "release/v${NEW_VERSION}"
