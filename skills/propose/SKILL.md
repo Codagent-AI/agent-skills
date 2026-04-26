@@ -9,7 +9,7 @@ description: >
 
 Evaluate whether an idea is worth formalizing, and if so, write the proposal document. This sits between optional freeform exploration and the formal design artifact.
 
-**The proposal is a "why" document.** Deeply understand and articulate the motivation — the problem, the opportunity, and why it matters now. Touch on "what" just enough to scope the change, but leave the "how" for later.
+**The proposal is a "why + high-level what + high-level how" document.** Deeply understand and articulate the motivation — the problem, the opportunity, and why it matters now. Scope "what" at a high level — enough to bound the change and identify capabilities, but leave detailed behavioral requirements for specs. Sketch the high-level technical approach and architecture — enough to ground the change in reality and surface structural risks early — but leave detailed design for design.md.
 
 ## Principles
 
@@ -17,7 +17,7 @@ Evaluate whether an idea is worth formalizing, and if so, write the proposal doc
 - **Research-informed** — Before opining, investigate the codebase and web resources to ground advice in reality.
 - **Honest assessment** — If an idea has problems, say so directly. "Not worth building" is a valid and valuable outcome. A brainstorm that only cheerleads is useless.
 - **Visual** — Use ASCII diagrams liberally when they'd help clarify thinking: architecture maps, comparison tables, flow sketches.
-- **Why-first** — The proposal establishes motivation, not solutions. Dig into the problem deeply. Implementation details and technical approach belong in design.md.
+- **Why-first, then lightly** — The proposal establishes motivation first, then scopes the change at a high level, then sketches the high-level technical approach. Dig into the problem deeply. Scope "what" enough to bound capabilities and identify what needs specs — but leave detailed behavioral requirements for specs. Capture enough architecture and key technical decisions to ground the proposal in reality — but leave detailed design, component internals, and implementation specifics for design.md.
 
 ## Flow
 
@@ -80,14 +80,17 @@ A "no-go" requires explanation: what specifically makes this not worth pursuing,
 
 ### 4. Explore the Approach (lightly)
 
-Only reached on GO or GO WITH CAVEATS. Sketch the high-level approach just enough to bound scope and identify risks — this is NOT the design phase:
+Only reached on GO or GO WITH CAVEATS. Sketch the high-level technical approach — enough to ground the proposal in architectural reality and surface structural risks. This is NOT the design phase; you're establishing the approach, not detailing component internals.
 
 - **Architecture fit** — How does this fit into the existing system? Align with current patterns or require new ones?
 - **Key technical decisions** — The 2-3 big choices that will shape implementation (e.g., sync vs async, build vs buy, new service vs extending existing)
+- **High-level approach** — What is the overall shape of the solution? Which layers/components are involved? What's the data flow?
 - **Scope bounding** — What is the minimum viable version? What should be deferred?
 - **Risk areas** — What parts are uncertain, complex, or likely to cause problems?
 
 Present options when multiple approaches exist. Give a recommendation with reasoning, but let the user decide. Draw comparison tables and architecture sketches.
+
+The findings from this phase feed directly into the proposal's Technical Approach section.
 
 ### 5. Write the Proposal
 
@@ -102,13 +105,13 @@ Once the idea has been evaluated and the approach has crystallized, determine wh
    - Default path: `~/.agent-skills/changes/<slug>/proposal.md`
    - Use the appropriate tool for asking the user a question or requesting input to confirm the location. Offer exactly two choices: the default generated path, and "Somewhere else" (user specifies). Do not proceed until the user responds.
 
-The proposal should be anchored in the "why" — the problem, the motivation, and the impact. Draw heavily from the Understand and Evaluate phases. The "what changes" section should scope the work without prescribing solutions.
+The proposal should be anchored in the "why" — the problem, the motivation, and the impact. Draw heavily from the Understand and Evaluate phases. The "what changes" section should scope the work at a high level — enough to bound capabilities, not to detail requirements. The "technical approach" section should capture the high-level architecture and key decisions from the Explore phase.
 
 ## Guardrails
 
 - **Do not skip the evaluation** — Even for "obvious" ideas, the evaluation surfaces risks and shapes scope. Speed through it, but don't skip it.
 - **Do not cheerlead** — Honest assessment over enthusiasm. Every idea has trade-offs; name them.
-- **Do not go deep on implementation** — The proposal answers "why" and scopes "what". The "how" belongs entirely in design.md. Resist the urge to solve the problem in the proposal.
+- **Do not go deep on what or how** — The proposal answers "why" deeply, scopes "what" at a high level, and sketches the high-level "how". Detailed behavioral requirements belong in specs. Detailed design — component internals, algorithms, data structures, interface contracts — belongs in design.md. Capture enough to bound the change and ground it architecturally, then stop.
 - **Do not auto-transition** — Follow `codagent:ask-questions` to confirm before writing the proposal. A "no-go" verdict means no proposal.
 - **Do visualize** — Diagrams help clarify thinking. Use them for architecture, comparisons, and flows.
 - **Follow the template** — Use the Artifact Template section below for proposal structure.
@@ -124,8 +127,8 @@ Use this structure when writing `proposal.md`. Replace comments with actual cont
 
 ## What Changes
 
-<!-- Bullet list of changes. Be specific about new capabilities, modifications, or removals.
-     Mark breaking changes with **BREAKING**. -->
+<!-- High-level bullet list of what's changing. Enough to bound scope and identify capabilities,
+     not detailed requirements. Mark breaking changes with **BREAKING**. -->
 
 ## Capabilities
 
@@ -143,6 +146,15 @@ Use this structure when writing `proposal.md`. Replace comments with actual cont
      Only list here if spec-level behavior changes. Each needs a delta spec file.
      Leave empty if no requirement changes. -->
 - `<existing-name>`: <what requirement is changing>
+
+## Technical Approach
+
+<!-- High-level architecture and key technical decisions. NOT detailed design —
+     just enough to ground the proposal in reality.
+     - Overall shape of the solution: which layers/components are involved
+     - Key technical decisions and why (e.g., sync vs async, build vs buy)
+     - How this fits into the existing architecture
+     - Use ASCII diagrams for architecture sketches and data flows -->
 
 ## Out of Scope
 
