@@ -65,7 +65,7 @@ if [ "$CURRENT_BRANCH" != "main" ]; then
   git push
 
   # Print the existing PR URL
-  gh pr view --repo "$REPO" --json url --jq .url
+  gh pr view "$CURRENT_BRANCH" --repo "$REPO" --json url --jq .url
 else
   # --- Main branch: create release branch and PR ---
   git checkout -B "release/v${NEW_VERSION}"
