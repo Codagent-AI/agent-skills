@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.7.2
+
+### Patch Changes
+
+- [#35](https://github.com/Codagent-AI/agent-skills/pull/35) Add Codex plugin packaging with manifest, entry point, and release script support
+- [#36](https://github.com/Codagent-AI/agent-skills/pull/36) Add proposal-review skill for adversarial review of proposals, and update propose skill to include high-level technical approach and architecture
+
 ## 0.7.1
 
 ### Patch Changes
