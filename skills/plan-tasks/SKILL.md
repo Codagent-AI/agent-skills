@@ -78,6 +78,8 @@ For small changes, a single task is fine. Don't manufacture fake granularity.
 
 **Do not write any task files yet.** Present the user with a brief overview of your planned breakdown, then follow the `codagent:ask-questions` skill to get confirmation:
 
+Before presenting the breakdown, ask targeted clarification questions if the proposal, specs, design, or code research leave meaningful ambiguity about task grouping, delivery boundaries, dependencies, risk, or sequencing. Do not use the final confirmation prompt as a substitute for resolving those ambiguities.
+
 1. State the number of tasks.
 2. For each task, give the title and a 1-sentence summary of its scope — what it delivers, not implementation details.
 3. Explain:
@@ -403,3 +405,10 @@ denied requests but not for 400 or 429 responses.
 - **Copy spec scenarios verbatim** — don't paraphrase; copy them exactly so they serve directly as test cases
 - **Exact file paths** — always use real paths from the codebase, not placeholders like `src/your-service.ts`
 - **No unresolved placeholders** — if the design document contains instructional placeholders (e.g., `<path to the task file>`), do not copy them verbatim. You must resolve them to their actual values or describe them in prose. Never leak `<...>` placeholder syntax into the task file.
+- **Questions before breakdown approval** — when task grouping or sequencing is ambiguous, ask targeted questions before presenting the proposed breakdown
+
+## Never
+
+- Never present a task breakdown for approval while meaningful grouping, dependency, or sequencing ambiguities remain unasked.
+- Never use "does this breakdown look right?" as a substitute for resolving known uncertainty about delivery boundaries.
+- Never write task files before the user has confirmed the breakdown.

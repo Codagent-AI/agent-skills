@@ -78,6 +78,8 @@ digraph design {
 - Focus on: technical approach, architecture, patterns, trade-offs, constraints
 - Prefer multiple-choice questions when possible, but open-ended is fine too
 - Do NOT ask about what the system should do — that is settled in the specs
+- Ask targeted architecture questions after reading specs and exploring relevant code, unless the specs and codebase make the implementation approach obvious and low-risk. Questions should cover choices that affect components, interfaces, data flow, error handling, migration, tests, or rollout.
+- Do NOT treat "does this design look right?" as the architecture discussion. Approval happens only after real trade-offs and unresolved technical choices have been surfaced.
 
 **Tracking spec implications:**
 - When an architectural decision reveals a new requirement or changes an existing scenario, surface it during the conversation: "This decision means we need to add scenario X to the spec for Y."
@@ -110,6 +112,7 @@ This skill does not invoke other skills or manage sequencing.
 - **Architecture only** — Ask about "how", not "what"
 - **Surface spec implications** — Don't silently ignore new requirements revealed by architecture
 - **Use `codagent:ask-questions`** — For tool choice and batching strategy when gathering information
+- **Questions before design text** — Ask specific architecture, trade-off, integration, failure-mode, and testing questions before presenting design sections
 - **Multiple choice preferred** — Easier to answer than open-ended when possible
 - **YAGNI ruthlessly** — Remove unnecessary features from all designs
 - **Explore alternatives** — Always propose 2–3 approaches before settling
@@ -117,6 +120,12 @@ This skill does not invoke other skills or manage sequencing.
 - **Be flexible** — Go back and clarify when something doesn't make sense
 - **Capture implementation details** — Implementation details that came up in conversation but don't belong in behavioral specs (algorithms, data-structure choices, integration points, migration steps, error-handling strategies, etc.) **must** be captured here
 - **Write for a different agent** — A separate implementing agent will read this design with no shared context from this conversation. Every decision, constraint, and technical detail must be in the written artifact
+
+## Never
+
+- Never present design sections or ask for approval before asking the appropriate architecture and trade-off questions.
+- Never infer significant technical choices from the specs alone when a user answer would materially change the design.
+- Never use the approval gate as a substitute for clarifying components, interfaces, data flow, error handling, testing, or rollout.
 
 ## Artifact Template
 
