@@ -4,8 +4,8 @@ description: >-
   (plus any unmerged current-branch PR), calculates semver bump from
   conventional commit titles, generates changelog entries, and opens a release
   PR. Works from any branch: includes both main and current branch changes.
-  Use when the user says "release", "cut a release", "create a release PR",
-  "prepare a release", or "bump version".
+  Activates for requests such as "release", "cut a release", "create a release
+  PR", "prepare a release", or "bump version".
 ---
 
 Create a release PR by gathering merged PRs, calculating the version bump, writing changelog entries, and opening the PR.
