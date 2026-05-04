@@ -25,6 +25,7 @@ Rapid, lightweight planning for small changes. One conversation produces a `prop
    - Behaviors, boundaries, and error/edge cases (for the specs — this is the load-bearing part)
    - Scope boundaries (what's in, what's out)
    - Any architectural question that would actually change the specs — otherwise skip it
+   Ask these as concrete discovery questions before presenting the plan or writing artifacts. A final "thumbs-up" confirmation is not a substitute for clarifying the behavior.
 4. **Decide if a design doc is needed** — Default: **no**. Write `design.md` when:
    - There's a real architectural choice whose rationale needs to survive (e.g., a non-obvious trade-off future contributors would re-litigate), **or**
    - There are specific implementation details (algorithms, data-structure choices, integration points, migration steps, error-handling strategies, etc.) that came up in conversation but don't belong in behavioral specs. Because a different agent will implement the change, these details **must** be written down somewhere — `design.md` is that somewhere.
@@ -69,10 +70,17 @@ Use relative paths from the change directory. Include every spec file. Include `
 ## Guardrails
 
 - **Do NOT walk doc-by-doc, section-by-section.** Ask questions, then write everything.
+- **Do NOT skip discovery questions.** Ask the behavior, boundary, error/edge-case, scope, and necessary architecture questions before confirming the plan or writing artifacts.
 - **Do NOT cheerlead.** If you spot a real problem with the idea, say so — but don't run a full GO/NO-GO evaluation.
 - **Do NOT pad with unused sections.** Omit sections of the templates that don't apply.
 - **Do NOT write `design.md` by default.** The bar is "someone will re-litigate this later without a written rationale." If that's not true, skip it.
 - **Follow `codagent:ask-questions`.** For tool choice and batching strategy whenever you need user input.
+
+## Never
+
+- Never present the consolidated plan or ask for thumbs-up before asking the appropriate discovery questions.
+- Never write planning artifacts while behavior, scope, or edge-case questions remain unresolved.
+- Never use the confirmation step as a substitute for clarifying what the system should do.
 
 ---
 

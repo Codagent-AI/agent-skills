@@ -72,6 +72,8 @@ digraph spec {
 - Focus on: what the system does (behaviors), what it rejects (boundaries), what goes wrong (error conditions), unusual situations (edge cases)
 - Prefer multiple-choice questions when possible, but open-ended is fine too
 - Do NOT ask about architecture, patterns, or technical approach — that belongs in design
+- Ask at least one targeted discovery question for each capability after surveying related specs, unless the proposal and existing specs already answer every behavior, boundary, error condition, and edge case needed for a testable spec. If you skip questions, state the concrete source that answered them.
+- Do NOT treat "does this spec look right?" as the clarifying question. Approval happens only after discovery questions are resolved.
 
 **When a requirement depends on architectural knowledge:**
 - Acknowledge the dependency explicitly
@@ -101,11 +103,18 @@ Tell the user the relative path of each spec file created. This skill does not i
 ## Key Principles
 
 - **Use `codagent:ask-questions`** — For tool choice and batching strategy when gathering information
+- **Questions before spec text** — Ask specific behavior, boundary, error-condition, and edge-case questions before presenting proposed requirements and scenarios
 - **Multiple choice preferred** — Easier to answer than open-ended when possible
 - **Focus on "what", not "how"** — Behaviors, boundaries, and error conditions — not architecture
 - **Deferred is valid** — A deferred-to-design marker is better than a forced answer
 - **Incremental validation** — Present spec for each capability, get approval before writing
 - **Be flexible** — Go back and revise when something doesn't look right
+
+## Never
+
+- Never present a full spec delta or ask for approval before asking the appropriate capability-specific discovery questions.
+- Never infer exact behavior from a rough proposal when a user answer would materially change requirements or scenarios.
+- Never use the approval gate as a substitute for clarifying behaviors, boundaries, error conditions, or edge cases.
 
 ## Artifact Template
 

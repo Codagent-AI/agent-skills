@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.7.3
+
+### Patch Changes
+
+- [#36](https://github.com/Codagent-AI/agent-skills/pull/36) Added the proposal-review skill and refined proposal guidance to cover high-level what and how evaluation.
+- [#38](https://github.com/Codagent-AI/agent-skills/pull/38) Improved skill workflows for asking user questions and added release automation for changelog/version PRs.
+
 ## 0.7.2
 
 ### Patch Changes

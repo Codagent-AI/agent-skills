@@ -70,6 +70,7 @@ Do not ask the user to confirm the location. Just write to the resolved path.
 
 ## Guardrails
 
+- **Write from current context only.** The handoff should be based on what the agent already knows from the current conversation — do not explore files, run searches, or do additional research unless the user explicitly asks for it.
 - **Do not summarize the entire conversation.** Focus only on the aspect the user specified.
 - **Do not invent context.** Only capture what actually happened or was discussed in this session.
 - **Do not prescribe solutions for open questions.** State the question; let the next agent and user decide.

@@ -27,8 +27,9 @@ First understand the idea. If the user's invocation didn't include enough contex
 - What is the idea? What does it do from the user's perspective?
 - What problem does it solve? Who has this problem?
 - What triggered this? (bug report, user request, personal itch, competitive pressure)
+- What would make this successful? What is explicitly out of scope?
 
-Focus on purpose, constraints, and success criteria. Do not proceed until you have a concrete understanding of the idea.
+Focus on purpose, constraints, success criteria, audience, and scope boundaries. Do not proceed until you have a concrete understanding of the idea. If the prompt is rough, ask specific discovery questions before evaluating or drafting — do not jump straight to a proposal-shaped artifact.
 
 ### 2. Research
 
@@ -110,11 +111,18 @@ The proposal should be anchored in the "why" — the problem, the motivation, an
 ## Guardrails
 
 - **Do not skip the evaluation** — Even for "obvious" ideas, the evaluation surfaces risks and shapes scope. Speed through it, but don't skip it.
+- **Do not skip discovery questions** — If purpose, user impact, success criteria, or scope boundaries are ambiguous, ask targeted questions before presenting a verdict or proposal.
 - **Do not cheerlead** — Honest assessment over enthusiasm. Every idea has trade-offs; name them.
 - **Do not go deep on what or how** — The proposal answers "why" deeply, scopes "what" at a high level, and sketches the high-level "how". Detailed behavioral requirements belong in specs. Detailed design — component internals, algorithms, data structures, interface contracts — belongs in design.md. Capture enough to bound the change and ground it architecturally, then stop.
 - **Do not auto-transition** — Follow `codagent:ask-questions` to confirm before writing the proposal. A "no-go" verdict means no proposal.
 - **Do visualize** — Diagrams help clarify thinking. Use them for architecture, comparisons, and flows.
 - **Follow the template** — Use the Artifact Template section below for proposal structure.
+
+## Never
+
+- Never present or write the proposal artifact before asking the appropriate purpose, scope, success-criteria, and constraint questions.
+- Never use "does this proposal look right?" as a substitute for understanding why the change matters and what outcome the user wants.
+- Never invent capability boundaries from a rough idea when a user answer would materially change the proposal.
 
 ## Artifact Template
 

@@ -12,20 +12,26 @@ This skill encodes how to ask users questions effectively. It is **not invoked d
 
 ## Which Tool to Use
 
-**Always use the dedicated question/input tool, not a plain message.**
+Prefer a dedicated question/input tool when the runtime makes one available for the current turn, but do not fail just because that tool is unavailable.
 
-- **Claude**: use the `mcp__ide__askQuestion` tool (or `ask_followup_question` in agentic contexts). Do NOT embed questions in plain prose — use the tool.
-- **Other agents**: use the equivalent input-requesting tool for your runtime (e.g., `request_input`, `ask_user`, or similar). If your runtime exposes a native question tool, always prefer it over a plain assistant turn.
+Use this decision order:
 
-The tool ensures the agent explicitly waits for a response before continuing, rather than proceeding with assumptions.
+1. **Dedicated question tool available** — use the runtime's native input-requesting tool.
+   - **Claude**: use `mcp__ide__askQuestion` or `ask_followup_question` when available.
+   - **Codex Plan mode**: use `request_user_input` when available.
+   - **Other agents**: use the equivalent input-requesting tool for the runtime (for example, `request_input`, `ask_user`, or similar).
+2. **No dedicated tool, but the session is interactive** — ask the question directly in chat, then stop and wait for the user's answer. Do not continue with assumptions after asking.
+3. **Headless/non-interactive session** — do not ask the user. Return a blocker/ambiguity explaining what decision is needed, or follow the caller skill's headless fallback instructions if it defines one.
+
+The goal is to explicitly pause for user input before continuing. A dedicated tool is preferred because it enforces the pause, but an interactive plain-chat question is the correct fallback when the runtime does not expose that tool.
 
 <HARD-GATE>
-NEVER ask a question by writing it in prose and continuing the response. ALWAYS use the appropriate question tool to pause and wait for the user's answer. Violating this is the most common failure mode.
+Do not proceed past an unresolved user decision. If you ask a question with a dedicated tool, wait for the tool response. If you ask in plain chat, end the turn and wait for the user's reply. In headless mode, return the ambiguity instead of inventing an answer.
 </HARD-GATE>
 
 ## Batching Strategy
 
-**Prefer asking 2–4 questions at a time.** Batching reduces round-trips and respects the user's time.
+**Prefer asking 2–4 questions at a time when the caller skill does not require serial discovery.** Batching reduces round-trips and respects the user's time.
 
 ### When to batch (default)
 
@@ -41,20 +47,21 @@ Group related questions into a single tool call when:
 
 ### When to ask one question at a time (serial)
 
-Ask a single question only when:
+Ask a single question when:
 - The answer determines what the *next* question should be (a branching decision point)
 - The question is a binary gate that may end the conversation entirely (e.g., "Is this change approved?")
+- The caller skill explicitly says to ask questions one at a time
 
 **Good serial example:**
 > "Before I write the spec file, does this look right to you?" ← wait for yes/no before continuing
 
-Even when asking serially, use the question tool — not prose.
+Even when asking serially, prefer the dedicated question tool when available; otherwise ask directly in chat and stop.
 
 ### Anti-patterns
 
 - **Asking 1 question when 3 are independent** — unnecessarily drag out the conversation
 - **Asking 7 questions at once** — overwhelming; users stop reading carefully past question 3
-- **Embedding questions in prose** — the agent may not pause for a response; always use the tool
+- **Asking in prose and then continuing** — the agent may proceed without the answer; if you ask in chat, stop there
 - **Asking follow-up questions that ignore the dependency** — if Q1's answer eliminates Q3, drop Q3
 
 ## Question Quality
@@ -63,6 +70,7 @@ Even when asking serially, use the question tool — not prose.
 - **Open-ended is fine** when the space is genuinely open (e.g., "What should happen when X?")
 - **Provide context with each question** — quote relevant material if needed so the user isn't switching context
 - **One topic per question** — don't bundle two decisions into one question
+- **Ask discovery questions before approval questions** — "Does this artifact look good?" is an approval gate, not requirements discovery. Before asking for approval, ask the specific behavior, boundary, trade-off, or grouping questions that would materially change the artifact.
 
 ## Applying This Skill
 
@@ -70,6 +78,11 @@ When another skill says "use the appropriate tool for asking the user a question
 
 1. Determine whether to batch or ask serially (see above)
 2. Draft your questions following the quality guidelines
-3. Call the question tool with all questions in this batch
-4. Wait for the user's response before proceeding
+3. Use the best available input path from "Which Tool to Use"
+4. Wait for the user's response before proceeding, or stop the turn if asking in chat
 5. Adjust your next batch based on what you learned
+
+## Never
+
+- Never use a generic artifact approval question as a substitute for clarifying the underlying requirements, architecture, or task grouping.
+- Never present a completed artifact for approval while high-impact ambiguities remain unasked.
