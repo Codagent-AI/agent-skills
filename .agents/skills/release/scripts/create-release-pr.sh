@@ -16,6 +16,11 @@ CHANGELOG="CHANGELOG.md"
 NEW_VERSION="${1:?Usage: create-release-pr.sh <new-version> <changelog-section-file>}"
 CHANGELOG_FILE="${2:?Usage: create-release-pr.sh <new-version> <changelog-section-file>}"
 
+if [[ ! "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "Error: invalid version '$NEW_VERSION' (expected X.Y.Z)" >&2
+  exit 1
+fi
+
 if [ ! -f "$CHANGELOG_FILE" ]; then
   echo "Error: changelog section file not found: $CHANGELOG_FILE" >&2
   exit 1

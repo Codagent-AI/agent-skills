@@ -13,25 +13,29 @@ CURRENT_BRANCH=$(git branch --show-current)
 BRANCH_PR=""
 AHEAD=0
 
+error_json() {
+  local code="$1"
+  local message="$2"
+  jq -n --arg error "$code" --arg message "$message" \
+    '{error: $error, message: $message}'
+}
+
 git fetch origin main --tags --quiet
 
-if [ "$CURRENT_BRANCH" = "main" ]; then
-  git pull origin main --quiet
-else
+if [ "$CURRENT_BRANCH" != "main" ]; then
+  if ! git merge-base --is-ancestor origin/main HEAD; then
+    error_json "branch_behind" "Current branch does not contain origin/main. Rebase or merge main before creating a release."
+    exit 1
+  fi
+
   # Check for commits ahead of origin/main
   AHEAD=$(git log --oneline origin/main..HEAD | wc -l | tr -d ' ')
   if [ "$AHEAD" -gt 0 ]; then
     # Verify a PR exists for this branch
-    BRANCH_PR=$(gh pr view --json number,title,labels 2>&1) || {
-      jq -n '{"error": "no_pr", "message": "Current branch has changes not on main but no PR exists. Create a PR first."}' >&2
+    BRANCH_PR=$(gh pr view "$CURRENT_BRANCH" --repo "$REPO" --json number,title,labels 2>/dev/null) || {
+      error_json "no_pr" "Current branch has changes not on main but no PR exists. Create a PR first."
       exit 1
     }
-  fi
-
-  # Merge origin/main into current branch
-  if ! git merge origin/main --no-edit --quiet 2>/dev/null; then
-    jq -n '{"error": "merge_conflict", "message": "Merge conflicts when merging origin/main. Resolve conflicts first."}' >&2
-    exit 1
   fi
 fi
 
@@ -46,7 +50,7 @@ fi
 # --- Current version from plugin.json ---
 CURRENT_VERSION=$(jq -r '.version' "$PLUGIN_JSON")
 if [[ ! "$CURRENT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  jq -n --arg v "$CURRENT_VERSION" '{"error": "invalid_version", "message": "Invalid version in plugin.json: \($v)"}' >&2
+  error_json "invalid_version" "Invalid version in plugin.json: $CURRENT_VERSION"
   exit 1
 fi
 
