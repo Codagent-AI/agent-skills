@@ -10,7 +10,7 @@ num_reviews: 1
 
 **Scope:** Review only changed or added skill files (SKILL.md and supporting files in skill directories). Ignore non-skill files.
 
-**Evaluation Criteria:**
+## Evaluation Criteria
 
 ### 1. Frontmatter Quality — Description Tells Claude WHEN, Not Just WHAT
 
@@ -24,12 +24,12 @@ The description is the single most important field. Claude scans descriptions of
 *   The **first 250 characters** front-load the use case? (That's all that gets included in Claude's context budget — bury the trigger context and Claude won't see it.)
 
 **Bad:**
-```
+```yaml
 description: Code review tool
 ```
 
 **Good:**
-```
+```yaml
 description: Review code for bugs, security issues, and maintainability.
 Use when reviewing pull requests, checking code quality, analyzing diffs,
 or when user mentions "review", "PR", "code quality", or "best practices".
@@ -47,12 +47,12 @@ Skills are instructions, not chat. Claude follows imperative instructions much m
 *   Complex workflows are broken into **numbered steps** with explicit sequencing?
 
 **Weak (conversational):**
-```
+```text
 Could you please review the code? Maybe check if there are any bugs?
 ```
 
 **Strong (directive):**
-```
+```text
 Review the current diff. Check for:
 1. Security vulnerabilities (OWASP Top 10)
 2. Performance issues (N+1 queries, blocking calls)
@@ -65,7 +65,7 @@ Output as a checklist with severity ratings.
 
 If the skill is getting long, split it. Claude loads supporting files only when the task actually needs them.
 
-```
+```text
 SKILL.md (under 200 lines, always loaded)
 ├── ADVANCED_PATTERNS.md (loaded only when needed)
 ├── REFERENCE.md (loaded only when referenced)
@@ -89,13 +89,13 @@ Most skills fail here — they tell Claude what to do but not what the output sh
 *   Constraints on output values are stated (e.g., "under 50 characters", "must be one of: feat, fix, refactor")?
 
 **Without output format:**
-```
+```text
 Generate a commit message for these changes.
 ```
 Result: sometimes one line, sometimes paragraphs, sometimes with prefixes, sometimes without.
 
 **With output format:**
-```
+```text
 Generate a commit message in this exact format:
 
 type(scope): short description
@@ -118,7 +118,7 @@ The best skills don't assume Claude knows the project. They tell Claude to look 
 *   For skills that generate code: includes a step to **run/validate** the generated output and fix failures before finishing?
 
 **Example of a good "read first" step:**
-```
+```text
 Before writing tests:
 1. Read the target file to understand function signatures and types
 2. Find the existing test directory and read 1-2 existing tests
@@ -131,14 +131,14 @@ Run tests after writing them. Fix failures before finishing.
 
 ### 6. Out of Scope Definition
 
-Explicitly listing what the skill does NOT do is counterintuitive but powerful. When a user asks for something the skill can't do, Claude doesn't try and fail — it picks a different skill or asks for clarification. This pattern appears in 70% of high-quality skills and almost never in low-quality ones.
+Explicitly listing what the skill does NOT do is counterintuitive but powerful. When a user asks for something the skill can't do, Claude doesn't try and fail — it picks a different skill or asks for clarification. This pattern appears in 70% of high-quality skills and rarely in low-quality ones.
 
 *   Skill includes an **"Out of Scope"** section (or equivalent) listing what it does NOT do?
 *   Out-of-scope items redirect to the **correct alternative** where applicable (e.g., "use OCR skill instead")?
 *   Scope boundaries prevent the skill from **attempting tasks it will fail at**?
 
 **Example:**
-```
+```markdown
 ## Out of Scope
 
 This skill does NOT:

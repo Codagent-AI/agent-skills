@@ -22,7 +22,12 @@ error_json() {
 
 git fetch origin main --tags --quiet
 
-if [ "$CURRENT_BRANCH" != "main" ]; then
+if [ "$CURRENT_BRANCH" = "main" ]; then
+  if ! git merge-base --is-ancestor origin/main HEAD; then
+    error_json "branch_behind" "Local main does not contain origin/main. Update main before creating a release."
+    exit 1
+  fi
+else
   if ! git merge-base --is-ancestor origin/main HEAD; then
     error_json "branch_behind" "Current branch does not contain origin/main. Rebase or merge main before creating a release."
     exit 1

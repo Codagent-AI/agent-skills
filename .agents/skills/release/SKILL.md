@@ -24,7 +24,7 @@ Run the info script to collect merged PRs and calculate the version:
 bash .agents/skills/release/scripts/release-info.sh
 ```
 
-Capture the JSON output. If the output contains `"error"`, stop and report the message to the user.
+Capture stdout as JSON. The script writes all structured responses, including errors, to stdout. If the output contains `"error"`, stop and report the message to the user.
 
 ### 2. Show the release summary
 
@@ -43,7 +43,7 @@ Build the changelog section for the new version. Only include sections that have
 
 Format:
 
-```
+```markdown
 ## <new_version>
 
 ### Major Changes
