@@ -1,4 +1,5 @@
 ---
+name: init
 description: >
   Initializes Agent Skills in a project by checking prerequisites and verifying the validator
   configuration. Use when the user says "init", "set up agent-skills", or "initialize agent-skills".

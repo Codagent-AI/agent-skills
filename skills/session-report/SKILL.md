@@ -1,4 +1,5 @@
 ---
+name: session-report
 description: >
   Audits your session for assumptions and context gaps — things only a human can act on.
   Use when the user says "session report", "review assumptions", "what did you struggle with",

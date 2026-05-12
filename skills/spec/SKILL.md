@@ -1,4 +1,5 @@
 ---
+name: spec
 description: >
   Drives interactive requirement discovery to produce spec files.
   Use when the user says "spec this", "write specs", "create specs", or "run the spec skill".

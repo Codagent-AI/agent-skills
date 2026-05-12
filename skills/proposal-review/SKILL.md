@@ -1,4 +1,5 @@
 ---
+name: proposal-review
 description: >
   Adversarial review of a proposal — challenges the why, what, and how, and suggests alternative approaches.
   Use when the user says "review proposal", "challenge this proposal", "adversarial review", "poke holes",

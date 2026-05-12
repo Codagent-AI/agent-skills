@@ -1,4 +1,5 @@
 ---
+name: fix-pr
 description: >
   Fixes CI failures and review comments on the current branch's pull request by dispatching
   a fixer subagent, verifying with the validator, and pushing the fix. Use when the user says

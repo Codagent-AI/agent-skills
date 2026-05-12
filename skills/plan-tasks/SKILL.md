@@ -1,4 +1,5 @@
 ---
+name: plan-tasks
 description: Creates a structured implementation task breakdown for a structured change, synthesizing proposal, design, and specs into self-contained per-task files. Use when the tasks artifact is the next step in a change.
 ---
 

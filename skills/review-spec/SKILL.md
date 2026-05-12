@@ -1,4 +1,5 @@
 ---
+name: review-spec
 description: >
   Reviews design artifacts (proposal, specs, design, tasks) for internal consistency, gaps, and cross-artifact alignment.
   Use when the user says "review spec", "review artifacts", "review the design docs", "review the change",

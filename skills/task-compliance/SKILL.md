@@ -1,4 +1,5 @@
 ---
+name: task-compliance
 description: >
   Review an implementation against task file requirements. Checks every spec scenario and Done When criterion,
   identifies gaps, and reports them.

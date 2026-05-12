@@ -1,4 +1,5 @@
 ---
+name: finalize-pr
 description: >
   Orchestrates the full post-implementation loop: push PR → wait for CI → fix failures → repeat
   until CI passes or termination rules trigger a pause.

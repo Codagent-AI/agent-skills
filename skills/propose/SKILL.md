@@ -1,4 +1,5 @@
 ---
+name: propose
 description: >
   Evaluate whether a software idea is worth building, then write the proposal document.
   Use when the user wants to assess an idea, says "evaluate", "propose", "is this worth building",

@@ -1,4 +1,5 @@
 ---
+name: review-assumptions
 description: >
   Reviews risky/notable assumptions and context gaps surfaced by implementor session reports,
   fixes high-confidence issues directly, and asks one clarifying question at a time for

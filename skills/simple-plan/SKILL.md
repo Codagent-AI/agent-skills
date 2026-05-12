@@ -1,4 +1,5 @@
 ---
+name: simple-plan
 description: >
   Lightweight planning for small, quick changes. Combines propose, spec, and (optionally) design
   into one conversational pass, then writes tasks.md so the change is ready for OpenSpec

@@ -1,4 +1,5 @@
 ---
+name: implement-and-validate
 description: >
   Autonomous implementer agent that executes a single task end-to-end using TDD and verifies with Agent Validator.
   Activates for requests such as "implement this task", "finish this ticket", "apply this spec end-to-end", or "complete the implementation".
