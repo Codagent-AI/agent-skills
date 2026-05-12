@@ -1,4 +1,5 @@
 ---
+name: wait-ci
 description: >
   Polls CI check status for the current branch's pull request and reports pass/fail/pending/comments,
   surfacing PR review comments even when CI is green.

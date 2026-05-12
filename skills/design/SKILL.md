@@ -1,4 +1,5 @@
 ---
+name: design
 description: >
   Creates design artifacts through collaborative brainstorming of approaches, architecture, and trade-offs.
   Use when the user says "design this", "create a design", "brainstorm approaches", or "write a design doc".

@@ -1,4 +1,5 @@
 ---
+name: push-pr
 description: >
   Commits changes, pushes to remote, and creates or updates a pull request for the current branch.
   Use when the user says "push pr", "create pr", "push and create pr", or invokes "codagent:push-pr".

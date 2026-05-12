@@ -1,4 +1,5 @@
 ---
+name: implement-change
 description: >
   Autonomous tech lead that implements a full change end-to-end by dispatching one subagent per task
   sequentially using implement-and-validate, running the validator, and finalizing the PR. Activates

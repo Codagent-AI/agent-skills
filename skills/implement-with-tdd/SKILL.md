@@ -1,4 +1,5 @@
 ---
+name: implement-with-tdd
 description: >
   Enforces test-driven development for feature work, bug fixes, and refactoring, activating for requests
   such as "implement", "fix", "add feature", "write tests first", or "TDD".
