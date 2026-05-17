@@ -2,16 +2,16 @@
 name: simple-plan
 description: >
   Lightweight planning for small, quick changes. Combines propose, spec, and (optionally) design
-  into one conversational pass, then writes tasks.md so the change is ready for OpenSpec
-  implementation. Activates when users ask for "simple plan", "quick plan", "plan this", or
-  "planning mode" for a change that doesn't warrant the full propose/spec/design ceremony.
+  into one conversational pass, then writes tasks.md so the change is ready for implementation.
+  Activates when users ask for "simple plan", "quick plan", "plan this", or "planning mode" for
+  a change that doesn't warrant the full propose/spec/design ceremony.
 ---
 
 # Simple Plan
 
 ## Overview
 
-Rapid, lightweight planning for small changes. One conversation produces a `proposal.md`, one or more spec files, an optional `design.md`, and a `tasks.md` placeholder so the change slots into the OpenSpec workflow.
+Rapid, lightweight planning for small changes. One conversation produces a `proposal.md`, one or more spec files, an optional `design.md`, and a `tasks.md` placeholder so the change is ready for implementation.
 
 > **Key principle — write for a different agent.**  The artifacts you produce will be handed to a *separate* implementing agent that has **zero shared context** from this conversation. Every decision, rationale, constraint, file path, naming convention, and behavioral detail must be captured in the written artifacts. If you discussed it but didn't write it down, the implementer won't know about it.
 
@@ -37,11 +37,11 @@ Rapid, lightweight planning for small changes. One conversation produces a `prop
 
 ## Output location
 
-Follow the project's convention if one exists (AGENTS.md, OpenSpec config, etc.). Otherwise default to `openspec/changes/<kebab-slug>/` and confirm with the user before writing.
+Follow the project's convention if one exists (e.g., AGENTS.md, a project config, or similar conventions). Otherwise default to `changes/<kebab-slug>/` and confirm with the user before writing.
 
 ## Specs — the load-bearing artifact
 
-Specs outlive everything else in this skill — they become the living source of truth via OpenSpec. Get them right:
+Specs outlive everything else in this skill — they become the living source of truth for the change. Get them right:
 
 - Every requirement MUST have at least one scenario.
 - Scenarios use `#### Scenario:` (exactly four hashtags) with WHEN/THEN.
