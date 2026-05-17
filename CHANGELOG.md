@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.7.5
+
+### Patch Changes
+
+- [9669478](https://github.com/Codagent-AI/agent-skills/commit/9669478) Preserved task execution order in planning artifacts so generated task lists keep dependency ordering intact.
+- [7ae0245](https://github.com/Codagent-AI/agent-skills/commit/7ae0245) Improved planning-related skills so agents recommend before asking, decide low-risk details, and surface inferred decisions during approval.
+
 ## 0.7.4
 
 ### Patch Changes
