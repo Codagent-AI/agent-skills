@@ -95,7 +95,7 @@ Each clarifying question should:
 - Quote the assumption (or a tight paraphrase) so the user has context.
 - Cite the task and section it came from.
 - Propose 2–4 concrete options when the option space is small. Include "leave as-is" when appropriate.
-- Not presume the answer.
+- Recommend a default when you have enough evidence, while making clear the user owns the decision.
 
 After the user answers, apply the change exactly like a high-confidence fix (edit, commit) before moving on. If the answer is "leave as-is", note it and move on.
 

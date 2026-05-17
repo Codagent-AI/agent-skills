@@ -64,9 +64,12 @@ Within each artifact: no self-contradictions, sections that reference each other
 
 Report issues found directly to the user. Cite exact artifact paths and text for each issue.
 
+When a finding leaves multiple reasonable fixes, recommend the smallest safe fix. Do not turn every ambiguity into a question; ask only when the artifact owner must choose product behavior, scope, or architecture.
+
 ## Guardrails
 
 - **Do not critique requirements** — only flag when they are untestable, incomplete (missing scenarios or edge cases), contain unresolved placeholders, or conflict with other artifacts. Do not assess product intent, feature value, or design choices.
 - **Do not rewrite artifacts** — point out issues, don't produce "improved" versions.
+- **Do recommend fixes** — findings should be actionable without forcing the user to infer the next step.
 - **Do not review code** — this reviews design artifacts, not implementation.
 - **Do not invent missing artifacts** — skip checks that depend on absent artifacts.
