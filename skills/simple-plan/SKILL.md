@@ -26,13 +26,13 @@ Rapid, lightweight planning for small changes. One conversation produces a `prop
    - Behaviors, boundaries, and error/edge cases (for the specs — this is the load-bearing part)
    - Scope boundaries (what's in, what's out)
    - Any architectural question that would actually change the specs — otherwise skip it
-   Ask these as concrete discovery questions before presenting the plan or writing artifacts. A final "thumbs-up" confirmation is not a substitute for clarifying the behavior.
+   Ask these as concrete discovery questions before presenting the plan or writing artifacts. Include recommendations when options have trade-offs. A final "thumbs-up" confirmation is not a substitute for clarifying the behavior.
 4. **Decide if a design doc is needed** — Default: **no**. Write `design.md` when:
    - There's a real architectural choice whose rationale needs to survive (e.g., a non-obvious trade-off future contributors would re-litigate), **or**
    - There are specific implementation details (algorithms, data-structure choices, integration points, migration steps, error-handling strategies, etc.) that came up in conversation but don't belong in behavioral specs. Because a different agent will implement the change, these details **must** be written down somewhere — `design.md` is that somewhere.
    
    A small code change, a config tweak, a straightforward CRUD addition, or anything where "the code is the design" does not need one. When in doubt, ask whether the implementer would have enough information without it.
-5. **Confirm the plan** — Briefly restate: capabilities to spec, whether a design doc will be written, and output location. Get a quick thumbs-up before writing.
+5. **Confirm the plan** — Briefly restate: capabilities to spec, whether a design doc will be written, and output location. Before confirming, do a quick self-check: did you ask only questions that mattered, avoid discoverable facts, and choose obvious implementation defaults yourself? End with a compact "Low-level decisions I made" list for any defaults you chose from context.
 6. **Write all the docs in one pass** — `proposal.md`, one `specs/<capability>/spec.md` per capability, optionally `design.md`, and `tasks.md`.
 
 ## Output location
@@ -72,6 +72,7 @@ Use relative paths from the change directory. Include every spec file. Include `
 
 - **Do NOT walk doc-by-doc, section-by-section.** Ask questions, then write everything.
 - **Do NOT skip discovery questions.** Ask the behavior, boundary, error/edge-case, scope, and necessary architecture questions before confirming the plan or writing artifacts.
+- **Do NOT over-interview.** For small changes, ask only questions that materially change the artifacts.
 - **Do NOT cheerlead.** If you spot a real problem with the idea, say so — but don't run a full GO/NO-GO evaluation.
 - **Do NOT pad with unused sections.** Omit sections of the templates that don't apply.
 - **Do NOT write `design.md` by default.** The bar is "someone will re-litigate this later without a written rationale." If that's not true, skip it.
@@ -81,6 +82,7 @@ Use relative paths from the change directory. Include every spec file. Include `
 
 - Never present the consolidated plan or ask for thumbs-up before asking the appropriate discovery questions.
 - Never write planning artifacts while behavior, scope, or edge-case questions remain unresolved.
+- Never ask the user to decide implementation details that can be handled safely from context.
 - Never use the confirmation step as a substitute for clarifying what the system should do.
 
 ---

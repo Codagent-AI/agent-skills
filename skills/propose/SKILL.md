@@ -90,7 +90,7 @@ Only reached on GO or GO WITH CAVEATS. Sketch the high-level technical approach 
 - **Scope bounding** — What is the minimum viable version? What should be deferred?
 - **Risk areas** — What parts are uncertain, complex, or likely to cause problems?
 
-Present options when multiple approaches exist. Give a recommendation with reasoning, but let the user decide. Draw comparison tables and architecture sketches.
+Present options when multiple approaches exist. Give a recommendation with reasoning, but let the user decide. Keep comparisons concise: recommend the path, name the trade-off, and ask only if the answer changes scope or direction. Draw comparison tables and architecture sketches when they clarify the decision.
 
 The findings from this phase feed directly into the proposal's Technical Approach section.
 
@@ -109,6 +109,8 @@ Once the idea has been evaluated and the approach has crystallized, determine wh
 
 The proposal should be anchored in the "why" — the problem, the motivation, and the impact. Draw heavily from the Understand and Evaluate phases. The "what changes" section should scope the work at a high level — enough to bound capabilities, not to detail requirements. The "technical approach" section should capture the high-level architecture and key decisions from the Explore phase.
 
+Before writing, check that the proposal has a clear recommendation, no unresolved low-risk implementation choices, and only the assumptions needed to move into specs/design. When asking for approval, include a compact "Low-level decisions I made" list for defaults you chose from context.
+
 ## Guardrails
 
 - **Do not skip the evaluation** — Even for "obvious" ideas, the evaluation surfaces risks and shapes scope. Speed through it, but don't skip it.
@@ -116,6 +118,7 @@ The proposal should be anchored in the "why" — the problem, the motivation, an
 - **Do not cheerlead** — Honest assessment over enthusiasm. Every idea has trade-offs; name them.
 - **Do not go deep on what or how** — The proposal answers "why" deeply, scopes "what" at a high level, and sketches the high-level "how". Detailed behavioral requirements belong in specs. Detailed design — component internals, algorithms, data structures, interface contracts — belongs in design.md. Capture enough to bound the change and ground it architecturally, then stop.
 - **Do not auto-transition** — Follow `codagent:ask-questions` to confirm before writing the proposal. A "no-go" verdict means no proposal.
+- **Do not offload raw choices** — If an approach choice is internal and low-risk, decide it from codebase context and record the rationale briefly in the approval prompt.
 - **Do visualize** — Diagrams help clarify thinking. Use them for architecture, comparisons, and flows.
 - **Follow the template** — Use the Artifact Template section below for proposal structure.
 
@@ -123,6 +126,7 @@ The proposal should be anchored in the "why" — the problem, the motivation, an
 
 - Never present or write the proposal artifact before asking the appropriate purpose, scope, success-criteria, and constraint questions.
 - Never use "does this proposal look right?" as a substitute for understanding why the change matters and what outcome the user wants.
+- Never ask the user to choose among approaches without first giving your recommendation.
 - Never invent capability boundaries from a rough idea when a user answer would materially change the proposal.
 
 ## Artifact Template

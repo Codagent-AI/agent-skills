@@ -67,11 +67,17 @@ Even when asking serially, prefer the dedicated question tool when available; ot
 
 ## Question Quality
 
+- **Explore first** — do not ask the user for facts you can discover from the repo, docs, config, or prior artifacts
+- **Ask only load-bearing questions** — the answer should change behavior, scope, architecture, risk, sequencing, or acceptance criteria
+- **Decide low-risk implementation details yourself** — when the codebase points to a reasonable answer, use it; at the next approval gate, include a compact "Low-level decisions I made" list for approval
 - **Prefer multiple-choice** when the option space is bounded — easier to answer quickly
 - **Open-ended is fine** when the space is genuinely open (e.g., "What should happen when X?")
 - **Provide context with each question** — quote relevant material if needed so the user isn't switching context
+- **Recommend a path** — for trade-off questions, briefly state the recommendation and why before presenting options
+- **Name the default** — if the user does not care, say you can proceed with the recommended option
 - **One topic per question** — don't bundle two decisions into one question
 - **Ask discovery questions before approval questions** — "Does this artifact look good?" is an approval gate, not requirements discovery. Before asking for approval, ask the specific behavior, boundary, trade-off, or grouping questions that would materially change the artifact.
+- **Surface agent-owned defaults at approval** — end approval prompts with short bullets for low-level defaults/assumptions you chose. Use one-line rationale; omit noise.
 
 ## Applying This Skill
 
@@ -85,5 +91,8 @@ When another skill says "use the appropriate tool for asking the user a question
 
 ## Never
 
+- Never ask raw implementation-detail questions without explaining why the choice matters.
+- Never ask the user to choose among options you have not evaluated.
+- Never ask about discoverable repo facts before exploring.
 - Never use a generic artifact approval question as a substitute for clarifying the underlying requirements, architecture, or task grouping.
 - Never present a completed artifact for approval while high-impact ambiguities remain unasked.

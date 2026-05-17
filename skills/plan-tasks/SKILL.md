@@ -83,11 +83,13 @@ Before presenting the breakdown, ask targeted clarification questions if the pro
 
 1. State the number of tasks.
 2. For each task, give the title and a 1-sentence summary of its scope — what it delivers, not implementation details.
-3. Explain:
+3. If there were plausible alternatives, briefly explain why you recommend this grouping over them.
+4. Include a compact "Low-level decisions I made" list for tasking defaults you chose from context, such as grouping, sequencing, or omitted standalone tasks.
+5. Explain:
 
 > **Goldilocks task sizing:** Each task should be big enough to deliver a meaningful, independently completable unit of work (something worth its own commit and review), but small enough that a single agent can hold the full context and finish it in one session.
 
-4. Ask: _"Does this look like the right number and grouping? Would you like me to split or combine any of these before I write the detailed task files?"_
+6. Ask: _"Does this look like the right number and grouping? Would you like me to split or combine any of these before I write the detailed task files?"_
 
 **Wait for the user's response.** Adjust the plan if they request changes. Only proceed to Step 4 after confirmation.
 

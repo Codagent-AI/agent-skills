@@ -80,6 +80,7 @@ digraph design {
 - Prefer multiple-choice questions when possible, but open-ended is fine too
 - Do NOT ask about what the system should do — that is settled in the specs
 - Ask targeted architecture questions after reading specs and exploring relevant code, unless the specs and codebase make the implementation approach obvious and low-risk. Questions should cover choices that affect components, interfaces, data flow, error handling, migration, tests, or rollout.
+- Do not ask the user to pick among raw implementation options. First evaluate the options, explain the meaningful trade-offs, and recommend one. If the choice is low-risk or local to implementation, decide it yourself.
 - Do NOT treat "does this design look right?" as the architecture discussion. Approval happens only after real trade-offs and unresolved technical choices have been surfaced.
 
 **Tracking spec implications:**
@@ -91,10 +92,13 @@ digraph design {
 - Propose 2-3 different approaches with trade-offs
 - Present options conversationally with a recommendation and reasoning
 - Lead with the recommended option and explain why
+- Keep option analysis brief; enough to support the decision, not a design essay
 
 **Presenting the design:**
 - Once the architecture is well understood, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
+- Before asking for approval, check that unresolved decisions are user-owned and that obvious implementation defaults are already chosen
+- End the approval prompt with a compact "Low-level decisions I made" list covering implementation defaults you chose from code context, with one-line rationale for each
 - Use the appropriate tool for asking the user a question or requesting input to ask after each section whether it looks right so far
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
@@ -115,6 +119,8 @@ This skill does not invoke other skills or manage sequencing.
 - **Use `codagent:ask-questions`** — For tool choice and batching strategy when gathering information
 - **Questions before design text** — Ask specific architecture, trade-off, integration, failure-mode, and testing questions before presenting design sections
 - **Multiple choice preferred** — Easier to answer than open-ended when possible
+- **Recommend before asking** — If there are real options, present concise pros/cons and the preferred path
+- **Own implementation details** — Do not escalate choices that a skilled implementer can safely make from code context; list them for approval when presenting the design
 - **YAGNI ruthlessly** — Remove unnecessary features from all designs
 - **Explore alternatives** — Always propose 2–3 approaches before settling
 - **Incremental validation** — Present design, get approval before moving on
@@ -125,6 +131,7 @@ This skill does not invoke other skills or manage sequencing.
 ## Never
 
 - Never present design sections or ask for approval before asking the appropriate architecture and trade-off questions.
+- Never ask the user to choose between unevaluated implementation options.
 - Never infer significant technical choices from the specs alone when a user answer would materially change the design.
 - Never use the approval gate as a substitute for clarifying components, interfaces, data flow, error handling, testing, or rollout.
 

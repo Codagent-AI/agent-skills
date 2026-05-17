@@ -74,6 +74,8 @@ digraph spec {
 - Prefer multiple-choice questions when possible, but open-ended is fine too
 - Do NOT ask about architecture, patterns, or technical approach — that belongs in design
 - Ask at least one targeted discovery question for each capability after surveying related specs, unless the proposal and existing specs already answer every behavior, boundary, error condition, and edge case needed for a testable spec. If you skip questions, state the concrete source that answered them.
+- Ask only questions that change observable behavior or scope. If the uncertainty is implementation-only, leave it for design or implementation.
+- When presenting options, include a recommended behavior and the trade-off in one or two sentences.
 - Do NOT treat "does this spec look right?" as the clarifying question. Approval happens only after discovery questions are resolved.
 
 **When a requirement depends on architectural knowledge:**
@@ -84,6 +86,8 @@ digraph spec {
 
 **Presenting for approval:**
 - Once you have enough for a capability, present the full set of proposed requirements and scenarios
+- Before asking for approval, check that remaining assumptions are behavioral and minimal
+- End the approval prompt with a compact "Spec decisions I made" list for low-risk behavioral defaults, inferred scope boundaries, and scenario interpretations you chose from context, with one-line rationale for each
 - Use the appropriate tool for asking the user a question or requesting input to ask whether it looks right before writing the file
 - Be ready to go back and revise if something doesn't look right
 
@@ -107,6 +111,8 @@ Tell the user the relative path of each spec file created. This skill does not i
 - **Questions before spec text** — Ask specific behavior, boundary, error-condition, and edge-case questions before presenting proposed requirements and scenarios
 - **Multiple choice preferred** — Easier to answer than open-ended when possible
 - **Focus on "what", not "how"** — Behaviors, boundaries, and error conditions — not architecture
+- **Recommend defaults** — When behavior options exist, say which one you recommend and why
+- **Confirm inferred decisions** — At approval, list the spec-level decisions you made from context so the user can approve or correct them
 - **Deferred is valid** — A deferred-to-design marker is better than a forced answer
 - **Incremental validation** — Present spec for each capability, get approval before writing
 - **Be flexible** — Go back and revise when something doesn't look right
@@ -115,6 +121,7 @@ Tell the user the relative path of each spec file created. This skill does not i
 
 - Never present a full spec delta or ask for approval before asking the appropriate capability-specific discovery questions.
 - Never infer exact behavior from a rough proposal when a user answer would materially change requirements or scenarios.
+- Never ask architecture or implementation questions as spec discovery.
 - Never use the approval gate as a substitute for clarifying behaviors, boundaries, error conditions, or edge cases.
 
 ## Artifact Template
