@@ -3,7 +3,7 @@ set -euo pipefail
 
 # release-info.sh — Gather merged PRs, classify by type, calculate version bump.
 # Output: JSON with current_version, new_version, and PRs grouped by bump type.
-# Works from any branch: includes merged-to-main PRs AND the current branch's PR.
+# Works from any branch: includes merged-to-main PRs AND unmerged current-branch commits.
 
 REPO="Codagent-AI/agent-skills"
 PLUGIN_JSON=".claude-plugin/plugin.json"
@@ -21,11 +21,8 @@ else
   # Check for commits ahead of origin/main
   AHEAD=$(git log --oneline origin/main..HEAD | wc -l | tr -d ' ')
   if [ "$AHEAD" -gt 0 ]; then
-    # Verify a PR exists for this branch
-    BRANCH_PR=$(gh pr view --json number,title,labels 2>&1) || {
-      jq -n '{"error": "no_pr", "message": "Current branch has changes not on main but no PR exists. Create a PR first."}' >&2
-      exit 1
-    }
+    # Check if a PR exists for this branch (open or merged)
+    BRANCH_PR=$(gh pr view --json number,title,labels,state 2>/dev/null) || BRANCH_PR=""
   fi
 
   # Merge origin/main into current branch
@@ -55,9 +52,20 @@ PRS=$(gh pr list --repo "$REPO" --state merged --base main \
   --search "merged:>$TAG_DATE" \
   --json number,title,mergedAt,labels --limit 100)
 
-# --- Add current branch PR if not on main and has commits ahead ---
+# --- Add current branch PR if not on main and has unmerged commits ---
 if [ "$CURRENT_BRANCH" != "main" ] && [ "$AHEAD" -gt 0 ] && [ -n "$BRANCH_PR" ]; then
-  PRS=$(jq -s '.[0] + [.[1]] | unique_by(.number)' <(echo "$PRS") <(echo "$BRANCH_PR"))
+  BRANCH_STATE=$(echo "$BRANCH_PR" | jq -r '.state')
+  if [ "$BRANCH_STATE" = "OPEN" ]; then
+    # Open PR: include it as-is (it has unmerged changes not in the search results)
+    PRS=$(jq -s '.[0] + [.[1]] | unique_by(.number)' <(echo "$PRS") <(echo "$BRANCH_PR"))
+  elif [ "$BRANCH_STATE" = "MERGED" ]; then
+    # PR already merged but branch has new commits not in any PR yet.
+    # Generate a synthetic entry from the commit log so these changes appear in the release.
+    COMMIT_SUMMARY=$(git log --oneline origin/main..HEAD --no-merges | head -5 | paste -sd '; ' -)
+    SYNTHETIC_TITLE="fix: unmerged branch changes (${COMMIT_SUMMARY})"
+    SYNTHETIC_PR=$(jq -n --arg title "$SYNTHETIC_TITLE" --argjson number 0 '{number: $number, title: $title, labels: [], mergedAt: null, is_branch_commits: true}')
+    PRS=$(jq -s '.[0] + [.[1]]' <(echo "$PRS") <(echo "$SYNTHETIC_PR"))
+  fi
 fi
 
 # --- Filter out release PRs and classify ---

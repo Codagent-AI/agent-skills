@@ -106,5 +106,5 @@ End with a brief overall assessment: is the proposal ready to move forward, or d
 - **Do not invent requirements** — Challenge what's written, don't add features the proposal didn't ask for.
 - **Do not skip research** — Uninformed challenges waste everyone's time. Investigate before opining.
 - **Do not manufacture objections** — If a section is solid, say so and move on. Not every section needs a challenge.
-- **Do not flag missing downstream artifacts** — The proposal phase intentionally produces only proposal.md. Design docs, specs, and tasks are subsequent OpenSpec phases. Never report missing design.md, tasks.md, or spec files as a finding.
+- **Do not flag missing downstream artifacts** — The proposal phase intentionally produces only proposal.md. Design docs, specs, and tasks are subsequent phases. Never report missing design.md, tasks.md, or spec files as a finding.
 - **Do suggest alternatives** — Every challenge must come with a suggested alternative or a concrete question. "This is wrong" without direction is not helpful.
