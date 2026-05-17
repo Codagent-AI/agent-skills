@@ -22,16 +22,20 @@ bash .claude/skills/release/scripts/release-info.sh
 
 Capture the JSON output. If the output contains `"error"`, stop and report the message to the user.
 
-### 2. Show the release summary
+### 2. Show the release summary and confirm classification
 
 Display to the user:
 - Version bump: `current_version` → `new_version`
 - Number of PRs by category
 - List each PR number and title, grouped by Major / Minor / Patch
 
+Ask the user to confirm the classification is correct. The conventional commit prefix is a heuristic — internal changes (tooling, CI, skills used only by maintainers) should be patch-level even if prefixed with `feat:`. Adjust categories based on user feedback before proceeding.
+
 ### 3. Write changelog descriptions
 
 For each PR in the JSON output, write a one-sentence description that is slightly more informative than the raw PR title. Strip the conventional commit prefix from the title (`feat:`, `fix:`, `chore:`, etc.) and expand it into a sentence that gives enough context to understand the change without clicking through.
+
+If an entry has `"is_branch_commits": true` and `"number": 0`, it represents unmerged commits on the current branch. Read the commit messages (`git log origin/main..HEAD --oneline --no-merges`) and write a description summarizing those changes. Omit the PR link for these entries since they have no PR yet — just use a bullet with the description.
 
 ### 4. Format the changelog section
 
@@ -53,6 +57,7 @@ Format:
 ### Patch Changes
 
 - [#<number>](https://github.com/Codagent-AI/agent-skills/pull/<number>) <description>
+- <description without link> (for branch-commit entries with no PR)
 ```
 
 ### 5. Write the changelog section to a temp file

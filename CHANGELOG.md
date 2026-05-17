@@ -1,14 +1,12 @@
 # agent-skills
 
-## 0.8.0
-
-### Minor Changes
-
-- [#38](https://github.com/Codagent-AI/agent-skills/pull/38) Added a release skill workflow for automating version bumps and changelogs, and improved guidance for how skills ask users questions interactively
+## 0.7.4
 
 ### Patch Changes
 
+- [#38](https://github.com/Codagent-AI/agent-skills/pull/38) Added a release skill workflow for automating version bumps and changelogs, and improved guidance for how skills ask users questions interactively
 - [#39](https://github.com/Codagent-AI/agent-skills/pull/39) Added name fields to skill frontmatter for Vercel platform compatibility
+- Removed OpenSpec-specific language from generic skills (simple-plan, proposal-review) so they work in any workflow
 
 ## 0.7.3
 
