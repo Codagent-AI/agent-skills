@@ -97,9 +97,13 @@ Before presenting the breakdown, ask targeted clarification questions if the pro
 
 ## 4. Write Task Files
 
-For each task you identified, write a self-contained `<slug>.md` file in `tasks/`. Write them all before moving on to ordering.
+For each task you identified, write a self-contained task file in `tasks/`. Write them all before moving on to ordering.
 
-**slug**: 2–4 word kebab-case summary (e.g., `export-service-endpoint`, `rate-limiting-audit-log`)
+**Filename format**:
+- Single-task changes: use `<slug>.md`, where `slug` is a 2–4 word kebab-case summary (e.g., `package-as-plugin`).
+- Multi-task changes: use a temporary descriptive filename while drafting if needed, but after Step 5 every task file MUST be named `<NN>-<slug>.md`, where `NN` is a zero-padded execution-order prefix (`01`, `02`, ...). The runner executes task files by sorted glob order, so these prefixes are what make execution match `tasks.md`.
+
+**slug**: 2–4 word kebab-case summary (e.g., `export-service-endpoint`, `rate-limiting-audit-log`). Do not choose slugs whose alphabetical order is meant to imply execution order; the numeric prefix is the ordering mechanism.
 
 ### Single-task changes
 
@@ -195,7 +199,9 @@ Now that all task files exist, decide their sequence.
 
 Order tasks so each one is ready to start when the previous finishes. A task is ready when everything it depends on already exists. Don't invent ordering to make the list feel structured — if two tasks have no dependency on each other, order doesn't matter; put the one that unblocks more work first.
 
-**If you decided in Step 2 that refactoring is needed**, prepend it as the first task now. Write its task file (`refactor-<slug>.md`) using the same format, describing what structural changes are needed and why, with a `## Done When` stating the code is restructured and all existing tests still pass.
+For multi-task changes, rename every task file now so its filename starts with its execution-order prefix: `01-<slug>.md`, `02-<slug>.md`, and so on. If there are 10 or more tasks, keep all prefixes the same width (`01` through `10`, or `001` through `100`) so lexical sort order remains execution order.
+
+**If you decided in Step 2 that refactoring is needed**, prepend it as the first task now. Write its task file (`01-refactor-<slug>.md` for multi-task changes, or `refactor-<slug>.md` for a single-task change) using the same format, describing what structural changes are needed and why, with a `## Done When` stating the code is restructured and all existing tests still pass. Renumber the remaining multi-task files after prepending it.
 
 ---
 
@@ -206,8 +212,8 @@ With ordering settled, write the task index at `<change-dir>/tasks.md` (i.e., in
 ## Artifact Template
 
 ```markdown
-- [ ] <Task title> (`tasks/<slug>.md`)
-- [ ] <Task title> (`tasks/<slug>.md`)
+- [ ] <Task title> (`tasks/01-<slug>.md`)
+- [ ] <Task title> (`tasks/02-<slug>.md`)
 ```
 
 One checkbox line per task, in execution order. The parenthesized path links to the detailed task file. The applying agent marks tasks complete by changing `[ ]` to `[x]`.
@@ -250,8 +256,8 @@ Requirements 4–5 (rate limiting, audit logging) are cross-cutting concerns lay
 ### tasks.md
 
 ```markdown
-- [ ] ExportService + POST /exports endpoint (`tasks/export-service-endpoint.md`)
-- [ ] Rate limiting and audit logging (`tasks/rate-limiting-audit-log.md`)
+- [ ] ExportService + POST /exports endpoint (`tasks/01-export-service-endpoint.md`)
+- [ ] Rate limiting and audit logging (`tasks/02-rate-limiting-audit-log.md`)
 ```
 
 ### Task 1 file
@@ -409,6 +415,7 @@ denied requests but not for 400 or 429 responses.
 - **Exact file paths** — always use real paths from the codebase, not placeholders like `src/your-service.ts`
 - **No unresolved placeholders** — if the design document contains instructional placeholders (e.g., `<path to the task file>`), do not copy them verbatim. You must resolve them to their actual values or describe them in prose. Never leak `<...>` placeholder syntax into the task file.
 - **Questions before breakdown approval** — when task grouping or sequencing is ambiguous, ask targeted questions before presenting the proposed breakdown
+- **Task filenames preserve order** — multi-task filenames must have numeric prefixes so sorted glob execution follows the same order as `tasks.md`
 
 ## Never
 
