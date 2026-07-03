@@ -8,7 +8,7 @@ Agent Validator is required for the implementation and PR workflows:
 
 ```bash
 npm install -g agent-validator
-agent-validator init
+agent-validate init
 ```
 
 The `init` skill verifies:
