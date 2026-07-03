@@ -13,6 +13,8 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      DOCS_SYNC_PAT: ${{ secrets.DOCS_SYNC_PAT }}
     steps:
       - name: Checkout agent-skills
         uses: actions/checkout@v4
@@ -20,20 +22,17 @@ jobs:
           path: agent-skills
 
       - name: Verify docs sync token
-        env:
-          DOCS_SYNC_PAT: ${{ secrets.DOCS_SYNC_PAT }}
+        if: env.DOCS_SYNC_PAT == ''
         run: |
-          if [ -z "$DOCS_SYNC_PAT" ]; then
-            echo "DOCS_SYNC_PAT is not set; configure it to enable docs sync."
-            exit 1
-          fi
+          echo "DOCS_SYNC_PAT is not set; configure it to enable docs sync."
+          exit 1
 
       - name: Checkout dot-dev
         uses: actions/checkout@v4
         with:
           repository: pacaplan/codagent-dot-dev
           ref: main
-          token: ${{ secrets.DOCS_SYNC_PAT }}
+          token: ${{ env.DOCS_SYNC_PAT }}
           path: dot-dev
 
       - name: Copy docs into dot-dev content dir
@@ -62,7 +61,7 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         working-directory: dot-dev
         env:
-          GH_TOKEN: ${{ secrets.DOCS_SYNC_PAT }}
+          GH_TOKEN: ${{ env.DOCS_SYNC_PAT }}
         run: |
           set -euo pipefail
           git config user.name "docs-sync-bot"
