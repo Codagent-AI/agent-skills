@@ -39,12 +39,36 @@ jobs:
       - name: Copy docs into dot-dev content dir
         run: |
           set -euo pipefail
+          SRC=agent-skills/docs
           DEST="dot-dev/src/docs/content/agent-skills"
           rm -rf "$DEST"
           mkdir -p "$DEST"
-          cp agent-skills/docs/*.md "$DEST"/
-          if [ -d agent-skills/docs/images ]; then
-            cp -r agent-skills/docs/images "$DEST"/images
+
+          # Published markdown, minus internal/meta pages. (The dot-dev generator
+          # also skips README/AGENTS/CLAUDE, but drop them here to keep the
+          # content dir clean; development.md is internal and not published.)
+          cp "$SRC"/*.md "$DEST"/
+          rm -f "$DEST"/development.md "$DEST"/README.md "$DEST"/AGENTS.md "$DEST"/CLAUDE.md
+
+          # Images: copy only the ones a published page references, so unreferenced
+          # assets (demo GIF, full-size diagrams) never bloat the site; downscale
+          # any oversized raster that does get referenced.
+          if [ -d "$SRC/images" ]; then
+            mkdir -p "$DEST/images"
+            for img in "$SRC"/images/*; do
+              [ -f "$img" ] || continue
+              base="$(basename "$img")"
+              if grep -qlF "images/$base" "$DEST"/*.md 2>/dev/null; then
+                cp "$img" "$DEST/images/$base"
+              fi
+            done
+            if command -v convert >/dev/null 2>&1; then
+              for img in "$DEST"/images/*.png "$DEST"/images/*.jpg "$DEST"/images/*.jpeg "$DEST"/images/*.gif; do
+                [ -f "$img" ] || continue
+                convert "$img" -resize '1280x1280>' "$img" || true
+              done
+            fi
+            rmdir "$DEST/images" 2>/dev/null || true
           fi
 
       - name: Check for changes

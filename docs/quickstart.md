@@ -1,3 +1,10 @@
+---
+title: Quickstart
+group: Getting Started
+order: 2
+description: Install the skill bundle for your agent host and run the first workflow.
+---
+
 # Quickstart
 
 Install the plugin for your host, initialize the target project, then invoke the skill that matches the work.

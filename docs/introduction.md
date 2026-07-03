@@ -1,3 +1,10 @@
+---
+title: Introduction
+group: Getting Started
+order: 1
+description: What Codagent Agent Skills is and the agent workflow it guides.
+---
+
 # Introduction
 
 Codagent Agent Skills is a portable skill bundle for guiding AI agents through software-development work. The skills turn open-ended requests into a repeatable flow: evaluate the idea, write requirements, design the approach, break work into tasks, implement with validation, and finalize the pull request.

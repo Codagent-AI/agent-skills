@@ -1,3 +1,10 @@
+---
+title: Workflow Guide
+group: Guides
+order: 1
+description: The standard and lightweight skill flows, support skills, and how to choose a path.
+---
+
 # Workflow Guide
 
 Codagent skills are designed to preserve intent across phases. Each planning skill writes or checks an artifact that the next skill can consume, and each implementation skill verifies its work before handing off.

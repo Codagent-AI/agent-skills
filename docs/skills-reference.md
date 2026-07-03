@@ -1,3 +1,10 @@
+---
+title: Skills Reference
+group: Reference
+order: 1
+description: The user-facing and support skills shipped from the bundle.
+---
+
 # Skills Reference
 
 This page summarizes the user-facing and support skills shipped from `skills/`.
