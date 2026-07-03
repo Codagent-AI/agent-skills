@@ -1,0 +1,65 @@
+name: Sync docs to dot-dev
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**']
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout agent-skills
+        uses: actions/checkout@v4
+        with:
+          path: agent-skills
+
+      - name: Checkout dot-dev
+        uses: actions/checkout@v4
+        with:
+          repository: pacaplan/codagent-dot-dev
+          ref: main
+          token: ${{ secrets.DOCS_SYNC_PAT }}
+          path: dot-dev
+
+      - name: Copy docs into dot-dev content dir
+        run: |
+          set -euo pipefail
+          DEST="dot-dev/src/docs/content/agent-skills"
+          rm -rf "$DEST"
+          mkdir -p "$DEST"
+          cp agent-skills/docs/*.md "$DEST"/
+          if [ -d agent-skills/docs/images ]; then
+            cp -r agent-skills/docs/images "$DEST"/images
+          fi
+
+      - name: Check for changes
+        id: diff
+        working-directory: dot-dev
+        run: |
+          git add -A src/docs/content/agent-skills
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open sync PR
+        if: steps.diff.outputs.changed == 'true'
+        working-directory: dot-dev
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_SYNC_PAT }}
+        run: |
+          set -euo pipefail
+          git config user.name "docs-sync-bot"
+          git config user.email "actions@users.noreply.github.com"
+          SHORT_SHA="$(cd ../agent-skills && git rev-parse --short HEAD)"
+          BRANCH="docs-sync/agent-skills-${SHORT_SHA}-${GITHUB_RUN_ID}"
+          git checkout -b "$BRANCH"
+          git commit -m "docs: sync agent-skills docs from ${SHORT_SHA}"
+          git push origin "$BRANCH"
+          gh pr create --repo pacaplan/codagent-dot-dev \
+            --title "docs: sync agent-skills docs (${SHORT_SHA})" \
+            --body "Automated sync of \`docs/\` from Codagent-AI/agent-skills@${SHORT_SHA}. Merges automatically once the build check passes." \
+            --base main --head "$BRANCH"
