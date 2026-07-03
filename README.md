@@ -53,6 +53,12 @@ use the codagent:init skill
 cursor plugins install Codagent-AI/agent-skills
 ```
 
+Then initialize a project from the Cursor plugin environment:
+
+```text
+use the codagent:init skill
+```
+
 ## Requirements
 
 Codagent skills expect Agent Validator to be installed and initialized in projects where validation should run:

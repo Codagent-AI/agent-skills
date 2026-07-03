@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: agent-skills
+          persist-credentials: false
 
       - name: Verify docs sync token
         if: env.DOCS_SYNC_PAT == ''
@@ -34,6 +35,7 @@ jobs:
           ref: main
           token: ${{ env.DOCS_SYNC_PAT }}
           path: dot-dev
+          persist-credentials: false
 
       - name: Copy docs into dot-dev content dir
         run: |
@@ -70,6 +72,8 @@ jobs:
           BRANCH="docs-sync/agent-skills-${SHORT_SHA}-${GITHUB_RUN_ID}"
           git checkout -b "$BRANCH"
           git commit -m "docs: sync agent-skills docs from ${SHORT_SHA}"
+          git remote set-url origin "https://x-access-token:${DOCS_SYNC_PAT}@github.com/pacaplan/codagent-dot-dev.git"
+          trap 'git remote set-url origin https://github.com/pacaplan/codagent-dot-dev.git' EXIT
           git push origin "$BRANCH"
           gh pr create --repo pacaplan/codagent-dot-dev \
             --title "docs: sync agent-skills docs (${SHORT_SHA})" \

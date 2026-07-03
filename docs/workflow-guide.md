@@ -7,7 +7,7 @@ Codagent skills are designed to preserve intent across phases. Each planning ski
 Use the standard flow for feature work, behavior changes, risky refactors, or anything that needs requirements before implementation.
 
 ```text
-propose -> spec -> design -> review-spec -> plan-tasks -> implement-change -> finalize-pr
+propose -> spec -> design -> plan-tasks -> review-spec -> implement-change -> finalize-pr
 ```
 
 ### 1. Propose
@@ -28,15 +28,15 @@ Spec scenarios use requirement blocks and WHEN/THEN scenarios so implementation 
 
 If the design phase discovers a spec implication, it applies the corresponding spec edits after approval.
 
-### 4. Review The Artifacts
-
-`review-spec` checks proposal, spec, design, and task artifacts for conflicts, gaps, and cross-artifact drift. It treats requirements as written and reports inconsistencies rather than changing product decisions.
-
-### 5. Plan Tasks
+### 4. Plan Tasks
 
 `plan-tasks` creates self-contained task files. Each task includes the relevant why, how, exact spec scenarios, and done criteria needed by a separate implementer that has no shared session context.
 
 Tasks are ordered so dependent work stays sequential.
+
+### 5. Review The Artifacts
+
+`review-spec` checks proposal, spec, design, and task artifacts for conflicts, gaps, and cross-artifact drift. It treats requirements as written and reports inconsistencies rather than changing product decisions.
 
 ### 6. Implement
 

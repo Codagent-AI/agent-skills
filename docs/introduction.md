@@ -8,7 +8,7 @@ The bundle is distributed for Claude Code, Codex, and Cursor from the same repos
 
 The core skills cover four parts of the development lifecycle:
 
-- Planning: `propose`, `proposal-review`, `spec`, `design`, `review-spec`, `plan-tasks`, and `simple-plan`
+- Planning: `propose`, `proposal-review`, `spec`, `design`, `plan-tasks`, `review-spec`, and `simple-plan`
 - Implementation: `implement-with-tdd`, `implement-and-validate`, and `implement-change`
 - Pull requests: `push-pr`, `wait-ci`, `fix-pr`, and `finalize-pr`
 - Support and review: `init`, `ask-questions`, `handoff`, `session-report`, `review-assumptions`, and `task-compliance`
@@ -20,7 +20,7 @@ The repository also includes a separate release skill under `.agents/skills/rele
 Codagent works best when the agent has explicit artifacts to hand off between phases. A typical larger change moves through:
 
 ```text
-propose -> spec -> design -> review-spec -> plan-tasks -> implement-change -> finalize-pr
+propose -> spec -> design -> plan-tasks -> review-spec -> implement-change -> finalize-pr
 ```
 
 For smaller changes, `simple-plan` compresses the planning phase into one lightweight pass while still writing enough artifacts for another agent to continue safely.
