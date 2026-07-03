@@ -6,6 +6,10 @@ on:
     paths: ['docs/**']
   workflow_dispatch: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -14,6 +18,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: agent-skills
+
+      - name: Verify docs sync token
+        env:
+          DOCS_SYNC_PAT: ${{ secrets.DOCS_SYNC_PAT }}
+        run: |
+          if [ -z "$DOCS_SYNC_PAT" ]; then
+            echo "DOCS_SYNC_PAT is not set; configure it to enable docs sync."
+            exit 1
+          fi
 
       - name: Checkout dot-dev
         uses: actions/checkout@v4
