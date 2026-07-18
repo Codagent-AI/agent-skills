@@ -32,8 +32,6 @@ Skip areas you already explored in earlier steps of this session. Focus on what'
 - Whether any of the affected code is tangled or poorly abstracted enough that the new work would be significantly harder to implement as-is
 - Whether any existing documentation (README, guides, config references, etc.) covering the affected areas will need updating
 
-**Decide now if a refactoring task is needed.** Prepend a standalone refactoring task in Step 5 only when implementation would otherwise require working around serious structural obstacles. Use it to restructure existing code without changing behavior so the feature work lands cleanly. When in doubt, skip it; the implementing subagent can refactor inline. Count a warranted refactor as one of the outcome/risk boundaries in the Step 3 LOE estimate and task-count budget; never add it later as an unbudgeted extra task.
-
 ---
 
 ## 3. Plan the Task Breakdown
@@ -54,6 +52,8 @@ Use this t-shirt scale as a task-count budget:
 | XL | 5+ | A program-scale change spanning multiple major subsystems or product capabilities, each with substantial implementation and verification. A difficult replacement of one subsystem is usually Large, not XL. Start at 5; every task beyond 5 needs its own clear boundary. |
 
 Choose the smallest size whose implementation-risk profile fits, without looking ahead to the task count you want. The preferred granularity is deliberately dense. A change touching many files and several specs can still be Small when the work is patterned and low-risk. Conversely, one cohesive architectural outcome can be Large when it replaces a core subsystem or carries substantial platform, integration, cutover, and verification risk. Treat XL as exceptional, not as a synonym for a difficult Large change.
+
+Only after completing this unbiased implementation-effort estimate and selecting the size band, decide whether any restructuring identified in Step 2 warrants a standalone refactoring task. Prepend one in Step 5 only when implementation would otherwise require working around serious structural obstacles. Use it to restructure existing code without changing behavior so the feature work lands cleanly. When in doubt, skip it; the implementing subagent can refactor inline. Treat necessary restructuring effort as part of the whole-change LOE, but do not let a preliminary refactoring-task decision influence size selection. If a standalone refactoring task is warranted, allocate it within the selected size band and task-count budget; never add it later as an unbudgeted extra task.
 
 For a Medium, Large, or XL estimate—or whenever provider, migration, feasibility, cutover, or cleanup boundaries are ambiguous—read [references/task-sizing.md](references/task-sizing.md) before drafting task boundaries. Apply its calibration and boundary rules as required guidance, not optional examples.
 
@@ -217,7 +217,7 @@ Order tasks so each one is ready to start when the previous finishes. A task is 
 
 For multi-task changes, rename every task file now so its filename starts with its execution-order prefix: `01-<slug>.md`, `02-<slug>.md`, and so on. If there are 10 or more tasks, keep all prefixes the same width (`01` through `10`, or `001` through `100`) so lexical sort order remains execution order.
 
-**If you decided in Step 2 that refactoring is needed**, prepend it as the first task now. Write its task file (`01-refactor-<slug>.md` for multi-task changes, or `refactor-<slug>.md` for a single-task change) using the same format, describing what structural changes are needed and why, with a `## Done When` stating the code is restructured and all existing tests still pass. Renumber the remaining multi-task files after prepending it.
+**If you decided during the Step 3 LOE flow that refactoring is needed**, prepend it as the first task now. Write its task file (`01-refactor-<slug>.md` for multi-task changes, or `refactor-<slug>.md` for a single-task change) using the same format, describing what structural changes are needed and why, with a `## Done When` stating the code is restructured and all existing tests still pass. Renumber the remaining multi-task files after prepending it.
 
 ---
 
