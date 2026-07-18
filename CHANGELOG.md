@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.7.6
+
+### Patch Changes
+
+- [#42](https://github.com/Codagent-AI/agent-skills/pull/42) Restructure the documentation into focused introduction, quickstart, workflow, and skill-reference guides, with an automated docs sync workflow.
+- [#43](https://github.com/Codagent-AI/agent-skills/pull/43) Calibrate autonomous task planning with LOE-based task-count budgets and dense grouping rules that prevent systematic over-splitting.
+
 ## 0.7.5
 
 ### Patch Changes

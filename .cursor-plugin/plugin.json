@@ -1,7 +1,7 @@
 {
   "name": "codagent",
   "displayName": "Codagent Agent Skills",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "A curated set of skills for each stage of development — propose, spec, design, plan, implement, ship.",
   "author": "Codagent-AI",
   "license": "MIT",
