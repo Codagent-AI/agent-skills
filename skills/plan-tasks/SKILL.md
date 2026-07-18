@@ -1,5 +1,4 @@
 ---
-name: plan-tasks
 description: Creates a structured implementation task breakdown for a structured change, synthesizing proposal, design, and specs into self-contained per-task files. Use when the tasks artifact is the next step in a change.
 ---
 
@@ -33,24 +32,61 @@ Skip areas you already explored in earlier steps of this session. Focus on what'
 - Whether any of the affected code is tangled or poorly abstracted enough that the new work would be significantly harder to implement as-is
 - Whether any existing documentation (README, guides, config references, etc.) covering the affected areas will need updating
 
-**Decide now if a refactoring task is needed.** If implementation would require working around serious structural obstacles in the current code, you'll prepend a standalone refactoring task in Step 5. This task restructures existing code without changing behavior, so the feature work lands cleanly. It is not a default step — add it only when genuinely warranted. When in doubt, skip it; the implementing subagent can refactor inline as needed.
+**Decide now if a refactoring task is needed.** Prepend a standalone refactoring task in Step 5 only when implementation would otherwise require working around serious structural obstacles. Use it to restructure existing code without changing behavior so the feature work lands cleanly. When in doubt, skip it; the implementing subagent can refactor inline. Count a warranted refactor as one of the outcome/risk boundaries in the Step 3 LOE estimate and task-count budget; never add it later as an unbudgeted extra task.
 
 ---
 
 ## 3. Plan the Task Breakdown
 
-Decide how many tasks this change requires and what each one covers. Do not write any files yet.
+Decide the change's overall implementation effort first, then identify the delivery units that fit that size. Do not derive task count from the number of requirements, scenarios, design sections, affected files, or architectural layers.
 
-**1 task = 1 meaningful, independently completable unit of work** — something you could describe with a single focused git commit message. Not a TDD micro-step. Not a vague epic.
+### Estimate whole-change LOE
 
-**Your default instinct is to over-split. Resist it.** Most changes need fewer tasks than you think. A change with 3 spec requirements is probably 1–2 tasks, not 3. A change with 6 requirements is probably 2–3 tasks, not 6. The number of spec requirements, design sections, or affected files does NOT determine the number of tasks — delivery units do.
+Estimate the change independently before drafting or counting candidate task boundaries. Base the estimate on the amount of novel implementation, uncertainty, architectural reach, platform or provider breadth, migration and cutover risk, and verification burden. Discount repeated or mechanical propagation through files, UI surfaces, adapters, docs, and tests. Do not use a preliminary outcome count to choose the size; that makes the task-count cross-check circular.
 
-Apply these rules to identify your tasks:
+Use this t-shirt scale as a task-count budget:
 
-1. **Group by delivery unit** — what would a skilled full-stack engineer naturally commit together? Don't split by layer (don't separate "the config file" from "the code that uses it", or "the schema" from "the feature that requires it"). Requirements that implement the same capability end-to-end belong together even if they touch different layers.
-2. **Apply the merge test** — if two candidate tasks would always be committed together, have no independent value, and aren't separately review-worthy, merge them.
-3. **Apply the merge test again** — seriously, you probably still have too many tasks. For each pair of adjacent tasks, ask: "Would a senior engineer open two separate PRs for these, or one?" If one, merge them.
-4. **Check for specialization mismatch** — split only when a task spans domains requiring genuinely different specialists. A full-stack engineer handles most vertical slices.
+| LOE | Preferred task count | Calibration |
+| --- | ---: | --- |
+| Small | exactly 1 | A routine, cohesive change using established patterns with limited uncertainty, even when it propagates through many surfaces or files. |
+| Medium | exactly 2 | A substantial feature or refactor with a meaningful contract change, migration, or second implementation-sized risk cluster. |
+| Large | 3–4 | A major subsystem change with high novelty or uncertainty, platform/provider integration breadth, a production transition, or extensive verification. Prefer 3 unless the fourth boundary is strong. |
+| XL | 5+ | A program-scale change spanning multiple major subsystems or product capabilities, each with substantial implementation and verification. A difficult replacement of one subsystem is usually Large, not XL. Start at 5; every task beyond 5 needs its own clear boundary. |
+
+Choose the smallest size whose implementation-risk profile fits, without looking ahead to the task count you want. The preferred granularity is deliberately dense. A change touching many files and several specs can still be Small when the work is patterned and low-risk. Conversely, one cohesive architectural outcome can be Large when it replaces a core subsystem or carries substantial platform, integration, cutover, and verification risk. Treat XL as exceptional, not as a synonym for a difficult Large change.
+
+For a Medium, Large, or XL estimate—or whenever provider, migration, feasibility, cutover, or cleanup boundaries are ambiguous—read [references/task-sizing.md](references/task-sizing.md) before drafting task boundaries. Apply its calibration and boundary rules as required guidance, not optional examples.
+
+### Form delivery units within the budget
+
+**1 task = 1 meaningful outcome a skilled agent can implement, test, and review in one focused session.** A focused session may cover a broad repo-wide vertical slice when the task points to the design and specs. It is not a TDD micro-step, one architectural layer, one spec requirement, one UI surface, one adapter, or one file group.
+
+Apply these rules:
+
+1. **Group by delivered outcome** — include all layers needed to make one capability work. Keep config with its consumer, schema with the behavior that needs it, UI with its backing logic, and tests with implementation.
+2. **Split on outcome and risk boundaries, not surface area** — use a separate task only when the work has independently meaningful value, a distinct risk or cutover point, or a genuine sequencing boundary. Multiple UI screens, providers, or files increase LOE but do not automatically create tasks.
+3. **Assume a generalist implementer** — crossing backend, frontend, config, CLI, docs, or tests is not itself a reason to split. Split for genuinely different work, not different file types.
+4. **Fold enabling work forward** — scaffolding, refactors, dependency changes, and infrastructure belong in the task that first exercises them unless they are independently risky and review-worthy.
+5. **Run the merge test** — if two candidates would normally land in one PR, neither is useful without the other, or one merely prepares for the next, merge them.
+
+Keep all plumbing for one capability together. In particular, do not split:
+
+- a setting's persistence and validation from the runtime behavior it controls;
+- editor and setup surfaces from the setting they expose or from the runtime routing/enforcement that makes the setting effective;
+- adapter-specific implementations of the same behavior from their shared contract;
+- tests, docs, migrations, or refactors from the outcome that requires them.
+
+### Cross-check the count
+
+After drafting candidate boundaries, compare the count with the independent LOE budget:
+
+1. If the count is above the band, merge the most coupled candidates until it fits.
+2. If a task contains multiple cohesive outcomes, split it and raise the whole-change LOE if necessary. Do not split merely because one outcome is broad.
+3. If the count is below the band's minimum, re-check the LOE; do not manufacture a task merely to satisfy an inflated estimate.
+4. Within a range, choose the lower count unless an additional boundary is concrete and implementation-significant.
+5. For every task after the first, state internally why it cannot be folded into another task. If the answer is only "different requirement," "different layer," "different UI," "many adapters," "cleaner organization," "a lot of work," or "easier to track," merge it.
+
+Once the cross-check passes, proceed autonomously to writing the task files. Do not present the breakdown for approval, ask the user to choose a count, or pause for confirmation. Resolve ordinary grouping uncertainty with best judgment; stop only if the source artifacts contain a contradiction that makes the implementation itself unsafe to plan.
 
 ### Task Splitting Examples and Anti-patterns
 
@@ -74,26 +110,6 @@ For small changes, a single task is fine. Don't manufacture fake granularity.
 **Anti-pattern: Separate doc-update tasks.** Don't create standalone tasks for documentation updates (README, guides, license files, etc.) when the docs are part of the same change as code or config. Update docs in the same task that introduces the related functionality. Only split docs into their own task when the documentation work is substantial and independent of any code change (e.g., a docs-only change).
 
 **Litmus test for infrastructure/config-only changes:** If all files being created/modified are prompt files, config files, skill definitions, or other non-compiled artifacts (no application code with runtime behavior), the entire change is likely one task. Prompt/config changes don't have the layer boundaries that justify splitting — they're all "infrastructure" in the same sense. Only split when tasks produce independently valuable, releasable functionality.
-
-### Confirm with the User Before Writing
-
-**Do not write any task files yet.** Present the user with a brief overview of your planned breakdown, then follow the `codagent:ask-questions` skill to get confirmation:
-
-Before presenting the breakdown, ask targeted clarification questions if the proposal, specs, design, or code research leave meaningful ambiguity about task grouping, delivery boundaries, dependencies, risk, or sequencing. Do not use the final confirmation prompt as a substitute for resolving those ambiguities.
-
-1. State the number of tasks.
-2. For each task, give the title and a 1-sentence summary of its scope — what it delivers, not implementation details.
-3. If there were plausible alternatives, briefly explain why you recommend this grouping over them.
-4. Include a compact "Low-level decisions I made" list for tasking defaults you chose from context, such as grouping, sequencing, or omitted standalone tasks.
-5. Explain:
-
-> **Goldilocks task sizing:** Each task should be big enough to deliver a meaningful, independently completable unit of work (something worth its own commit and review), but small enough that a single agent can hold the full context and finish it in one session.
-
-6. Ask: _"Does this look like the right number and grouping? Would you like me to split or combine any of these before I write the detailed task files?"_
-
-**Wait for the user's response.** Adjust the plan if they request changes. Only proceed to Step 4 after confirmation.
-
----
 
 ## 4. Write Task Files
 
@@ -414,11 +430,12 @@ denied requests but not for 400 or 429 responses.
 - **Copy spec scenarios verbatim** — don't paraphrase; copy them exactly so they serve directly as test cases
 - **Exact file paths** — always use real paths from the codebase, not placeholders like `src/your-service.ts`
 - **No unresolved placeholders** — if the design document contains instructional placeholders (e.g., `<path to the task file>`), do not copy them verbatim. You must resolve them to their actual values or describe them in prose. Never leak `<...>` placeholder syntax into the task file.
-- **Questions before breakdown approval** — when task grouping or sequencing is ambiguous, ask targeted questions before presenting the proposed breakdown
+- **Estimate LOE before task count** — use implementation effort to choose the size band, then fit outcome-based delivery units within it
+- **Autonomous tasking** — make grouping and sequencing decisions from the artifacts and codebase, write the files, and report the result without an approval gate
 - **Task filenames preserve order** — multi-task filenames must have numeric prefixes so sorted glob execution follows the same order as `tasks.md`
 
 ## Never
 
-- Never present a task breakdown for approval while meaningful grouping, dependency, or sequencing ambiguities remain unasked.
-- Never use "does this breakdown look right?" as a substitute for resolving known uncertainty about delivery boundaries.
-- Never write task files before the user has confirmed the breakdown.
+- Never ask the user to approve, split, or combine the task breakdown before writing it.
+- Never equate requirements, scenarios, design sections, layers, or file groups with tasks.
+- Never add a task solely for tests, docs, scaffolding, plumbing, or "laying the groundwork" when that work belongs to a delivered outcome.
