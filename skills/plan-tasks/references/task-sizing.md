@@ -2,11 +2,7 @@
 
 Read this reference when the initial LOE estimate is Medium, Large, or XL, or when provider, migration, feasibility, cutover, or cleanup boundaries are ambiguous.
 
-## Calibration anchors
-
-- **Small → 1 task:** Add one patterned policy setting and carry it through persistence, user-facing configuration, runtime enforcement, provider-specific flags, docs, and tests.
-- **Medium → 2 tasks:** Migrate a shared contract, then add a substantial capability that depends on the new contract.
-- **Large → 3–4 tasks:** Replace one high-risk subsystem across platforms or providers, including its shared foundation, integrations, production transition, and substantial legacy cleanup.
+## Medium versus Large
 
 Treat a shared-contract migration plus one configurable capability built on it as Medium, regardless of how many packages, settings screens, or existing adapters it touches. Raise it to Large only when it also replaces a core subsystem, introduces substantial new external integration mechanisms, or requires a staged production transition.
 
