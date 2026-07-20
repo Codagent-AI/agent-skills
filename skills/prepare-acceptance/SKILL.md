@@ -1,9 +1,9 @@
 ---
 description: >
   Exercises an implemented change through its user and client flows, reports clear defects to a
-  caller-managed fix and validation loop, waits for current-head CI once stable, and prepares concise
-  evidence for human review. Use when preparing a change for acceptance, gathering review evidence,
-  performing human-style flow testing, or when invoked as codagent:prepare-acceptance.
+  caller without fixing them, waits for current-head CI once stable, and prepares concise evidence for
+  human review. Use when preparing a change for acceptance, gathering review evidence, performing
+  human-style flow testing, or when invoked as codagent:prepare-acceptance.
 ---
 
 # Prepare Acceptance
@@ -11,7 +11,7 @@ description: >
 Prepare an implemented change for a separate human acceptance session. Exercise it as a human user or
 real client would, report clear defects, wait for CI once no defects remain, and produce concise
 evidence bound to the exact PR revision. Fixes and automated validation belong to separate
-caller-managed steps.
+caller-managed steps when used.
 
 ## Required inputs
 
@@ -20,12 +20,13 @@ Resolve these from the caller before acting:
 - approved requirements, scenarios, design, and task artifacts;
 - caller-supplied implementation summary or completion evidence identifying delivered behavior;
 - evidence output directory;
-- unresolved-assumptions ledger path, when one exists;
-- required PR state.
+- unresolved-assumptions ledger path, when one exists.
 
 Treat missing source-of-truth artifacts or an unspecified evidence directory as blockers. Do not infer
-product behavior from implementation alone. Keep this workflow autonomous: preserve product, scope,
-or design ambiguity for the later human acceptance session instead of asking the user here.
+product behavior from implementation alone. When no assumptions-ledger path is supplied, use
+`<evidence-directory>/acceptance-assumptions.md` and create it if needed. Keep this preparation
+autonomous: preserve product, scope, or design ambiguity for the later human acceptance session
+instead of asking the user here.
 
 ## Procedure
 
@@ -33,10 +34,10 @@ or design ambiguity for the later human acceptance session instead of asking the
 
 1. Read repository instructions, the approved artifacts, the unresolved-assumptions ledger, and the
    existing automated-validation evidence supplied by the caller.
-2. Record local `HEAD`. Read only the PR URL, current head SHA, and draft state needed for acceptance.
-   Do not inspect or reconstruct a diff.
-3. Require a clean tracked worktree, the required PR state, and local `HEAD` equal to the PR head. If
-   they do not match, stop for the caller to resolve; do not push or alter PR metadata in this skill.
+2. Record local `HEAD`. Read only the PR URL, current head SHA, and current PR state needed for the
+   evidence record. Do not inspect or reconstruct a diff.
+3. Require a clean tracked worktree and local `HEAD` equal to the PR head. If they do not match, stop
+   for the caller to resolve; do not push or alter PR metadata in this skill.
 
 ### 2. Exercise the product like a user
 
@@ -65,10 +66,10 @@ resulting state instead of relying on task completion or agent assertions.
 When a clear implementation defect appears, do not fix it. Write
 `<evidence-directory>/acceptance-findings.md` with the tested SHA, affected flow, expected and observed
 behavior, concise reproduction steps, and evidence paths. Do not wait for CI or write final acceptance
-evidence in that invocation. Report the findings and end with the exact line
-`ACCEPTANCE_FIX_NEEDED` so the caller can run its fix and validation loop.
+evidence in that invocation. Report the findings clearly so the caller can run its fix and validation
+process.
 
-Append product, scope, or design ambiguity to the caller's assumptions ledger with the decision needed
+Append product, scope, or design ambiguity to the resolved assumptions ledger with the decision needed
 and likely impact; never silently choose an interpretation or report ambiguity as a clear defect. Every
 invocation re-exercises all supported flows against the current committed `HEAD`; never reuse results
 or screenshots from an earlier invocation.
@@ -98,9 +99,14 @@ Invoke `codagent:wait-ci` after a complete flow pass finds no clear defects and 
 pushed. Require its report to apply to the exact local and PR head SHA used for the flow pass.
 
 - `passed`: continue.
-- `failed`, `comments`, or `pending`: do not write final acceptance-test or handoff evidence or claim
-  readiness. Report the blocking checks/comments and stop so the caller can route the change through
-  the appropriate fix path.
+- `failed` or `comments`: do not write final acceptance-test or handoff evidence or claim readiness.
+  When the failure or comment is clearly attributable to the implementation and actionable in the
+  repository, add it to `<evidence-directory>/acceptance-findings.md` with the tested SHA, failing
+  check or comment, relevant log or link, and concise expected-versus-observed behavior. Report it as
+  a clear defect so the caller can run its fix and validation process. Otherwise, report the external,
+  environmental, or infrastructure blocker without classifying it as an implementation defect.
+- `pending`: do not claim readiness. Report the pending checks and stop for the caller to resume or
+  retry later.
 - no configured checks: continue only after recording that CI coverage is absent.
 
 Treat skipped, neutral, cancelled, stale, and timed-out checks as explicit evidence states, never as
@@ -109,13 +115,15 @@ proof that associated behavior passed.
 ### 5. Write acceptance-test evidence
 
 Write `acceptance-test.md` in the evidence directory only after CI passes or is explicitly absent, the
-complete flow pass makes no tracked changes, and the caller's latest automated-validation evidence
-applies to the current pushed head. Include:
+complete flow pass makes no tracked changes, and any automated-validation evidence supplied by the
+caller applies to the current pushed head. Do not require automated-validation evidence when none was
+supplied; explicitly record its absence instead. Include:
 
 - exact tested local/PR head SHA;
 - the supported flows exercised and their outcomes;
-- clear-defect status and any prior workflow fix evidence supplied by the caller;
-- existing automated-validation and CI status without rerunning either;
+- clear-defect status and any prior fix evidence supplied by the caller;
+- existing automated-validation and CI status without rerunning either, explicitly noting when
+  automated-validation evidence was not supplied;
 - screenshot metadata and text equivalents for every UI flow;
 - representative API, CLI, library, or background-operation evidence for non-UI flows;
 - unavailable flows, environment limitations, warnings, and residual risks;
@@ -125,20 +133,21 @@ Prefer concise conclusions with durable log paths over raw log dumps.
 
 ### 6. Prepare the human handoff
 
-Collate existing implementation, acceptance-test, automated-validation, and CI evidence. Do not run new
-acceptance tests, capture replacement screenshots, or fix issues during collation. If evidence is
-missing or stale, stop and require the producing phase to run again.
+Collate existing implementation, acceptance-test, available automated-validation, and CI evidence. Do
+not run new acceptance tests, capture replacement screenshots, or fix issues during collation. If
+required evidence is missing or stale, stop and require the producing phase to run again. The explicit
+absence of caller-supplied automated-validation evidence is not missing evidence.
 
 Write `acceptance-handoff.md` in the evidence directory with:
 
 1. **Decision brief** — unresolved decisions, delivered behavior, overall validation status, known
    limitations, and suggested human review path.
-2. **Revision identity** — repository, draft PR URL, exact tested SHA, generation time, and tracked
+2. **Revision identity** — repository, PR URL, exact tested SHA, generation time, and tracked
    worktree status.
 3. **Flow evidence** — each supported flow, what was done, the observed result, its evidence, and any
    limitation.
-4. **Automated validation and CI** — concise status plus durable logs or links produced by the separate
-   validation and CI steps.
+4. **Automated validation and CI** — concise status plus durable logs or links produced by separate
+   validation and CI steps; explicitly say when automated-validation evidence was not supplied.
 5. **Visual and client evidence** — screenshot metadata/text equivalents, API or CLI evidence, and
    practical human review instructions.
 6. **Residual risk** — unavailable flows, environment limitations, warnings, and relevant omissions.
@@ -154,30 +163,18 @@ Before reporting readiness:
 4. Verify every referenced evidence and screenshot path exists and every UI flow has visual evidence.
 5. Ensure persisted evidence does not expose secrets, credentials, tokens, private data, or unrelated
    user content.
-6. Confirm the PR remains a draft.
+6. Record the current PR state for the caller without changing it.
 
 Report the exact ready-for-acceptance SHA, PR URL, handoff path, unresolved-decision count, CI status,
-and known limitations. End with the exact line `ACCEPTANCE_READY`. Do not mark the PR ready or perform
-human acceptance.
-
-## Result protocol
-
-Write the terminal marker to `<evidence-directory>/acceptance-status.txt` as its only non-empty line,
-and return the same marker as the final response line:
-
-- `ACCEPTANCE_FIX_NEEDED` — one or more clear implementation defects were documented for the caller's
-  fix and validation loop. Do not emit final acceptance evidence.
-- `ACCEPTANCE_READY` — no clear defects were found, current-head CI passed or was explicitly absent,
-  and revision-bound evidence was verified.
-- `ACCEPTANCE_BLOCKED: <reason>` — required inputs, testing, PR state, CI, or evidence could not be
-  completed. Do not emit either success marker.
+and known limitations. Do not mark the PR ready or perform human acceptance. The caller owns any
+machine-readable status file, terminal marker, or control-flow protocol.
 
 ## Out of scope
 
-- Do not obtain human acceptance; leave that to the interactive acceptance workflow.
+- Do not obtain human acceptance; leave that to the later human acceptance session.
 - Do not fix implementation defects, modify repository files, commit, push, or alter PR metadata.
-- Do not run automated test suites, linters, builds, or other automated checks; the caller owns them.
-- Do not run automated validation; the caller owns validation and reinvocation.
+- Do not run automated test suites, linters, builds, other automated checks, or automated validation;
+  the caller owns validation and reinvocation.
 - Do not change approved requirements, product scope, or design to make tests pass.
 - Do not archive the change, mark the PR ready, merge, or release.
 - Do not perform fuzzing, adversarial testing, or exhaustive edge-case exploration.
