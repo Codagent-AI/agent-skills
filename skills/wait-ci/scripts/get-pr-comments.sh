@@ -10,17 +10,20 @@
 # {
 #   "has_comments": true | false,
 #   "unresolved_threads": [...],    # inline review threads not yet resolved
-#   "issue_comments": [...]         # top-level PR conversation comments
+#   "issue_comments": [...],        # blocking top-level human comments
+#   "informational_bot_comments": [...] # non-blocking top-level bot comments
 # }
 #
 # Each unresolved_thread entry:
 # { "file": "...", "line": N, "author": "...", "body": "..." }
 #
-# Each issue_comment entry:
+# Each issue_comment and informational_bot_comment entry:
 # { "author": "...", "body": "..." }
 #
 # Notes:
-# - Only returns comments NOT authored by the PR creator (pass pr-author-login to exclude).
+# - Unresolved review threads always block, regardless of author type.
+# - Top-level comments by the PR creator are omitted.
+# - Top-level bot comments are returned as informational evidence, not blockers.
 # - Resolved threads are omitted.
 # - Fetches up to 100 review threads and 100 issue comments.
 
@@ -42,13 +45,13 @@ query='
 query($owner: String!, $repo: String!, $prNumber: Int!) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $prNumber) {
-      author { login }
+      author { __typename login }
       reviewThreads(first: 100) {
         nodes {
           isResolved
           comments(first: 10) {
             nodes {
-              author { login }
+              author { __typename login }
               body
               path
               line
@@ -59,7 +62,7 @@ query($owner: String!, $repo: String!, $prNumber: Int!) {
       }
       comments(first: 100) {
         nodes {
-          author { login }
+          author { __typename login }
           body
         }
       }
@@ -82,9 +85,9 @@ fi
 # ── Unresolved review threads ─────────────────────────────────────────────────
 # Filter to threads where isResolved == false, then take the first comment's
 # metadata (file, line) and all comment bodies.
-unresolved_threads=$(echo "$result" | jq --arg pr_author "$PR_AUTHOR" '
+unresolved_threads=$(echo "$result" | jq '
   [
-    .data.repository.pullRequest.reviewThreads.nodes[]
+    .data.repository.pullRequest.reviewThreads.nodes[]?
     | select(.isResolved == false)
     | .comments.nodes as $comments
     | ($comments | first) as $first
@@ -94,15 +97,27 @@ unresolved_threads=$(echo "$result" | jq --arg pr_author "$PR_AUTHOR" '
         author: ($first.author.login // "unknown"),
         body: ($first.body // "")
       }
-    | select(.author != $pr_author)
   ]
 ')
 
-# ── Issue-level comments ──────────────────────────────────────────────────────
+# ── Top-level human comments ──────────────────────────────────────────────────
+# Only explicit Bot actors are informational. Missing or unfamiliar actor types
+# remain blocking so unavailable author metadata cannot hide feedback.
 issue_comments=$(echo "$result" | jq --arg pr_author "$PR_AUTHOR" '
   [
-    .data.repository.pullRequest.comments.nodes[]
-    | select((.author.login // "") != $pr_author)
+    .data.repository.pullRequest.comments.nodes[]?
+    | select($pr_author == "" or (.author.login // "") != $pr_author)
+    | select((.author.__typename // "") != "Bot")
+    | { author: (.author.login // "unknown"), body: (.body // "") }
+  ]
+')
+
+# ── Top-level bot comments ────────────────────────────────────────────────────
+informational_bot_comments=$(echo "$result" | jq --arg pr_author "$PR_AUTHOR" '
+  [
+    .data.repository.pullRequest.comments.nodes[]?
+    | select($pr_author == "" or (.author.login // "") != $pr_author)
+    | select((.author.__typename // "") == "Bot")
     | { author: (.author.login // "unknown"), body: (.body // "") }
   ]
 ')
@@ -116,8 +131,10 @@ jq -n \
   --argjson has_comments        "$([ "$has_comments" -gt 0 ] && echo true || echo false)" \
   --argjson unresolved_threads  "$unresolved_threads" \
   --argjson issue_comments      "$issue_comments" \
+  --argjson informational_bot_comments "$informational_bot_comments" \
   '{
     has_comments: $has_comments,
     unresolved_threads: $unresolved_threads,
-    issue_comments: $issue_comments
+    issue_comments: $issue_comments,
+    informational_bot_comments: $informational_bot_comments
   }'
