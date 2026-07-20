@@ -1,19 +1,15 @@
 ---
-description: >
-  Exercises an implemented change through its user and client flows, reports clear defects to a
-  caller without fixing them, waits for current-head CI once stable, and prepares concise evidence for
-  human review. Use when preparing a change for acceptance, gathering review evidence, performing
-  human-style flow testing, or when invoked as codagent:prepare-acceptance.
+description: Exercises an implemented change through its user and client flows, reports clear defects without fixing them, waits for current-head CI, and prepares concise evidence for human review when preparing a change for acceptance, gathering review evidence, performing human-style flow testing, or invoking codagent:prepare-acceptance.
 ---
 
-# Prepare Acceptance
+## Prepare Acceptance
 
 Prepare an implemented change for a separate human acceptance session. Exercise it as a human user or
 real client would, report clear defects, wait for CI once no defects remain, and produce concise
 evidence bound to the exact PR revision. Fixes and automated validation belong to separate
 caller-managed steps when used.
 
-## Required inputs
+### Required inputs
 
 Resolve these from the caller before acting:
 
@@ -28,18 +24,19 @@ product behavior from implementation alone. When no assumptions-ledger path is s
 autonomous: preserve product, scope, or design ambiguity for the later human acceptance session
 instead of asking the user here.
 
-## Procedure
+### Procedure
 
-### 1. Pin the tested revision
+#### 1. Pin the tested revision
 
 1. Read repository instructions, the approved artifacts, the unresolved-assumptions ledger, and the
    existing automated-validation evidence supplied by the caller.
-2. Record local `HEAD`. Read only the PR URL, current head SHA, and current PR state needed for the
-   evidence record. Do not inspect or reconstruct a diff.
+2. Record local `HEAD` as the tested SHA and preserve it through the flow pass and CI wait. Read only
+   the PR URL, current head SHA, and current PR state needed for the evidence record. Do not inspect or
+   reconstruct a diff.
 3. Require a clean tracked worktree and local `HEAD` equal to the PR head. If they do not match, stop
    for the caller to resolve; do not push or alter PR metadata in this skill.
 
-### 2. Exercise the product like a user
+#### 2. Exercise the product like a user
 
 Derive a concise list of supported user or client flows only from the approved artifacts and the
 caller-supplied implementation evidence. Do not inspect a diff to discover behavior. Exercise every
@@ -69,12 +66,12 @@ behavior, concise reproduction steps, and evidence paths. Do not wait for CI or 
 evidence in that invocation. Report the findings clearly so the caller can run its fix and validation
 process.
 
-Append product, scope, or design ambiguity to the resolved assumptions ledger with the decision needed
-and likely impact; never silently choose an interpretation or report ambiguity as a clear defect. Every
-invocation re-exercises all supported flows against the current committed `HEAD`; never reuse results
-or screenshots from an earlier invocation.
+Append product, scope, or design ambiguity to the unresolved-assumptions ledger with the decision
+needed and likely impact; never silently choose an interpretation or report ambiguity as a clear
+defect. Every invocation re-exercises all supported flows against the current committed `HEAD`; never
+reuse results or screenshots from an earlier invocation.
 
-### 3. Capture visual evidence
+#### 3. Capture visual evidence
 
 For any UI—including web, mobile, desktop, and TUI—store screenshots under
 `<evidence-directory>/acceptance-screenshots/` as the flows are exercised. Capture at least one
@@ -93,10 +90,12 @@ Record for every screenshot:
 Screenshots support the observed interaction; they are not proof on their own. For non-visual surfaces,
 retain the corresponding client request/output evidence instead.
 
-### 4. Wait for current-head CI
+#### 4. Wait for current-head CI
 
 Invoke `codagent:wait-ci` after a complete flow pass finds no clear defects and the final tested head is
-pushed. Require its report to apply to the exact local and PR head SHA used for the flow pass.
+pushed. After it returns, immediately re-read local `HEAD` and the PR `headRefOid`. Require the
+preserved tested SHA, returned `head_sha`, current local `HEAD`, and current PR head to be identical;
+otherwise stop and report the evidence as stale before writing acceptance-test or handoff evidence.
 
 - `passed`: continue.
 - `failed` or `comments`: do not write final acceptance-test or handoff evidence or claim readiness.
@@ -112,7 +111,7 @@ pushed. Require its report to apply to the exact local and PR head SHA used for 
 Treat skipped, neutral, cancelled, stale, and timed-out checks as explicit evidence states, never as
 proof that associated behavior passed.
 
-### 5. Write acceptance-test evidence
+#### 5. Write acceptance-test evidence
 
 Write `acceptance-test.md` in the evidence directory only after CI passes or is explicitly absent, the
 complete flow pass makes no tracked changes, and any automated-validation evidence supplied by the
@@ -131,7 +130,7 @@ supplied; explicitly record its absence instead. Include:
 
 Prefer concise conclusions with durable log paths over raw log dumps.
 
-### 6. Prepare the human handoff
+#### 6. Prepare the human handoff
 
 Collate existing implementation, acceptance-test, available automated-validation, and CI evidence. Do
 not run new acceptance tests, capture replacement screenshots, or fix issues during collation. If
@@ -153,7 +152,7 @@ Write `acceptance-handoff.md` in the evidence directory with:
 6. **Residual risk** — unavailable flows, environment limitations, warnings, and relevant omissions.
 7. **Assumption handoff** — canonical ledger path plus a concise summary of every unresolved item.
 
-### 7. Verify readiness
+#### 7. Verify readiness
 
 Before reporting readiness:
 
@@ -169,7 +168,7 @@ Report the exact ready-for-acceptance SHA, PR URL, handoff path, unresolved-deci
 and known limitations. Do not mark the PR ready or perform human acceptance. The caller owns any
 machine-readable status file, terminal marker, or control-flow protocol.
 
-## Out of scope
+### Out of scope
 
 - Do not obtain human acceptance; leave that to the later human acceptance session.
 - Do not fix implementation defects, modify repository files, commit, push, or alter PR metadata.

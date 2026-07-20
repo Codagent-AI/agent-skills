@@ -57,6 +57,7 @@ The script outputs a JSON object with these fields:
 | `status` | string | `passed`, `failed`, `pending`, `no_checks`, or `comments` (set by caller) |
 | `pr_url` | string | PR URL |
 | `pr_number` | number | PR number |
+| `head_sha` | string | PR head commit queried for this invocation; preserve it when upgrading the status to `comments` |
 | `owner` / `repo` | string | Repo coordinates for subsequent calls |
 | `had_checks` | bool | Whether any checks were seen on this invocation |
 | `failed_checks` | array | Checks with `bucket == "fail"` |
