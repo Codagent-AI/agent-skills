@@ -67,6 +67,10 @@ Commits local changes, pushes the branch, and creates or updates the current bra
 
 Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews; and surfaces unresolved PR comments.
 
+### `prepare-acceptance`
+
+Prepares a draft PR for human acceptance. It exercises every supported user or client flow through the real product surface, reports clear defects to the caller, captures screenshots for every UI flow or client-style evidence for non-UI flows, waits for current-head CI once stable, and writes revision-bound acceptance-test and handoff artifacts. Fixes and automated validation are handled by the caller.
+
 ### `fix-pr`
 
 Fixes CI failures and review comments for the current branch PR. It gathers failure context, dispatches a fixer subagent, verifies the fix with Agent Validator, pushes, and resolves addressed review threads when possible.

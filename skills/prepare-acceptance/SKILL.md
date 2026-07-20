@@ -1,0 +1,184 @@
+---
+description: >
+  Exercises an implemented change through its user and client flows, reports clear defects to a
+  caller-managed fix and validation loop, waits for current-head CI once stable, and prepares concise
+  evidence for human review. Use when preparing a change for acceptance, gathering review evidence,
+  performing human-style flow testing, or when invoked as codagent:prepare-acceptance.
+---
+
+# Prepare Acceptance
+
+Prepare an implemented change for a separate human acceptance session. Exercise it as a human user or
+real client would, report clear defects, wait for CI once no defects remain, and produce concise
+evidence bound to the exact PR revision. Fixes and automated validation belong to separate
+caller-managed steps.
+
+## Required inputs
+
+Resolve these from the caller before acting:
+
+- approved requirements, scenarios, design, and task artifacts;
+- caller-supplied implementation summary or completion evidence identifying delivered behavior;
+- evidence output directory;
+- unresolved-assumptions ledger path, when one exists;
+- required PR state.
+
+Treat missing source-of-truth artifacts or an unspecified evidence directory as blockers. Do not infer
+product behavior from implementation alone. Keep this workflow autonomous: preserve product, scope,
+or design ambiguity for the later human acceptance session instead of asking the user here.
+
+## Procedure
+
+### 1. Pin the tested revision
+
+1. Read repository instructions, the approved artifacts, the unresolved-assumptions ledger, and the
+   existing automated-validation evidence supplied by the caller.
+2. Record local `HEAD`. Read only the PR URL, current head SHA, and draft state needed for acceptance.
+   Do not inspect or reconstruct a diff.
+3. Require a clean tracked worktree, the required PR state, and local `HEAD` equal to the PR head. If
+   they do not match, stop for the caller to resolve; do not push or alter PR metadata in this skill.
+
+### 2. Exercise the product like a user
+
+Derive a concise list of supported user or client flows only from the approved artifacts and the
+caller-supplied implementation evidence. Do not inspect a diff to discover behavior. Exercise every
+flow end to end through the same public surface a real user or client would use. A flow is a meaningful
+journey or operation, not every input permutation.
+
+- For a web, mobile, desktop, or terminal UI, navigate and operate it through its real interface.
+- For an API, call it through its documented HTTP, SDK, or CLI surface as a client would. Record a
+  sanitized request shape, response status and relevant response excerpt, plus observable side effects.
+- For a CLI or library, invoke its public commands or API as a consumer would and retain representative
+  input, output, and resulting state.
+- For background behavior, trigger it through the normal entry point and inspect the user-visible or
+  externally observable result.
+
+Use typical representative data, configuration, and roles. Do not run automated unit, integration, or
+end-to-end suites, linters, builds, or other automated validation commands; those belong to the caller.
+Do not fuzz, try bizarre inputs, attempt to break the product, or build an exhaustive edge-case matrix.
+Test an error, empty, boundary, or transient state only when it is an approved flow or necessary to
+complete a normal flow.
+
+For each flow, record the action, observed outcome, concise evidence, and any limitation. Verify the
+resulting state instead of relying on task completion or agent assertions.
+
+When a clear implementation defect appears, do not fix it. Write
+`<evidence-directory>/acceptance-findings.md` with the tested SHA, affected flow, expected and observed
+behavior, concise reproduction steps, and evidence paths. Do not wait for CI or write final acceptance
+evidence in that invocation. Report the findings and end with the exact line
+`ACCEPTANCE_FIX_NEEDED` so the caller can run its fix and validation loop.
+
+Append product, scope, or design ambiguity to the caller's assumptions ledger with the decision needed
+and likely impact; never silently choose an interpretation or report ambiguity as a clear defect. Every
+invocation re-exercises all supported flows against the current committed `HEAD`; never reuse results
+or screenshots from an earlier invocation.
+
+### 3. Capture visual evidence
+
+For any UI—including web, mobile, desktop, and TUI—store screenshots under
+`<evidence-directory>/acceptance-screenshots/` as the flows are exercised. Capture at least one
+meaningful stable result for every UI flow, and more only when multiple states are needed to understand
+that flow. Do not capture loading, empty, error, responsive, or before/after states unless they are part
+of the flow being tested.
+
+Record for every screenshot:
+
+- flow demonstrated;
+- expected behavior and what the reviewer should notice;
+- route or command, representative input, and user role when relevant;
+- tested head SHA;
+- concise text equivalent.
+
+Screenshots support the observed interaction; they are not proof on their own. For non-visual surfaces,
+retain the corresponding client request/output evidence instead.
+
+### 4. Wait for current-head CI
+
+Invoke `codagent:wait-ci` after a complete flow pass finds no clear defects and the final tested head is
+pushed. Require its report to apply to the exact local and PR head SHA used for the flow pass.
+
+- `passed`: continue.
+- `failed`, `comments`, or `pending`: do not write final acceptance-test or handoff evidence or claim
+  readiness. Report the blocking checks/comments and stop so the caller can route the change through
+  the appropriate fix path.
+- no configured checks: continue only after recording that CI coverage is absent.
+
+Treat skipped, neutral, cancelled, stale, and timed-out checks as explicit evidence states, never as
+proof that associated behavior passed.
+
+### 5. Write acceptance-test evidence
+
+Write `acceptance-test.md` in the evidence directory only after CI passes or is explicitly absent, the
+complete flow pass makes no tracked changes, and the caller's latest automated-validation evidence
+applies to the current pushed head. Include:
+
+- exact tested local/PR head SHA;
+- the supported flows exercised and their outcomes;
+- clear-defect status and any prior workflow fix evidence supplied by the caller;
+- existing automated-validation and CI status without rerunning either;
+- screenshot metadata and text equivalents for every UI flow;
+- representative API, CLI, library, or background-operation evidence for non-UI flows;
+- unavailable flows, environment limitations, warnings, and residual risks;
+- new unresolved assumptions added to the canonical ledger.
+
+Prefer concise conclusions with durable log paths over raw log dumps.
+
+### 6. Prepare the human handoff
+
+Collate existing implementation, acceptance-test, automated-validation, and CI evidence. Do not run new
+acceptance tests, capture replacement screenshots, or fix issues during collation. If evidence is
+missing or stale, stop and require the producing phase to run again.
+
+Write `acceptance-handoff.md` in the evidence directory with:
+
+1. **Decision brief** — unresolved decisions, delivered behavior, overall validation status, known
+   limitations, and suggested human review path.
+2. **Revision identity** — repository, draft PR URL, exact tested SHA, generation time, and tracked
+   worktree status.
+3. **Flow evidence** — each supported flow, what was done, the observed result, its evidence, and any
+   limitation.
+4. **Automated validation and CI** — concise status plus durable logs or links produced by the separate
+   validation and CI steps.
+5. **Visual and client evidence** — screenshot metadata/text equivalents, API or CLI evidence, and
+   practical human review instructions.
+6. **Residual risk** — unavailable flows, environment limitations, warnings, and relevant omissions.
+7. **Assumption handoff** — canonical ledger path plus a concise summary of every unresolved item.
+
+### 7. Verify readiness
+
+Before reporting readiness:
+
+1. Require a clean tracked worktree.
+2. Require local `HEAD`, PR head, `acceptance-test.md`, and `acceptance-handoff.md` to name the same SHA.
+3. Require CI evidence for that SHA to be passing, or explicitly record that no checks exist.
+4. Verify every referenced evidence and screenshot path exists and every UI flow has visual evidence.
+5. Ensure persisted evidence does not expose secrets, credentials, tokens, private data, or unrelated
+   user content.
+6. Confirm the PR remains a draft.
+
+Report the exact ready-for-acceptance SHA, PR URL, handoff path, unresolved-decision count, CI status,
+and known limitations. End with the exact line `ACCEPTANCE_READY`. Do not mark the PR ready or perform
+human acceptance.
+
+## Result protocol
+
+Write the terminal marker to `<evidence-directory>/acceptance-status.txt` as its only non-empty line,
+and return the same marker as the final response line:
+
+- `ACCEPTANCE_FIX_NEEDED` — one or more clear implementation defects were documented for the caller's
+  fix and validation loop. Do not emit final acceptance evidence.
+- `ACCEPTANCE_READY` — no clear defects were found, current-head CI passed or was explicitly absent,
+  and revision-bound evidence was verified.
+- `ACCEPTANCE_BLOCKED: <reason>` — required inputs, testing, PR state, CI, or evidence could not be
+  completed. Do not emit either success marker.
+
+## Out of scope
+
+- Do not obtain human acceptance; leave that to the interactive acceptance workflow.
+- Do not fix implementation defects, modify repository files, commit, push, or alter PR metadata.
+- Do not run automated test suites, linters, builds, or other automated checks; the caller owns them.
+- Do not run automated validation; the caller owns validation and reinvocation.
+- Do not change approved requirements, product scope, or design to make tests pass.
+- Do not archive the change, mark the PR ready, merge, or release.
+- Do not perform fuzzing, adversarial testing, or exhaustive edge-case exploration.
+- Do not treat successful task execution, agent summaries, or screenshots alone as proof of behavior.

@@ -59,6 +59,8 @@ Tasks are ordered so dependent work stays sequential.
 
 `wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments.
 
+`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. Starting from a draft PR, it exercises every supported user or client flow through the real product surface, captures screenshots for UI flows or client-style evidence for APIs and CLIs, reports clear defects to the caller, waits for CI on a stable tested head, and produces a concise evidence package for the human review session. Fixes and automated validation remain the caller's responsibility.
+
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
 `finalize-pr` orchestrates the full loop: push PR, wait for CI, fix failures or comments, and repeat until the PR is green or the documented termination rules require a pause.

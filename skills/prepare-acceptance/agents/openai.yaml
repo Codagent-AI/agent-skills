@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prepare Acceptance"
+  short_description: "Exercise product flows and package review evidence"
+  default_prompt: "Use $prepare-acceptance to exercise the implemented user and client flows, wait for CI, and prepare evidence for human acceptance."
