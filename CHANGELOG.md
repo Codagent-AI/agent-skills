@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.8.0
+
+### Minor Changes
+
+- [#44](https://github.com/Codagent-AI/agent-skills/pull/44) Add reusable human-style acceptance testing, revision-bound review evidence, and caller-owned correction and control-flow integration.
+
 ## 0.7.6
 
 ### Patch Changes

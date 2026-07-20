@@ -28,7 +28,7 @@ Compute `max_runs = ceil(max_minutes * 60 / 90)`, defaulting to `max_minutes = 1
 
 The skill accepts an optional `--max-minutes N` argument; pass it through to adjust `max_runs`.
 
-Track `ever_had_checks = false` and `run = 0` across iterations.
+Track `ever_had_checks = false`, `run = 0`, and the overall deadline across iterations. The deadline is `max_minutes` after polling starts and also bounds any review-bot waiting in Step 3.
 
 For each run:
 
@@ -57,6 +57,7 @@ The script outputs a JSON object with these fields:
 | `status` | string | `passed`, `failed`, `pending`, `no_checks`, or `comments` (set by caller) |
 | `pr_url` | string | PR URL |
 | `pr_number` | number | PR number |
+| `head_sha` | string | PR head commit queried for this invocation; preserve it when upgrading the status to `comments` |
 | `owner` / `repo` | string | Repo coordinates for subsequent calls |
 | `had_checks` | bool | Whether any checks were seen on this invocation |
 | `failed_checks` | array | Checks with `bucket == "fail"` |
@@ -89,7 +90,14 @@ Output fields:
 |---|---|---|
 | `has_comments` | bool | True if any unaddressed comments exist |
 | `unresolved_threads` | array | `{file, line, author, body}` per unresolved review thread |
-| `issue_comments` | array | `{author, body}` top-level PR comments (excluding PR creator) |
+| `issue_comments` | array | `{author, body}` blocking top-level human comments (excluding PR creator) |
+| `informational_bot_comments` | array | `{author, body}` non-blocking top-level bot comments retained as evidence |
+
+Unresolved review threads are blocking regardless of author. Top-level bot comments do not set `has_comments`; only unresolved threads and human top-level comments do.
+
+After checks are terminal, inspect `informational_bot_comments`. If a bot explicitly reports that its review is pending or in progress, or asks the caller to check back, wait 10 seconds and call `get-pr-comments.sh` again while time remains before the overall deadline. Re-evaluate the latest evidence on every poll. Do not hard-code bot vendors or exact phrases; use the comment's meaning. Completed summaries and ordinary status notices remain informational and do not delay completion.
+
+If a bot still explicitly reports unfinished review work when the overall deadline is reached, report `pending`. Preserve its comment in the output so the reason is visible. Never extend the overall deadline while waiting for review bots.
 
 **Status upgrade:** If checks returned `passed` but `get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments`.
 
@@ -118,6 +126,9 @@ Output fields:
 - **<author>** on `<file>` line <N>: <comment body>
 - **<author>** (issue comment): <comment body>
 
+### Informational Bot Comments
+- **<author>**: <comment body>
+
 ### Passing Checks
 - <check-name> (SUCCESS)
 
@@ -126,10 +137,10 @@ Output fields:
 ```
 
 Status meanings:
-- `passed` — CI green, no blocking reviews, no PR comments
+- `passed` — CI green, no blocking reviews or comments, and no bot review still in progress
 - `failed` — CI failures or `CHANGES_REQUESTED` reviews (with logs)
 - `comments` — CI green but unresolved PR comments need addressing
-- `pending` — checks still running after max wait (list which ones)
+- `pending` — checks or an explicitly unfinished bot review remain after max wait
 
 ## Notes
 
@@ -145,4 +156,4 @@ Status meanings:
 | Script | Purpose |
 |---|---|
 | `scripts/check-ci.sh` | Single-invocation poller (90s, 10s interval) — call in a loop from the skill |
-| `scripts/get-pr-comments.sh` | GraphQL comment fetcher — returns unresolved threads and issue comments |
+| `scripts/get-pr-comments.sh` | GraphQL comment fetcher — returns blocking review feedback and informational bot comments |

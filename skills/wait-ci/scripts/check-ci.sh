@@ -18,6 +18,7 @@
 #   status          "passed" | "failed" | "pending" | "no_checks"
 #   pr_url          PR URL
 #   pr_number       PR number
+#   head_sha        PR head commit queried for this invocation
 #   owner / repo    Repo coordinates for subsequent calls
 #   had_checks      bool — whether any checks were seen on this invocation
 #   checks          all checks from the last poll
@@ -55,12 +56,16 @@ MAX_POLLS=$(( (MAX_SECONDS + INTERVAL - 1) / INTERVAL ))
 [[ $MAX_POLLS -lt 1 ]] && MAX_POLLS=1
 
 # ── Find PR ───────────────────────────────────────────────────────────────────
-pr_json=$(gh pr view --json number,url,headRefName 2>/dev/null) || {
+pr_json=$(gh pr view --json number,url,headRefName,headRefOid 2>/dev/null) || {
   echo '{"error":"no PR found for current branch"}' >&2
   exit 1
 }
 pr_number=$(echo "$pr_json" | jq '.number')
 pr_url=$(echo "$pr_json" | jq -r '.url')
+head_sha=$(echo "$pr_json" | jq -er '.headRefOid | strings | select(length > 0)') || {
+  echo '{"error":"PR head SHA is missing"}' >&2
+  exit 1
+}
 
 # ── Repo info ─────────────────────────────────────────────────────────────────
 repo_json=$(gh repo view --json owner,name 2>/dev/null) || {
@@ -142,6 +147,7 @@ while [[ $poll -lt $MAX_POLLS ]]; do
       --arg     status           "failed" \
       --arg     pr_url           "$pr_url" \
       --argjson pr_number        "$pr_number" \
+      --arg     head_sha         "$head_sha" \
       --arg     owner            "$owner" \
       --arg     repo             "$repo" \
       --argjson had_checks       "$( [[ $had_checks == true ]] && echo true || echo false )" \
@@ -152,7 +158,7 @@ while [[ $poll -lt $MAX_POLLS ]]; do
       --argjson blocking_reviews "$blocking_reviews" \
       --argjson failed_run_ids   "$failed_run_ids_json" \
       '{
-        status: $status, pr_url: $pr_url, pr_number: $pr_number,
+        status: $status, pr_url: $pr_url, pr_number: $pr_number, head_sha: $head_sha,
         owner: $owner, repo: $repo, had_checks: $had_checks,
         checks: $checks, failed_checks: $failed_checks,
         passed_checks: $passed_checks, pending_checks: $pending_checks,
@@ -167,13 +173,14 @@ while [[ $poll -lt $MAX_POLLS ]]; do
       --arg     status          "passed" \
       --arg     pr_url          "$pr_url" \
       --argjson pr_number       "$pr_number" \
+      --arg     head_sha        "$head_sha" \
       --arg     owner           "$owner" \
       --arg     repo            "$repo" \
       --argjson had_checks      true \
       --argjson checks          "$checks_json" \
       --argjson passed_checks   "$passed_checks" \
       '{
-        status: $status, pr_url: $pr_url, pr_number: $pr_number,
+        status: $status, pr_url: $pr_url, pr_number: $pr_number, head_sha: $head_sha,
         owner: $owner, repo: $repo, had_checks: $had_checks,
         checks: $checks, failed_checks: [], passed_checks: $passed_checks,
         pending_checks: [], blocking_reviews: [], failed_run_ids: []
@@ -193,13 +200,14 @@ jq -n \
   --arg     status          "$( [[ $had_checks == true ]] && echo "pending" || echo "no_checks" )" \
   --arg     pr_url          "$pr_url" \
   --argjson pr_number       "$pr_number" \
+  --arg     head_sha        "$head_sha" \
   --arg     owner           "$owner" \
   --arg     repo            "$repo" \
   --argjson had_checks      "$( [[ $had_checks == true ]] && echo true || echo false )" \
   --argjson checks          "$checks_json" \
   --argjson pending_checks  "$pending_checks" \
   '{
-    status: $status, pr_url: $pr_url, pr_number: $pr_number,
+    status: $status, pr_url: $pr_url, pr_number: $pr_number, head_sha: $head_sha,
     owner: $owner, repo: $repo, had_checks: $had_checks,
     checks: $checks, failed_checks: [], passed_checks: [],
     pending_checks: $pending_checks, blocking_reviews: [], failed_run_ids: []
