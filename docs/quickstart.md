@@ -84,10 +84,11 @@ For a larger change:
 1. Use `codagent:propose` to evaluate the idea and write `proposal.md`.
 2. Run `codagent:spec` to turn the proposal into testable requirements.
 3. Ask `codagent:design` to settle architecture and implementation approach.
-4. Use `codagent:plan-tasks` to create task files for implementation.
-5. Run `codagent:review-spec` to check proposal, spec, design, and task alignment.
-6. Ask `codagent:implement-change` to run the implementation loop.
-7. Use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
+4. Run `codagent:review-approach` to challenge gaps and design decisions before planning implementation.
+5. Use `codagent:plan-tasks` to create task files for implementation.
+6. Run `codagent:review-spec` to check proposal, spec, design, and task alignment.
+7. Ask `codagent:implement-change` to run the implementation loop.
+8. Use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
 
 For a small change:
 

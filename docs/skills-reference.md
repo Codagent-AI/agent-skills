@@ -31,6 +31,10 @@ Turns proposal capabilities into requirements. It asks behavior, boundary, error
 
 Turns specs into a technical design. It reads all relevant specs first, explores code context, asks architecture and trade-off questions, proposes approaches, gets approval, writes `design.md`, and applies any spec edits discovered during design.
 
+### `review-approach`
+
+Reviews a completed specification and design for consequential behavioral gaps, missing architectural decisions, weak tradeoffs, failure modes, and better alternatives. It researches the affected code and reports findings without editing the artifacts.
+
 ### `plan-tasks`
 
 Creates a structured implementation task breakdown. Each task file includes the relevant motivation, design context, exact spec scenarios, and done criteria needed by a separate implementer.

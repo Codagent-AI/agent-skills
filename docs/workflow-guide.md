@@ -14,7 +14,7 @@ Codagent skills are designed to preserve intent across phases. Each planning ski
 Use the standard flow for feature work, behavior changes, risky refactors, or anything that needs requirements before implementation.
 
 ```text
-propose -> spec -> design -> plan-tasks -> review-spec -> implement-change -> finalize-pr
+propose -> spec -> design -> review-approach -> plan-tasks -> review-spec -> implement-change -> finalize-pr
 ```
 
 ### 1. Propose
@@ -35,17 +35,21 @@ Spec scenarios use requirement blocks and WHEN/THEN scenarios so implementation 
 
 If the design phase discovers a spec implication, it applies the corresponding spec edits after approval.
 
-### 4. Plan Tasks
+### 4. Review The Approach
+
+Use `review-approach` after the specification and design are complete. It challenges consequential behavioral gaps, architecture decisions, tradeoffs, failure modes, and alternatives without duplicating the later consistency and traceability review.
+
+### 5. Plan Tasks
 
 `plan-tasks` creates self-contained task files. Each task includes the relevant why, how, exact spec scenarios, and done criteria needed by a separate implementer that has no shared session context.
 
 Tasks are ordered so dependent work stays sequential.
 
-### 5. Review The Artifacts
+### 6. Review The Artifacts
 
 `review-spec` checks proposal, spec, design, and task artifacts for conflicts, gaps, and cross-artifact drift. It treats requirements as written and reports inconsistencies rather than changing product decisions.
 
-### 6. Implement
+### 7. Implement
 
 `implement-change` acts as the coordinating skill for a full change. It reads the tasks and context, dispatches one `implement-and-validate` subagent per task sequentially, runs Agent Validator, archives OpenSpec changes when applicable, and moves into PR finalization.
 
@@ -53,7 +57,7 @@ Tasks are ordered so dependent work stays sequential.
 
 `implement-with-tdd` enforces the red-green-refactor loop for new features, bug fixes, refactors, and behavior changes. It skips TDD only for the exceptions documented in the skill, such as generated code and configuration-only changes.
 
-### 7. Finalize The PR
+### 8. Finalize The PR
 
 `push-pr` commits changes, pushes the branch, and creates or updates the PR after running validation when applicable.
 
