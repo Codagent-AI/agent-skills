@@ -60,11 +60,16 @@ complete a normal flow.
 For each flow, record the action, observed outcome, concise evidence, and any limitation. Verify the
 resulting state instead of relying on task completion or agent assertions.
 
-When a clear implementation defect appears, do not fix it. Write
-`<evidence-directory>/acceptance-findings.md` with the tested SHA, affected flow, expected and observed
-behavior, concise reproduction steps, and evidence paths. Do not wait for CI or write final acceptance
-evidence in that invocation. Report the findings clearly so the caller can run its fix and validation
-process.
+When one or more clear implementation defects appear, do not fix them. Continue through every
+remaining flow that can still be exercised safely and independently; one finding alone is not a
+reason to end the flow pass. Stop flow testing early only when a defect makes the remaining flows
+unreachable, unsafe, or incapable of producing trustworthy evidence. Record every unexercised flow
+and the defect that blocked it.
+
+Write `<evidence-directory>/acceptance-findings.md` with the tested SHA and all clear defects found,
+including each affected flow, expected and observed behavior, concise reproduction steps, and evidence
+paths. Do not wait for CI or write final acceptance evidence in that invocation. Report the aggregated
+findings clearly so the caller can run its fix and validation process.
 
 Append product, scope, or design ambiguity to the unresolved-assumptions ledger with the decision
 needed and likely impact; never silently choose an interpretation or report ambiguity as a clear

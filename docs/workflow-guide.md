@@ -14,14 +14,14 @@ Codagent skills are designed to preserve intent across phases. Each planning ski
 Use the standard flow for feature work, behavior changes, risky refactors, or anything that needs requirements before implementation.
 
 ```text
-propose -> spec -> design -> review-approach -> plan-tasks -> review-spec -> implement-change -> finalize-pr
+propose -> proposal-review -> spec -> design -> review-approach -> plan-tasks -> review-tasks -> implement-change -> finalize-pr
 ```
 
 ### 1. Propose
 
 `propose` evaluates whether an idea is worth building. It researches the codebase and relevant outside context when needed, gives a GO / GO WITH CAVEATS / NO-GO verdict, and writes a proposal with motivation, high-level scope, capabilities, technical approach, exclusions, and impact.
 
-Use `proposal-review` when you want a second pass that challenges the proposal before moving into requirements.
+`proposal-review` provides an adversarial second pass that challenges the proposal before the user confirms it and moves into requirements.
 
 ### 2. Spec
 
@@ -37,7 +37,7 @@ If the design phase discovers a spec implication, it applies the corresponding s
 
 ### 4. Review The Approach
 
-Use `review-approach` after the specification and design are complete. It challenges consequential behavioral gaps, architecture decisions, tradeoffs, failure modes, and alternatives without duplicating the later consistency and traceability review.
+Use `review-approach` after the proposal, specification, and design are complete. It is the final review of those definition artifacts: it checks their consistency and testability, then challenges consequential behavioral gaps, architecture decisions, tradeoffs, failure modes, and alternatives.
 
 ### 5. Plan Tasks
 
@@ -45,9 +45,9 @@ Use `review-approach` after the specification and design are complete. It challe
 
 Tasks are ordered so dependent work stays sequential.
 
-### 6. Review The Artifacts
+### 6. Review The Tasks
 
-`review-spec` checks proposal, spec, design, and task artifacts for conflicts, gaps, and cross-artifact drift. It treats requirements as written and reports inconsistencies rather than changing product decisions.
+`review-tasks` must read the approved proposal, specifications, and design, but reviews only the task plan. It checks task coverage, fidelity, decomposition, dependencies, ordering, self-contained context, and done criteria. Every finding must be correctable in the task files without changing an approved definition artifact or asking the user for a new decision.
 
 ### 7. Implement
 
@@ -63,7 +63,7 @@ Tasks are ordered so dependent work stays sequential.
 
 `wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments.
 
-`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. Starting from an implemented PR revision, it exercises every supported user or client flow through the real product surface, captures screenshots for UI flows or client-style evidence for APIs and CLIs, reports clear defects to the caller, waits for CI on a stable tested head, and produces a concise evidence package for the human review session. Fixes and any automated validation remain the caller's responsibility; the skill records their evidence or absence and the current PR state without changing it.
+`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. Starting from an implemented PR revision, it exercises every safely testable supported user or client flow through the real product surface, aggregates clear defects across the complete flow pass, captures screenshots for UI flows or client-style evidence for APIs and CLIs, waits for CI on a stable tested head, and produces a concise evidence package for the human review session. Fixes and any automated validation remain the caller's responsibility; the skill records their evidence or absence and the current PR state without changing it.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
@@ -82,6 +82,8 @@ simple-plan -> implement-change -> finalize-pr
 ```
 
 ## Support Skills
+
+`review-spec` is a generic artifact-quality review for standalone or legacy use. It checks whichever proposal, specification, design, and task artifacts are present for consistency, testability, traceability, and alignment, but it is not part of the standard v2 planning flow.
 
 `ask-questions` is an internal helper used by other skills when they need user input. It defines when to use dedicated input tools, when to batch questions, and when to ask serially.
 
