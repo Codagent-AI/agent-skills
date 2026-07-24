@@ -31,13 +31,21 @@ Turns proposal capabilities into requirements. It asks behavior, boundary, error
 
 Turns specs into a technical design. It reads all relevant specs first, explores code context, asks architecture and trade-off questions, proposes approaches, gets approval, writes `design.md`, and applies any spec edits discovered during design.
 
+### `review-approach`
+
+Performs the final review of a completed proposal, specification, and design. It checks cross-artifact consistency and testability, then challenges consequential behavioral gaps, missing architectural decisions, weak tradeoffs, failure modes, and better alternatives without editing the artifacts.
+
 ### `plan-tasks`
 
 Creates a structured implementation task breakdown. Each task file includes the relevant motivation, design context, exact spec scenarios, and done criteria needed by a separate implementer.
 
+### `review-tasks`
+
+Reviews an implementation task plan against the approved proposal, specifications, and design. It must read those source artifacts, but reports only task-plan defects that can be corrected in the task index or detailed task files.
+
 ### `review-spec`
 
-Reviews proposal, spec, design, and task artifacts for internal consistency, cross-artifact alignment, missing scenarios, and gaps. It reports findings with artifact citations.
+Provides a generic artifact-quality review for any available proposal, spec, design, or task documents. It accepts product and design decisions as written and checks internal consistency, cross-artifact alignment, testability, and traceability. It remains available for standalone or legacy use but is not a stage in the standard v2 planning flow.
 
 ### `simple-plan`
 
@@ -69,7 +77,7 @@ Polls CI for the current branch PR. It reports pass, fail, pending, or comments 
 
 ### `prepare-acceptance`
 
-Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises every supported user or client flow through the real product surface, reports clear defects to the caller, and captures screenshots for every UI flow or client-style evidence for non-UI flows. Once the tested code is committed and pushed, it waits for current-head CI and writes acceptance-test and handoff artifacts aligned with the final PR head. Fixes and any automated validation are handled by the caller.
+Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises every safely testable supported user or client flow through the real product surface, aggregates clear defects across the complete flow pass, and captures screenshots for every UI flow or client-style evidence for non-UI flows. Once the tested code is committed and pushed, it waits for current-head CI and writes acceptance-test and handoff artifacts aligned with the final PR head. Fixes and any automated validation are handled by the caller; the skill records their evidence or absence and the current PR state without changing it.
 
 ### `fix-pr`
 

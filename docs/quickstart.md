@@ -82,12 +82,14 @@ After installation, initialize the project with the `init` skill from the Cursor
 For a larger change:
 
 1. Use `codagent:propose` to evaluate the idea and write `proposal.md`.
-2. Run `codagent:spec` to turn the proposal into testable requirements.
-3. Ask `codagent:design` to settle architecture and implementation approach.
-4. Use `codagent:plan-tasks` to create task files for implementation.
-5. Run `codagent:review-spec` to check proposal, spec, design, and task alignment.
-6. Ask `codagent:implement-change` to run the implementation loop.
-7. Use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
+2. Run `codagent:proposal-review` for an adversarial review before confirming the proposal.
+3. Run `codagent:spec` to turn the proposal into testable requirements.
+4. Ask `codagent:design` to settle architecture and implementation approach.
+5. Run `codagent:review-approach` for the final consistency, gap, and decision review of the proposal, specs, and design.
+6. Use `codagent:plan-tasks` to create task files for implementation.
+7. Run `codagent:review-tasks` to verify the task plan against the approved definition.
+8. Ask `codagent:implement-change` to run the implementation loop.
+9. Use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
 
 For a small change:
 
