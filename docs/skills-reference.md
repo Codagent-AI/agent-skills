@@ -69,7 +69,7 @@ Polls CI for the current branch PR. It reports pass, fail, pending, or comments 
 
 ### `prepare-acceptance`
 
-Prepares an implemented PR revision for human acceptance. It exercises every supported user or client flow through the real product surface, reports clear defects to the caller, captures screenshots for every UI flow or client-style evidence for non-UI flows, waits for current-head CI once stable, and writes revision-bound acceptance-test and handoff artifacts. Fixes and any automated validation are handled by the caller; the skill records their evidence or absence and the current PR state without changing it.
+Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises every supported user or client flow through the real product surface, reports clear defects to the caller, and captures screenshots for every UI flow or client-style evidence for non-UI flows. Once the tested code is committed and pushed, it waits for current-head CI and writes acceptance-test and handoff artifacts aligned with the final PR head. Fixes and any automated validation are handled by the caller.
 
 ### `fix-pr`
 

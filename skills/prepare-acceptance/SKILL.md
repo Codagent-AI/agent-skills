@@ -6,8 +6,9 @@ description: Exercises an implemented change through its user and client flows, 
 
 Prepare an implemented change for a separate human acceptance session. Exercise it as a human user or
 real client would, report clear defects, wait for CI once no defects remain, and produce concise
-evidence bound to the exact PR revision. Fixes and automated validation belong to separate
-caller-managed steps when used.
+evidence for the code currently checked out. Fixes and automated validation belong to separate
+caller-managed steps when used. PR and commit identity establish final CI and handoff alignment; they
+are not prerequisites for exercising the product.
 
 ### Required inputs
 
@@ -18,23 +19,25 @@ Resolve these from the caller before acting:
 - evidence output directory;
 - unresolved-assumptions ledger path, when one exists.
 
-Treat missing source-of-truth artifacts or an unspecified evidence directory as blockers. Do not infer
-product behavior from implementation alone. When no assumptions-ledger path is supplied, use
+Report missing source-of-truth artifacts or an unspecified evidence directory as findings that prevent
+readiness. Do not infer product behavior from implementation alone. When no assumptions-ledger path is supplied, use
 `<evidence-directory>/acceptance-assumptions.md` and create it if needed. Keep this preparation
 autonomous: preserve product, scope, or design ambiguity for the later human acceptance session
 instead of asking the user here.
 
 ### Procedure
 
-#### 1. Pin the tested revision
+#### 1. Establish the test context
 
 1. Read repository instructions, the approved artifacts, the unresolved-assumptions ledger, and the
    existing automated-validation evidence supplied by the caller.
-2. Record local `HEAD` as the tested SHA and preserve it through the flow pass and CI wait. Read only
-   the PR URL, current head SHA, and current PR state needed for the evidence record. Do not inspect or
-   reconstruct a diff.
-3. Require a clean tracked worktree and local `HEAD` equal to the PR head. If they do not match, stop
-   for the caller to resolve; do not push or alter PR metadata in this skill.
+2. Treat the code currently present in the checked-out worktree as the test target. Record local
+   `HEAD` and tracked worktree status as context, but do not require a clean worktree or PR-head
+   equality before exercising flows. Do not inspect or reconstruct a diff.
+3. Use the project's normal setup, build, install, seed, and start commands when needed to expose the
+   current worktree through its real public surface. These are test setup, not automated validation.
+   Do not require an executable to embed a Git SHA, compare executable and commit timestamps, or infer
+   source identity from a semantic version string.
 
 #### 2. Exercise the product like a user
 
@@ -51,11 +54,12 @@ journey or operation, not every input permutation.
 - For background behavior, trigger it through the normal entry point and inspect the user-visible or
   externally observable result.
 
-Use typical representative data, configuration, and roles. Do not run automated unit, integration, or
-end-to-end suites, linters, builds, or other automated validation commands; those belong to the caller.
-Do not fuzz, try bizarre inputs, attempt to break the product, or build an exhaustive edge-case matrix.
-Test an error, empty, boundary, or transient state only when it is an approved flow or necessary to
-complete a normal flow.
+Use typical representative data, configuration, and roles. Run only the setup and build commands
+needed to expose the checked-out product for hands-on use. Do not run automated unit, integration, or
+end-to-end suites, linters, or other automated validation commands; those belong to the caller. Do not
+fuzz, try bizarre inputs, attempt to break the product, or build an exhaustive edge-case matrix. Test
+an error, empty, boundary, or transient state only when it is an approved flow or necessary to complete
+a normal flow.
 
 For each flow, record the action, observed outcome, concise evidence, and any limitation. Verify the
 resulting state instead of relying on task completion or agent assertions.
@@ -68,8 +72,8 @@ process.
 
 Append product, scope, or design ambiguity to the unresolved-assumptions ledger with the decision
 needed and likely impact; never silently choose an interpretation or report ambiguity as a clear
-defect. Every invocation re-exercises all supported flows against the current committed `HEAD`; never
-reuse results or screenshots from an earlier invocation.
+defect. Every invocation re-exercises all supported flows against the code currently checked out;
+never reuse results or screenshots from an earlier invocation after that code changes.
 
 #### 3. Capture visual evidence
 
@@ -92,10 +96,13 @@ retain the corresponding client request/output evidence instead.
 
 #### 4. Wait for current-head CI
 
-Invoke `codagent:wait-ci` after a complete flow pass finds no clear defects and the final tested head is
-pushed. After it returns, immediately re-read local `HEAD` and the PR `headRefOid`. Require the
-preserved tested SHA, returned `head_sha`, current local `HEAD`, and current PR head to be identical;
-otherwise stop and report the evidence as stale before writing acceptance-test or handoff evidence.
+Invoke `codagent:wait-ci` after a complete flow pass finds no clear defects and the tested worktree
+contents are clean, committed, and pushed. This is the first point at which local `HEAD` and the PR
+head must match. After CI returns, immediately re-read local `HEAD` and the PR `headRefOid`. Require
+the returned `head_sha`, current local `HEAD`, and current PR head to be identical; otherwise report
+that final handoff evidence cannot yet be produced. If the code changes after flow testing, rerun the
+complete flow pass before producing final evidence. A push that publishes an already-tested commit
+without changing its contents does not itself invalidate the flow pass.
 
 - `passed`: continue.
 - `failed` or `comments`: do not write final acceptance-test or handoff evidence or claim readiness.
@@ -164,6 +171,9 @@ Before reporting readiness:
    user content.
 6. Record the current PR state for the caller without changing it.
 
+Use revision identity only to show that final CI and handoff evidence describe the code that was
+tested and will be reviewed. Do not require or inspect embedded executable revision metadata.
+
 Report the exact ready-for-acceptance SHA, PR URL, handoff path, unresolved-decision count, CI status,
 and known limitations. Do not mark the PR ready or perform human acceptance. The caller owns any
 machine-readable status file, terminal marker, or control-flow protocol.
@@ -171,9 +181,10 @@ machine-readable status file, terminal marker, or control-flow protocol.
 ### Out of scope
 
 - Do not obtain human acceptance; leave that to the later human acceptance session.
-- Do not fix implementation defects, modify repository files, commit, push, or alter PR metadata.
-- Do not run automated test suites, linters, builds, other automated checks, or automated validation;
-  the caller owns validation and reinvocation.
+- Do not fix implementation defects, modify tracked source or approved artifacts, commit, push, or
+  alter PR metadata. Disposable or ignored setup and build outputs are allowed.
+- Do not run automated test suites, linters, other automated checks, or automated validation; the
+  caller owns validation and reinvocation. Setup and builds needed to use the product are allowed.
 - Do not change approved requirements, product scope, or design to make tests pass.
 - Do not archive the change, mark the PR ready, merge, or release.
 - Do not perform fuzzing, adversarial testing, or exhaustive edge-case exploration.

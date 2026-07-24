@@ -59,7 +59,7 @@ Tasks are ordered so dependent work stays sequential.
 
 `wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments.
 
-`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. Starting from an implemented PR revision, it exercises every supported user or client flow through the real product surface, captures screenshots for UI flows or client-style evidence for APIs and CLIs, reports clear defects to the caller, waits for CI on a stable tested head, and produces a concise evidence package for the human review session. Fixes and any automated validation remain the caller's responsibility; the skill records their evidence or absence and the current PR state without changing it.
+`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. It exercises the code currently checked out through every supported user or client flow, using normal build and startup commands when needed, captures screenshots for UI flows or client-style evidence for APIs and CLIs, and reports clear defects to the caller. Once the tested code is committed and pushed, it waits for current-head CI and produces a concise evidence package for the human review session. Fixes and any automated validation remain the caller's responsibility; the skill records their evidence or absence and confirms PR alignment only before final readiness.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
