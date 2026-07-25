@@ -85,6 +85,13 @@ simple-plan -> implement-change -> finalize-pr
 
 `review-spec` is a generic artifact-quality review for standalone or legacy use. It checks whichever proposal, specification, design, and task artifacts are present for consistency, testability, traceability, and alignment, but it is not part of the standard v2 planning flow.
 
+`call-agent` is the orchestration helper for workflow steps that explicitly receive Agent Runner's
+`call_agent` tool. Proposal, approach, task-plan, and acceptance workflows use it to construct a
+standalone bounded child prompt, make one safe profile or named-session call, preserve structured
+failures, independently verify consequential findings, and report child findings separately from the
+lead's assessment. It does not provision the tool itself and never substitutes another delegation
+mechanism when the tool is unavailable.
+
 `ask-questions` is an internal helper used by other skills when they need user input. It defines when to use dedicated input tools, when to batch questions, and when to ask serially.
 
 `handoff` summarizes a specific aspect of the current conversation so another agent can resume.

@@ -89,6 +89,14 @@ Runs the full push, wait, fix, retry loop. It stops when CI and comments are cle
 
 ## Support And Review
 
+### `call-agent`
+
+Safely invokes one Runner-owned child through a profile or declared named session. It builds a
+standalone bounded prompt, preserves call budgets and structured failures, independently verifies
+consequential findings, and keeps child findings separate from the lead's assessment. It reports a
+clear blocker when the enclosing Agent Runner step did not provision `call_agent` and never substitutes
+another delegation mechanism.
+
 ### `ask-questions`
 
 Defines how skills ask users for input. It prefers dedicated input tools when available, batches independent questions, asks serially for branching decisions, and stops rather than continuing past unresolved user decisions.
