@@ -21,16 +21,19 @@ Resolve these from the caller before acting:
 - verification scope:
   - `full`;
   - `targeted`, naming the affected flows, directly dependent flows, a concise impact rationale, and
-    prior full-pass evidence to retain; or
+    prior full-pass evidence to retain, plus the caller's attestation that this scope covers the
+    tracked changes since that baseline; or
   - `evidence-only`, identifying prior flow evidence whose coverage revision exactly matches the
-    current tracked contents.
+    current tracked contents and supplying the caller's attestation of that content match.
 
-Report missing source-of-truth artifacts or an unspecified evidence directory as findings that prevent
-readiness. Do not infer product behavior from implementation alone. Use `full` when the caller does
-not supply a scope or no trustworthy full-pass baseline exists. Use `evidence-only` only when no
-tracked product contents changed after the recorded coverage revision; PR alignment, pushing the
-already-tested commit, waiting for CI, or a Validator run that made no tracked change do not invalidate
-flow evidence. When no assumptions-ledger path is supplied, use
+If source-of-truth artifacts or the evidence directory are missing, report what is missing and stop
+before flow execution. Do not infer product behavior from implementation alone. Use `full` when the
+caller does not supply a scope or no trustworthy full-pass baseline exists. Targeted and evidence-only
+reuse depend on the caller's impact or content attestation: reconcile it with the approved flow
+inventory, but do not independently inspect a diff. Use `evidence-only` only when the caller attests
+that no tracked product contents changed after the recorded coverage revision; PR alignment, pushing
+the already-tested commit, waiting for CI, or a Validator run that made no tracked change do not
+invalidate flow evidence. When no assumptions-ledger path is supplied, use
 `<evidence-directory>/acceptance-assumptions.md` and create it if needed. Keep this preparation
 autonomous: preserve product, scope, or design ambiguity for the later human acceptance session
 instead of asking the user here.
@@ -62,16 +65,18 @@ typical data, configuration, and roles that demonstrate the delivered behavior.
   separate manual case.
 - For targeted scope, exercise only the affected flows and directly dependent flows named by the
   caller. Require an existing `<evidence-directory>/acceptance-flow-evidence.md` from a prior full
-  pass, plus a rationale that bounds why flows outside the scope are unaffected; it may group them by
-  surface or subsystem rather than enumerate them individually. Do not expand a targeted pass into a
-  full pass merely because the revision changed. If the scope omits an obvious dependency or cannot
-  be reconciled with the approved flow list, report the scope gap instead of silently guessing or
-  rerunning everything.
+  pass, plus the caller's impact attestation and rationale bounding why flows outside the scope are
+  unaffected; it may group them by surface or subsystem rather than enumerate them individually.
+  Reconcile that scope with the approved flow inventory without inspecting a diff. Do not expand a
+  targeted pass into a full pass merely because the revision changed. If the scope omits an obvious
+  dependency or cannot be reconciled with the approved flow list, report the scope gap instead of
+  silently guessing or rerunning everything.
 - For `evidence-only` scope, do not exercise flows or replace screenshots. Require
-  `acceptance-flow-evidence.md` to cover the representative flow inventory and identify a coverage revision whose
-  tracked contents exactly match the current worktree. Continue directly to current-head CI and
-  handoff collation. If contents changed or coverage is incomplete, reject evidence-only reuse and
-  require a full or targeted scope from the caller.
+  `acceptance-flow-evidence.md` to cover the representative flow inventory and identify a coverage
+  revision, plus the caller's attestation that current tracked contents match that revision. Do not
+  independently inspect a diff to establish the match. Continue directly to current-head CI and
+  handoff collation. If the attestation is absent, reports changed contents, or coverage is incomplete,
+  reject evidence-only reuse and require a full or targeted scope from the caller.
 
 Exercise the selected flows through the same public surface a real user or client would use.
 
@@ -104,7 +109,9 @@ representative flow inventory, the current verification scope and rationale, and
 recent tested SHA, outcome, evidence paths, and limitations. A full pass establishes the baseline. A
 targeted pass replaces evidence for its selected flows and retains prior evidence for flows the caller
 identified as unaffected, preserving the original SHA and provenance rather than relabeling it as
-current-head evidence. Record the revision whose tracked contents this combined coverage supports.
+current-head evidence. Label retained evidence as caller-scoped provenance, not as an independently
+reverified current-head observation. Record the revision whose tracked contents this combined coverage
+supports according to the caller's impact or content attestation.
 
 Write `<evidence-directory>/acceptance-findings.md` with the tested SHA and all clear defects found,
 including each affected flow, expected and observed behavior, concise reproduction steps, and evidence
@@ -140,14 +147,18 @@ retain the corresponding client request/output evidence instead.
 
 #### 4. Wait for current-head CI
 
-Invoke `codagent:wait-ci` after the required full or targeted pass finds no clear defects, or after
-evidence-only reuse is verified, and the tested worktree contents are clean, committed, and pushed.
-This is the first point at which local `HEAD` and the PR head must match. After CI returns, immediately
-re-read local `HEAD` and the PR `headRefOid`. Require the returned `head_sha`, current local `HEAD`,
-and current PR head to be identical; otherwise report that final handoff evidence cannot yet be
-produced. If tracked product contents change after flow testing, require a new caller-supplied impact
-scope and run that verification before producing final evidence. A push that publishes already-tested
-contents, PR alignment, or a no-change Validator run does not invalidate the pass.
+Before invoking `codagent:wait-ci`, require a clean tracked worktree, a committed and pushed local
+`HEAD`, and a matching PR head. If any publication or alignment condition is absent, stop and tell the
+caller to commit, push, or align the PR as needed; do not perform those actions in this skill.
+
+Invoke `codagent:wait-ci` only after that alignment and after the required full or targeted pass finds
+no clear defects, or evidence-only reuse satisfies its caller attestation. After CI returns,
+immediately re-read local `HEAD` and the PR `headRefOid`. Require the returned `head_sha`, current local
+`HEAD`, and current PR head to be identical; otherwise report that final handoff evidence cannot yet
+be produced. If the caller reports tracked product-content changes after flow testing, require a new
+caller-supplied impact scope and run that verification before producing final evidence. A push that
+publishes already-tested contents, PR alignment, or a no-change Validator run does not invalidate the
+pass.
 
 - `passed`: continue.
 - `failed` or `comments`: do not write final acceptance-test or handoff evidence or claim readiness.
@@ -167,14 +178,15 @@ proof that associated behavior passed.
 
 Write `acceptance-test.md` in the evidence directory only after CI passes or is explicitly absent, the
 required verification makes no tracked changes, `acceptance-flow-evidence.md` covers the current
-tracked contents, every representative flow has evidence from either the full baseline or a subsequent
-targeted pass, and any automated-validation evidence supplied by the caller applies to the current
-pushed head. Do not require automated-validation evidence when none was supplied; explicitly record
-its absence instead. Include:
+tracked contents under the caller's supplied scope or content attestation, every representative flow
+has evidence from either the full baseline or a subsequent targeted pass, and any automated-validation
+evidence supplied by the caller applies to the current pushed head. Do not require automated-validation
+evidence when none was supplied; explicitly record its absence instead. Include:
 
 - exact current local/PR head SHA;
 - the representative flows, their outcomes, most recent tested SHA, and whether evidence came from the
-  full baseline or a targeted post-fix pass;
+  full baseline or a targeted post-fix pass; label retained observations as caller-scoped provenance
+  rather than independently reverified current-head observations;
 - the caller-supplied impact scope and rationale for retaining unaffected-flow evidence;
 - clear-defect status and any prior fix evidence supplied by the caller;
 - existing automated-validation and CI status without rerunning either, explicitly noting when
@@ -200,7 +212,8 @@ Write `acceptance-handoff.md` in the evidence directory with:
 2. **Revision identity** — repository, PR URL, current head SHA, generation time, tracked worktree
    status, full-baseline SHA, and subsequent targeted-pass SHAs.
 3. **Flow evidence** — each supported flow, what was done, the observed result, its evidence, most
-   recent tested SHA, baseline or targeted provenance, and any limitation.
+   recent tested SHA, baseline or targeted provenance, and any limitation; label retained observations
+   as caller-scoped provenance rather than independently reverified current-head observations.
 4. **Automated validation and CI** — concise status plus durable logs or links produced by separate
    validation and CI steps; explicitly say when automated-validation evidence was not supplied.
 5. **Visual and client evidence** — screenshot metadata/text equivalents, API or CLI evidence, and
@@ -214,8 +227,9 @@ Before reporting readiness:
 
 1. Require a clean tracked worktree.
 2. Require local `HEAD`, PR head, `acceptance-test.md`, and `acceptance-handoff.md` to name the same
-   current revision. Require `acceptance-flow-evidence.md` to account for the representative flow inventory and
-   preserve the actual SHA of every retained or refreshed observation.
+   current revision. Require `acceptance-flow-evidence.md` to account for the representative flow
+   inventory under the caller's supplied scope or content attestation and preserve the actual SHA of
+   every retained or refreshed observation.
 3. Require CI evidence for that SHA to be passing, or explicitly record that no checks exist.
 4. Verify every referenced evidence and screenshot path exists and every UI flow has visual evidence
    from the baseline or an applicable targeted pass.
@@ -223,8 +237,9 @@ Before reporting readiness:
    user content.
 6. Record the current PR state for the caller without changing it.
 
-Use revision identity only to show that final CI and handoff evidence describe the code that was
-tested and will be reviewed. Do not require or inspect embedded executable revision metadata.
+Use revision identity to show that final CI and handoff evidence describe the code under review.
+Preserved observations remain tied to their original revisions and claim only caller-scoped
+applicability to the current head. Do not require or inspect embedded executable revision metadata.
 
 Report the exact ready-for-acceptance SHA, PR URL, handoff path, unresolved-decision count, CI status,
 and known limitations. Do not mark the PR ready or perform human acceptance. The caller owns any

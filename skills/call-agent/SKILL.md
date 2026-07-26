@@ -102,10 +102,12 @@ Do not omit a material child finding because you consider it unsupported, invali
 Preserve the child's rationale and recommendation, then explain your disposition and evidence. Raw
 transcripts and immaterial observations are unnecessary.
 
-For autonomous work, a transcript is unnecessary. In normal output or the workflow's durable evidence,
-record:
+For autonomous work, a transcript is unnecessary. For each material child finding, record the same
+substance as the interactive report:
 
-- material child findings;
-- independent verification performed;
-- conclusions accepted or rejected, with a concise reason; and
+- the child's rationale, cited evidence, and recommendation;
+- the lead's independent verification, disposition, and concise reason; and
 - the resulting action or decision.
+
+Use caller-defined durable evidence when the caller supplies it; otherwise use normal output. Do not
+invent an evidence file. Preserve material findings the lead rejects or cannot verify.

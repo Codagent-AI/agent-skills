@@ -79,7 +79,7 @@ Polls CI for the current branch PR. It reports pass, fail, pending, or comments 
 
 ### `prepare-acceptance`
 
-Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises a concise representative set of user or client journeys through the real product surface, and persists per-flow evidence. It groups equivalent variants instead of manually replaying every specification scenario or edge case. After a fix, the caller can supply an impact scope so the skill retests only affected and directly dependent flows while preserving the provenance of unaffected baseline evidence. When tracked contents have not changed, it can reuse existing flow evidence and refresh only PR, CI, and handoff evidence. It captures screenshots for tested UI flows or client-style evidence for non-UI flows. Fixes and any automated validation are handled by the caller.
+Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises a concise representative set of user or client journeys through the real product surface, and persists per-flow evidence. It groups equivalent variants instead of manually replaying every specification scenario or edge case. After a fix, the caller can attest to an impact scope so the skill retests only affected and directly dependent flows while preserving unaffected baseline evidence as caller-scoped provenance. When the caller attests that tracked contents match the recorded coverage revision, it can reuse existing flow evidence and refresh only PR, CI, and handoff evidence. It does not inspect diffs or publish changes itself. It captures screenshots for tested UI flows or client-style evidence for non-UI flows. Fixes and any automated validation are handled by the caller.
 
 ### `fix-pr`
 
@@ -95,8 +95,8 @@ Runs the full push, wait, fix, retry loop. It stops when CI and comments are cle
 
 Safely invokes one Runner-owned child through a profile or declared named session. It builds a
 standalone bounded prompt, preserves call budgets and structured failures, independently verifies
-consequential findings, and reports each material child finding separately from the lead's
-assessment—even when the lead rejects or cannot verify it. It reports a
+consequential findings, and reports each material child finding—including its rationale, evidence,
+recommendation, lead disposition, and resulting action—even when the lead rejects or cannot verify it. It reports a
 clear blocker when the enclosing Agent Runner step did not provision `call_agent` and never substitutes
 another delegation mechanism.
 
