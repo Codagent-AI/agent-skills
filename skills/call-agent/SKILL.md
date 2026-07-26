@@ -80,7 +80,8 @@ cannot be verified, record the verification gap and do not present it as establi
 
 ## 6. Report the result
 
-For an interactive or otherwise user-facing decision, report two distinct sections:
+For an interactive or otherwise user-facing decision, report every material child finding, including
+findings you reject or cannot verify, in two distinct sections:
 
 ```markdown
 ## Child Findings
@@ -92,13 +93,14 @@ For an interactive or otherwise user-facing decision, report two distinct sectio
 
 ## Lead Assessment
 
-- Disposition: agree | partially agree | disagree
+- Disposition: agree | partially agree | disagree | unable to verify
 - Reasoning: <independent assessment and verification>
 - Recommended action: <lead's recommendation>
 ```
 
-Preserve every material supported disagreement. Do not relabel disagreement as agreement or omit the
-child's rationale or recommendation.
+Do not omit a material child finding because you consider it unsupported, invalid, or out of scope.
+Preserve the child's rationale and recommendation, then explain your disposition and evidence. Raw
+transcripts and immaterial observations are unnecessary.
 
 For autonomous work, a transcript is unnecessary. In normal output or the workflow's durable evidence,
 record:

@@ -59,11 +59,13 @@ Tasks are ordered so dependent work stays sequential.
 
 ### 8. Finalize The PR
 
-`push-pr` commits changes, pushes the branch, and creates or updates the PR after running validation when applicable.
+`push-pr` commits changes, pushes the branch, and creates or updates the open PR for the exact current
+head branch after running validation when applicable. Merged or closed predecessors do not substitute
+for the active PR.
 
 `wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments.
 
-`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. It exercises the code currently checked out through every safely testable supported user or client flow, using normal build and startup commands when needed, aggregates clear defects across the complete flow pass, and captures screenshots for UI flows or client-style evidence for APIs and CLIs. Once the tested code is committed and pushed, it waits for current-head CI and produces a concise evidence package aligned with the final PR head for the human review session. Fixes and any automated validation remain the caller's responsibility; the skill records their evidence or absence and the current PR state without changing it.
+`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. Its initial pass exercises a concise representative set of user or client journeys through the real product surface rather than replaying every specification scenario or edge case. After a fix, the caller supplies an impact scope so only affected and directly dependent flows are retested; unaffected baseline evidence remains available with its original revision provenance. If tracked contents did not change, the skill reuses that flow evidence and refreshes only PR, CI, and handoff evidence. It captures screenshots for tested UI flows or client-style evidence for APIs and CLIs. Fixes and automated validation remain the caller's responsibility.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
@@ -89,7 +91,8 @@ simple-plan -> implement-change -> finalize-pr
 `call_agent` tool. Proposal, approach, task-plan, and acceptance workflows use it to construct a
 standalone bounded child prompt, make one safe profile or named-session call, preserve structured
 failures, independently verify consequential findings, and report child findings separately from the
-lead's assessment. It does not provision the tool itself and never substitutes another delegation
+lead's assessment. Material findings remain visible even when the lead rejects or cannot verify them.
+It does not provision the tool itself and never substitutes another delegation
 mechanism when the tool is unavailable.
 
 `ask-questions` is an internal helper used by other skills when they need user input. It defines when to use dedicated input tools, when to batch questions, and when to ask serially.

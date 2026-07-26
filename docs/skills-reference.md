@@ -69,7 +69,9 @@ Coordinates a full change. It dispatches one `implement-and-validate` subagent p
 
 ### `push-pr`
 
-Commits local changes, pushes the branch, and creates or updates the current branch PR. It detects whether validator gates apply before committing.
+Commits local changes, pushes the branch, and creates or updates the open PR for the exact current
+head branch. It detects whether validator gates apply before committing and treats merged or closed
+predecessors as history.
 
 ### `wait-ci`
 
@@ -77,7 +79,7 @@ Polls CI for the current branch PR. It reports pass, fail, pending, or comments 
 
 ### `prepare-acceptance`
 
-Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises every safely testable supported user or client flow through the real product surface, aggregates clear defects across the complete flow pass, and captures screenshots for every UI flow or client-style evidence for non-UI flows. Once the tested code is committed and pushed, it waits for current-head CI and writes acceptance-test and handoff artifacts aligned with the final PR head. Fixes and any automated validation are handled by the caller; the skill records their evidence or absence and the current PR state without changing it.
+Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises a concise representative set of user or client journeys through the real product surface, and persists per-flow evidence. It groups equivalent variants instead of manually replaying every specification scenario or edge case. After a fix, the caller can supply an impact scope so the skill retests only affected and directly dependent flows while preserving the provenance of unaffected baseline evidence. When tracked contents have not changed, it can reuse existing flow evidence and refresh only PR, CI, and handoff evidence. It captures screenshots for tested UI flows or client-style evidence for non-UI flows. Fixes and any automated validation are handled by the caller.
 
 ### `fix-pr`
 
@@ -93,7 +95,8 @@ Runs the full push, wait, fix, retry loop. It stops when CI and comments are cle
 
 Safely invokes one Runner-owned child through a profile or declared named session. It builds a
 standalone bounded prompt, preserves call budgets and structured failures, independently verifies
-consequential findings, and keeps child findings separate from the lead's assessment. It reports a
+consequential findings, and reports each material child finding separately from the lead's
+assessment—even when the lead rejects or cannot verify it. It reports a
 clear blocker when the enclosing Agent Runner step did not provision `call_agent` and never substitutes
 another delegation mechanism.
 
