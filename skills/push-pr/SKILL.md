@@ -32,11 +32,10 @@ Commit all changes, push to the remote, and create or update the pull request fo
    - If push fails, show the error and stop
 
 4. **Check if PR exists**
-   - Run `gh pr view --json url,title,state,number,headRefOid` while capturing stdout, stderr, and exit code
-   - If the command exits non-zero and stderr indicates no pull requests were found for the branch, treat it as no PR existing and proceed to creation
-   - If the command exits non-zero for auth, network, API, or other errors, report stderr and stop
-   - If the command succeeds but output is empty or invalid JSON, report the unexpected output and stop
-   - Otherwise, parse the `state` field from the JSON response
+   - Query the current branch explicitly: `gh pr list --head <branch> --state open --json url,title,state,number,headRefOid --limit 2`
+   - If the command fails for auth, network, API, or another error, report stderr and stop
+   - If the output is invalid JSON or contains more than one open PR, report the unexpected state and stop
+   - If exactly one open PR exists, use it; do not let a prior closed or merged PR substitute for it
    - **If PR exists and is OPEN:**
      - Check if there are new commits by comparing current HEAD with PR's `headRefOid`
      - If new commits exist:
@@ -46,10 +45,10 @@ Commit all changes, push to the remote, and create or update the pull request fo
        - Update the PR: `gh pr edit <pr-number> --body "updated description"`
        - Print: "PR updated with new commits: <url>"
      - If no new commits: print "PR already exists: <url>"
-   - **If PR exists but is CLOSED:**
-     - Print: "Previous PR is closed, creating new PR"
-     - Create a new PR (follow creation steps below)
-   - **If no PR exists, create one:**
+   - **If no open PR exists:**
+     - Optionally query `gh pr list --head <branch> --state all` for context. Treat `CLOSED` and
+       `MERGED` as terminal history, not as the current PR.
+     - Print that no open PR exists and create a new PR using the steps below.
      - Get default branch: `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`
      - Get commit history for PR description: `git log <default-branch>..HEAD --oneline`
      - Generate a clear PR title and description based on the commits and change context
@@ -65,3 +64,4 @@ Commit all changes, push to the remote, and create or update the pull request fo
 - PR descriptions should summarize the changes and their purpose
 - Always include the PR URL in the final output
 - Can be invoked standalone at any point without prior workflow state
+- A merged or closed PR for the current branch never prevents creating a new open PR

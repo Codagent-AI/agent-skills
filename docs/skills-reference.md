@@ -31,13 +31,21 @@ Turns proposal capabilities into requirements. It asks behavior, boundary, error
 
 Turns specs into a technical design. It reads all relevant specs first, explores code context, asks architecture and trade-off questions, proposes approaches, gets approval, writes `design.md`, and applies any spec edits discovered during design.
 
+### `review-approach`
+
+Performs the final review of a completed proposal, specification, and design. It checks cross-artifact consistency and testability, then challenges consequential behavioral gaps, missing architectural decisions, weak tradeoffs, failure modes, and better alternatives without editing the artifacts.
+
 ### `plan-tasks`
 
 Creates a structured implementation task breakdown. Each task file includes the relevant motivation, design context, exact spec scenarios, and done criteria needed by a separate implementer.
 
+### `review-tasks`
+
+Reviews an implementation task plan against the approved proposal, specifications, and design. It must read those source artifacts, but reports only task-plan defects that can be corrected in the task index or detailed task files.
+
 ### `review-spec`
 
-Reviews proposal, spec, design, and task artifacts for internal consistency, cross-artifact alignment, missing scenarios, and gaps. It reports findings with artifact citations.
+Provides a generic artifact-quality review for any available proposal, spec, design, or task documents. It accepts product and design decisions as written and checks internal consistency, cross-artifact alignment, testability, and traceability. It remains available for standalone or legacy use but is not a stage in the standard v2 planning flow.
 
 ### `simple-plan`
 
@@ -61,7 +69,9 @@ Coordinates a full change. It dispatches one `implement-and-validate` subagent p
 
 ### `push-pr`
 
-Commits local changes, pushes the branch, and creates or updates the current branch PR. It detects whether validator gates apply before committing.
+Commits local changes, pushes the branch, and creates or updates the open PR for the exact current
+head branch. It detects whether validator gates apply before committing and treats merged or closed
+predecessors as history.
 
 ### `wait-ci`
 
@@ -69,7 +79,7 @@ Polls CI for the current branch PR. It reports pass, fail, pending, or comments 
 
 ### `prepare-acceptance`
 
-Prepares an implemented PR revision for human acceptance. It exercises every supported user or client flow through the real product surface, reports clear defects to the caller, captures screenshots for every UI flow or client-style evidence for non-UI flows, waits for current-head CI once stable, and writes revision-bound acceptance-test and handoff artifacts. Fixes and any automated validation are handled by the caller; the skill records their evidence or absence and the current PR state without changing it.
+Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises a concise representative set of user or client journeys through the real product surface, and persists per-flow evidence. It groups equivalent variants instead of manually replaying every specification scenario or edge case. After a fix, the caller can attest to an impact scope so the skill retests only affected and directly dependent flows while preserving unaffected baseline evidence as caller-scoped provenance. When the caller attests that tracked contents match the recorded coverage revision, it can reuse existing flow evidence and refresh only PR, CI, and handoff evidence. It does not inspect diffs or publish changes itself. It captures screenshots for tested UI flows or client-style evidence for non-UI flows. Fixes and any automated validation are handled by the caller.
 
 ### `fix-pr`
 
@@ -80,6 +90,15 @@ Fixes CI failures and review comments for the current branch PR. It gathers fail
 Runs the full push, wait, fix, retry loop. It stops when CI and comments are clear, when checks remain pending after the polling limit, after three fix cycles, or when the same failure persists across consecutive fix attempts.
 
 ## Support And Review
+
+### `call-agent`
+
+Safely invokes one Runner-owned child through a profile or declared named session. It builds a
+standalone bounded prompt, preserves call budgets and structured failures, independently verifies
+consequential findings, and reports each material child finding—including its rationale, evidence,
+recommendation, lead disposition, and resulting action—even when the lead rejects or cannot verify it. It reports a
+clear blocker when the enclosing Agent Runner step did not provision `call_agent` and never substitutes
+another delegation mechanism.
 
 ### `ask-questions`
 

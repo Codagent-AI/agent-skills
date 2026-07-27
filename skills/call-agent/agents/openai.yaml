@@ -1,0 +1,4 @@
+interface:
+  display_name: "Call Agent"
+  short_description: "Safely invoke one Runner-owned child agent"
+  default_prompt: "Use codagent:call-agent to invoke one bounded child and independently assess its result."
