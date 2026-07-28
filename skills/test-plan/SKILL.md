@@ -5,108 +5,66 @@ description: Collaboratively creates a risk-based test plan for a defined softwa
 # Test Plan
 
 Create `<change-dir>/test-plan.md` after the proposal, specifications, and design are complete. The
-artifact defines important automated integration and end-to-end obligations, authoritative agent
-acceptance flows, and any unavoidable human-only checks. Unit-test details remain primarily owned by
-TDD during implementation.
+plan records important automated integration and end-to-end obligations, authoritative agent
+acceptance flows, and exceptional human-only checks. Specifications and implementation-time TDD remain
+the source of unit-test requirements.
 
-Do not write the artifact until you have presented the proposed plan and the user has approved it.
-Use `codagent:ask-questions` for consequential choices about environments, external effects, cost,
-credentials, fidelity, or genuinely human-only judgment.
+Do not write the plan until the user approves the proposed coverage. Use `codagent:ask-questions` for
+consequential choices involving environments, external effects, cost, credentials, fidelity,
+substitutes, or genuinely human-only judgment.
 
-## 1. Understand the change and its risks
+## Plan coverage by risk
 
-Read the proposal, every specification, the design, relevant repository instructions, existing test
-structure, and the public surfaces affected by the change. Trace the critical user journeys and
-component boundaries. Identify failures that isolated logic tests would miss and flows whose completion
-must be demonstrated through the real product surface.
+Read the definition artifacts, relevant repository instructions, current test structure, and affected
+public surfaces. Trace critical journeys and boundaries, then choose the lowest test layer that can
+reliably detect each important failure:
 
-Do not turn every scenario, code path, or input variation into a separately planned test. Concentrate
-the artifact on cross-component risk, critical journeys, and acceptance evidence that implementers
-would otherwise have to invent.
+- **Unit tests:** the broad base for isolated logic, validation, transformations, decisions, and edge
+  cases. Do not inventory these in the test plan.
+- **Integration tests (`INT-*`):** important boundaries where real components must work together, such
+  as adapters, databases, filesystems, subprocesses, APIs, queues, or configuration-to-runtime wiring.
+  Prefer controlled real dependencies or contract tests when they are more faithful than mocks.
+- **Automated end-to-end tests (`E2E-*`):** a small set of critical journeys through a public entry
+  point with realistic isolated setup and stable observable assertions.
 
-## 2. Apply the automated test pyramid
+Avoid fixed ratios, test-count quotas, duplicate assertions across layers, and E2E coverage for
+behavior a cheaper layer proves adequately. It is valid to record that no new integration or E2E
+obligation is warranted and explain why.
 
-Use the pyramid as an economic and risk model, not a fixed ratio or test-count quota:
+For each automated obligation, capture what it covers, the boundary or journey exercised, setup,
+stable assertions, constraints, and where it runs.
 
-1. **Unit tests** form the broad base. Use them for isolated logic, validation, transformations,
-   decisions, and edge cases. Specifications remain the source of unit-test requirements, and TDD
-   determines the concrete cases during implementation; do not restate them in this plan.
-2. **Integration tests** form the middle layer. Create an `INT-*` obligation for an important boundary
-   whose behavior depends on real components working together, such as adapters, databases, filesystems,
-   subprocesses, APIs, queues, configuration-to-runtime wiring, or workflow handoffs. Prefer controlled
-   real dependencies or contract tests when they prove the boundary more faithfully than mocks.
-3. **Automated end-to-end tests** form the narrow top. Create an `E2E-*` obligation only for a critical
-   journey that must cross the complete application through a public entry point. Use realistic,
-   isolated setup and stable observable assertions. Keep this set small because these tests are slower,
-   costlier, and more fragile.
+## Define acceptance flows
 
-Prove behavior at the lowest layer that can adequately detect the relevant failure. Do not duplicate
-the same assertion across layers merely for coverage. Do not use an E2E test for logic an integration
-or unit test can prove, and do not mock the boundary an integration test exists to verify.
+Create concise `AT-*` obligations for human-style verification through the delivered UI, mobile
+interface, TUI, CLI, API, library, or other public surface. Acceptance complements automated tests; it
+does not rerun suites, enumerate edge cases, or fuzz inputs.
 
-For each `INT-*` or `E2E-*` obligation, record:
+Each flow should state:
 
-- the requirements or critical journey covered;
-- the boundary or public surface exercised;
-- setup and controlled dependencies;
-- the action and stable observable assertions;
-- important external-system, data, isolation, cost, or CI constraints;
-- where and how the automated test should run.
-
-It is valid to record that no new integration or E2E obligation is warranted, with a concrete rationale.
-
-## 3. Define agent acceptance testing
-
-Create concise `AT-*` obligations for human-style verification through the real UI, mobile interface,
-TUI, CLI, API, library, or other public surface. Agent acceptance complements the automated pyramid: it
-checks that representative delivered flows work coherently and captures review evidence; it does not
-rerun automated suites, enumerate edge cases, fuzz inputs, or replace deterministic regression tests.
-
-For each `AT-*`, record:
-
-- requirements or journey covered, whether it is **required** or **conditional**, and the activation
-  condition when conditional;
-- actor, public surface, setup, and representative data;
+- whether it is required or conditional, and the activation condition;
+- actor, public surface, representative setup and data;
 - actions and expected observable result;
-- evidence to capture, including meaningful screenshots for any UI;
-- authorized external effects, credentials, expected cost, and cleanup;
-- any permitted substitute such as a sandbox or stub, and exactly when it is allowed.
+- evidence, including meaningful screenshots for UI flows;
+- authorized external effects, credentials, cost, cleanup, and any explicitly permitted substitute.
 
-A required `AT-*`, and a conditional `AT-*` whose activation condition holds, is authoritative. A later
-tester may group equivalent variants within it, but may not omit it, replace it with a dry run or mock,
-or relabel its absence as a harmless limitation unless this plan explicitly permits that substitute. If
-an applicable flow cannot be exercised, acceptance testing has not completed.
+Applicable flows are authoritative. A later tester may group equivalent variants but may not omit a
+flow, replace it with a dry run or mock, or call its absence a harmless limitation unless this plan
+allows that substitute. If an applicable flow cannot run, acceptance testing is incomplete.
 
-## 4. Minimize human-only testing
+Default human-only testing to `None.` Add an `HT-*` only for judgment or authority unavailable to an
+agent with the product and tools—for example subjective preference, legal approval, physical
+perception, unavailable personal credentials, or an irreversible user-authorized act. Visual or
+interactive UI testing normally belongs in agent acceptance. For each `HT-*`, state why an agent
+cannot perform it, what prior testing must establish, concise user instructions, and the decision or
+observation required.
 
-Default the Human-Only Testing section to `None.` Create an `HT-*` obligation only when a human must
-provide judgment or authority that an agent using the available product and tools cannot supply, such
-as subjective preference, legal or organizational approval, physical perception, unavailable personal
-credentials, or an irreversible act requiring the user.
+## Approve and write
 
-A UI flow is not human-only merely because it is visual or interactive. Agent acceptance should test it
-and capture screenshots when tools allow.
-
-For each unavoidable `HT-*`, record the reason it cannot be delegated, prerequisites that automated and
-agent testing must establish first, concise user instructions, and the decision or observation needed.
-The ordinary discretionary human review conversation does not need to become a mandatory `HT-*`.
-
-## 5. Check coverage and obtain approval
-
-Build a coverage map only for the additional `INT-*`, `E2E-*`, `AT-*`, and `HT-*` obligations in this
-plan, linking each to the requirements or critical journeys it covers. Do not add rows for requirements
-that rely only on specification-driven unit coverage. Check that:
-
-- important boundary risk has an integration obligation;
-- only critical complete journeys use automated E2E coverage;
-- agent acceptance covers the delivered public flows without duplicating automated edge-case testing;
-- any permitted substitute is explicit;
-- human-only testing is absent unless genuinely unavoidable; and
-- the planned environment, side effects, credentials, cost, and cleanup are feasible and authorized.
-
-Present the proposed obligations, meaningful omissions, and consequential testing choices to the user.
-Revise until approved, then write `test-plan.md`. This skill does not create implementation tasks, write
-tests, execute tests, or invoke another lifecycle phase.
+Present the proposed obligations, meaningful omissions, and consequential testing choices. After user
+approval, write the plan and a coverage map containing only requirements or journeys with an
+additional `INT-*`, `E2E-*`, `AT-*`, or `HT-*` obligation. Do not create tasks, write tests, execute
+tests, or invoke another lifecycle phase.
 
 ## Artifact template
 
@@ -139,24 +97,29 @@ integration, end-to-end, agent-acceptance, and exceptional human-only obligation
 ## Agent Acceptance Tests
 
 ### AT-001: <delivered flow>
-- Classification: Required
+- Classification: <Required | Conditional: condition>
 - Covers: <requirements or journey>
 - Actor and surface: <user/client and interface>
-- Setup: <representative data, environment, and credentials>
+- Setup: <data, environment, and credentials>
 - Steps: <human-style actions>
 - Expected: <observable result>
 - Evidence: <screenshots or client-visible evidence>
-- Effects and cleanup: <authorized side effects, cost, and cleanup>
-- Permitted substitutes: None
+- Effects and cleanup: <authorized effects, cost, and cleanup>
+- Permitted substitutes: <explicit substitute and condition, or None>
 
 ## Human-Only Testing
 
 None.
 
-## Coverage Map
+<!-- When needed:
+### HT-001: <human judgment or authority>
+- Reason: <why an agent cannot perform it>
+- Prerequisites: <prior automated and acceptance evidence>
+- Instructions: <concise user actions>
+- Required decision or observation: <result needed>
+-->
 
-Include only requirements or journeys with an additional obligation in this plan; do not inventory
-specification-driven unit coverage.
+## Coverage Map
 
 | Requirement or journey | INT | E2E | AT | HT |
 | --- | --- | --- | --- | --- |

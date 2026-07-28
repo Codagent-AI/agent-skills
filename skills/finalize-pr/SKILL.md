@@ -7,69 +7,26 @@ description: >
   "push pr and wait for CI", or invokes "codagent:finalize-pr".
 ---
 
-# codagent:finalize-pr
+# Finalize PR
 
-Push the PR, wait for CI, fix any failures or review comments, and repeat until the PR is green — or pause when termination rules require human input.
+Use the independently reusable PR skills to make the current branch review-ready:
 
-## Procedure
+1. Invoke `codagent:push-pr`.
+2. Invoke `codagent:wait-ci`.
+3. On `failed` or `comments`, invoke `codagent:fix-pr`, then return to waiting.
+4. On `passed`, report success and the PR URL.
 
-### Step 1 — Push the PR
+For `pending`, report what remains and ask whether to wait longer.
 
-Invoke `codagent:push-pr` to commit, push, and create or update the pull request.
+## Termination
 
-If push-pr fails (e.g. no remote, auth error), report the error and stop.
+Track each fix cycle's failure signature: the set of failing check names, or `comments-only` when only
+review feedback remains.
 
-### Step 2 — Wait for CI
+Pause for user direction instead of fixing when:
 
-Invoke `codagent:wait-ci` to poll CI status and gather review comments.
+- three fix cycles have already run; or
+- the same signature remains after two consecutive fix attempts.
 
-The wait-ci skill returns one of four statuses:
-- `passed` — CI green, no blocking reviews, no PR comments
-- `failed` — CI failures or `CHANGES_REQUESTED` reviews
-- `comments` — CI green but PR comments need addressing
-- `pending` — checks still running after timeout
-
-### Step 3 — Evaluate result
-
-**On `passed`:** Workflow is complete. Report success with the PR URL. Stop.
-
-**On `pending`:** Report which checks are still running. Use the appropriate tool for asking the user a question or requesting input to ask whether to wait longer or proceed.
-
-**On `failed` or `comments`:** Record the failure signature (the set of failing CI check names, or `comments-only` if CI passed but comments exist), then proceed to Step 4.
-
-### Step 4 — Fix and retry
-
-Check termination rules before attempting a fix:
-
-1. **Max 3 fix cycles.** If this would be the 4th fix attempt, pause immediately — show current CI status and use the appropriate tool for asking the user a question or requesting input to ask how to proceed. Do NOT attempt a 4th cycle.
-
-2. **Same failure persists after 2 fix attempts.** If the failure signature from Step 3 matches the previous cycle's failure signature AND this is the 2nd consecutive attempt at the same failure, pause immediately — explain the persistent failure in detail and use the appropriate tool for asking the user a question or requesting input to ask for guidance. "Same failure" means the identical CI check name(s) appear as failing across two consecutive wait-ci results after fix attempts.
-
-If neither termination rule applies:
-
-- Invoke `codagent:fix-pr` to address CI failures and/or review comments
-- Return to Step 2
-
-### Failure tracking
-
-Maintain a running count and history across cycles:
-
-| Cycle | Failure signature                        | Action          |
-|-------|------------------------------------------|-----------------|
-| 1     | `["lint", "test-unit"]`                  | fix-pr → retry  |
-| 2     | `["test-unit"]`                          | fix-pr → retry  |
-| 3     | `["test-unit"]`                          | PAUSE (same failure persisted 2 attempts) |
-
-Another example:
-
-| Cycle | Failure signature  | Action          |
-|-------|--------------------|-----------------|
-| 1     | `["lint"]`         | fix-pr → retry  |
-| 2     | `["test-e2e"]`     | fix-pr → retry  |
-| 3     | `["test-e2e"]`     | PAUSE (same failure persisted 2 attempts, AND max 3 cycles) |
-
-## Notes
-
-- Can be invoked standalone at any point — gathers its own state from the current branch's PR
-- Does NOT archive the change — archiving is a separate step that happens before this skill
-- Each sub-skill (`push-pr`, `wait-ci`, `fix-pr`) is independently invocable for ad-hoc use
+When pausing, include the current CI or review evidence and the attempted fixes. Do not archive changes;
+archiving is a separate operation.

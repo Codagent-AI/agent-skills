@@ -128,7 +128,9 @@ Audits a session for risky or notable assumptions and context gaps. It is intend
 
 ### `review-assumptions`
 
-Reviews assumptions from implementor session reports. It builds a finding ledger, fixes high-confidence issues directly, asks for clarification on ambiguous findings, and summarizes final dispositions.
+Reviews assumptions from implementor session reports. It verifies each finding against the approved
+plan and source, fixes high-confidence issues directly, asks for clarification on ambiguous findings,
+and summarizes final dispositions.
 
 ### `task-compliance`
 

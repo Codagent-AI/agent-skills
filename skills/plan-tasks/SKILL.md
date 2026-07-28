@@ -4,165 +4,104 @@ description: Creates a structured implementation task breakdown for a structured
 
 # Plan Tasks
 
-Create self-contained task files from a change's proposal, design, specs, and test plan. Assume each task
-goes to a skilled agent with no prior context. Include the decisions, paths, constraints, scenarios, and
-assigned automated-test obligations that agent needs, but avoid line-by-line implementation instructions.
+Create a small set of self-contained delivery tasks from the proposal, specifications, design, test
+plan, and relevant repository context. Each task goes to a skilled agent with no prior conversation;
+include necessary decisions, paths, constraints, scenarios, and automated-test obligations without
+dictating line-by-line implementation.
 
-Announce: "I'm using the plan-tasks skill to create the task breakdown."
+## Size before decomposing
 
-## 1. Read inputs and code
+Estimate the whole change from novelty, uncertainty, architectural reach, migration risk, integration
+breadth, and verification burden. Do not equate file, requirement, scenario, provider, or UI counts
+with task count.
 
-Read `proposal.md`, `design.md`, `test-plan.md`, and every `specs/**/*.md` in the provided change
-directory. Skip material already read in this session.
+| LOE | Typical tasks |
+| --- | ---: |
+| Small | 1 |
+| Medium | 2 |
+| Large | 3–4, preferably 3 |
+| XL | 5+, starting at 5 |
 
-Research only enough code to identify:
+Choose the smallest fitting band. Mechanical propagation across layers or adapters usually remains one
+task. For Medium-or-larger changes, or unclear provider, migration, cutover, feasibility, or cleanup
+boundaries, read [references/task-sizing.md](references/task-sizing.md).
 
-- affected files, interfaces, and conventions;
-- structural obstacles that could make implementation significantly harder;
-- documentation that must change with the behavior.
+## Form delivery units
 
-## 2. Size the whole change
+A task is an independently meaningful outcome a generalist can implement, test, and review in one
+focused session. Prefer vertical slices that include their schema, config, logic, interfaces, tests,
+and documentation.
 
-Estimate implementation effort before drafting task boundaries. Consider novelty, uncertainty, architectural reach, provider or platform breadth, migration and cutover risk, and verification burden. Discount mechanical propagation across files, adapters, UI surfaces, docs, and tests. Never infer size from requirement, scenario, layer, or candidate-task counts.
+Split only for a distinct outcome, implementation risk, real dependency or release gate, or substantial
+independently verifiable foundation. Merge boundaries that create broad unfinished plumbing, duplicate
+edits, or a large implicit handoff. Fold ordinary scaffolding, migrations, refactors, test setup, and
+documentation into the outcome they support.
 
-Use the estimate as a task-count budget:
+Assign each `INT-*` and `E2E-*` obligation to the task that first makes its boundary or journey
+executable; a cross-task E2E belongs to the final task completing that journey. Do not assign `AT-*` or
+`HT-*` execution to implementors. Unit cases remain implementation-time TDD decisions.
 
-| LOE | Task count | Calibration |
-| --- | ---: | --- |
-| Small | 1 | Cohesive, patterned work with limited uncertainty, even across many files. |
-| Medium | 2 | A substantial feature or refactor with a contract change, migration, or second implementation-sized risk cluster. |
-| Large | 3–4 | A major subsystem change with high novelty, integration breadth, production transition, or extensive verification. Prefer 3. |
-| XL | 5+ | Program-scale work spanning multiple major subsystems or capabilities. Start at 5; justify every additional task. |
+Compare the result with the independent LOE estimate. Merge coupled candidates above the band; never
+invent work to reach a count. Use repository context to resolve ordinary planning choices. Stop only
+when approved source artifacts contradict each other enough that safe implementation cannot be
+planned. Do not ask the user to approve the task count or grouping.
 
-Choose the smallest fitting size. A difficult replacement of one subsystem is usually Large, not XL.
+## Write the tasks
 
-For Medium or larger changes, or ambiguous provider, migration, feasibility, cutover, or cleanup boundaries, read [references/task-sizing.md](references/task-sizing.md) before decomposing.
+Write tasks under `<change-dir>/tasks/`. Use an unnumbered `<slug>.md` for one task or ordered
+`<NN>-<slug>.md` files for multiple tasks. Use real repository paths and no placeholders.
 
-Only after sizing, decide whether serious structural obstacles warrant a behavior-preserving refactor task. Prefer inline refactoring. If a standalone refactor is necessary, count it inside the selected budget.
-
-## 3. Form delivery units
-
-One task is one meaningful outcome a generalist agent can implement, test, and review in a focused session. A task may be a broad vertical slice; it is not a TDD step, requirement, scenario, layer, UI surface, adapter, or file group.
-
-Apply these rules:
-
-1. Group every layer needed for one outcome: schema, config, logic, UI, tests, and docs.
-2. Split only for an independently meaningful outcome, distinct implementation risk, real sequencing or release gate, or substantial independently verifiable foundation.
-3. Fold scaffolding, migrations, dependencies, and refactors into the outcome that first exercises them unless independently risky and review-worthy.
-4. Prefer seams with narrow, stable handoffs. If the next task would inherit broad unfinished plumbing, overlapping edits, or many implicit assumptions, merge the candidates. A boundary should reduce context transfer, not create a large handoff surface.
-5. Merge candidates that would normally land in one PR, are not useful separately, or exist only to prepare for the next task.
-
-Do not create standalone tasks for tests, ordinary documentation, setup surfaces, adapter flags, or other plumbing belonging to an outcome. Prompt-, config-, or skill-only changes are usually one task unless they deliver independently releasable capabilities.
-
-Assign each `INT-*` and `E2E-*` obligation from `test-plan.md` to the delivery task that first makes the
-covered boundary or journey executable:
-
-- keep the automated test in the same task as the behavior it protects;
-- when a journey spans multiple tasks, assign its E2E obligation to the final task that completes the
-  public journey while earlier tasks use unit and integration TDD appropriate to their portions;
-- create a separate test-infrastructure task only when that infrastructure is itself substantial,
-  risky, and independently reviewable; and
-- do not assign `AT-*` or `HT-*` execution to implementers. Tasks may create setup or observability the
-  approved acceptance flow requires, but acceptance is performed later.
-
-Unit-test cases remain implementation-time TDD decisions. Include the test plan's unit strategy and
-relevant risk guidance without turning each anticipated unit test into a task requirement.
-
-### Cross-check the count
-
-Compare the candidate count with the independent LOE budget:
-
-- Above the band: merge the most coupled candidates.
-- Below the minimum: re-check the estimate; never invent work to satisfy it.
-- Within a range: use the lower count unless another boundary is concrete and implementation-significant.
-- Multiple cohesive outcomes in one task: split and raise the LOE if needed.
-- For every task after the first, explain internally why it cannot be folded into another. "Different requirement/layer/UI," "many files/adapters," "cleaner," or "easier to track" are not sufficient.
-
-Proceed autonomously once the cross-check passes. Do not ask for approval or count selection. Stop only for a source-artifact contradiction that makes implementation unsafe to plan.
-
-## 4. Write task files
-
-Write every task under `tasks/` before ordering:
-
-- One task: `<2-4-word-slug>.md`
-- Multiple tasks: eventually `<NN>-<2-4-word-slug>.md`, where the numeric prefix determines runner order
-
-Use real repository paths and resolve all placeholders.
-
-### Single-task format
-
-Reference the design and every spec by exact relative path instead of duplicating them. Omit `## Spec`.
+For one task, exact references to the design, specs, and test plan may replace copied artifact text:
 
 ```markdown
 # Task: <Title>
 
 ## Goal
-
 <Outcome and reason>
 
 ## Background
+You MUST read:
+- `design.md` for <relevant decisions>
+- `specs/<capability>/spec.md` for <requirements and scenarios>
+- `test-plan.md` for <assigned INT/E2E obligations>
 
-You MUST read these files before starting:
-- `design.md` for <relevant details>
-- `specs/<capability>/spec.md` for <acceptance criteria>
-- `test-plan.md` for <assigned INT/E2E obligations and relevant unit strategy>
-
-<Brief motivation, key paths, decisions, and constraints>
+<Relevant paths, constraints, and context>
 
 ## Done When
-
-<Concrete completion signal covering all scenarios and assigned automated-test obligations>
+<Concrete completion signals>
 ```
 
-### Multi-task format
-
-Each file must stand alone. Never reference another task; its agent will not see it. Include only background that affects this task.
+For multiple tasks, each file must stand alone and must not refer to another task:
 
 ```markdown
 # Task: <Title>
 
 ## Goal
-
-<Outcome and reason in 1–3 sentences>
+<Outcome and reason>
 
 ## Background
-
-<Relevant proposal motivation, design decisions, exact paths/APIs, and constraints>
+<Motivation, design decisions, exact paths/APIs, and constraints>
 
 ## Spec
-
-<Copy every relevant requirement and scenario verbatim from the specs>
+<Relevant requirements and scenarios copied verbatim>
 
 ## Test Plan
-
-<Copy each assigned INT/E2E obligation and cite relevant unit-strategy guidance. Do not assign AT/HT execution.>
+<Assigned INT/E2E obligations and relevant strategy>
 
 ## Done When
-
-<Tests for the scenarios and assigned automated obligations pass, plus any concrete delivery signal>
+<Scenarios and automated obligations pass, plus concrete delivery signals>
 ```
 
-Scenarios map to behavior, not task count. Keep variations of one behavior together. When multiple tasks genuinely contribute to one scenario, copy the full scenario into each and identify that task's portion. Omit `## Spec` only for rare, purely internal work with no behavioral scenario.
+Keep all variants of one behavior together. If tasks genuinely share a scenario, copy it into each and
+state that task's portion. A standalone refactor is justified only when it is independently risky and
+reviewable; otherwise keep refactoring with the behavior it enables.
 
-## 5. Order and index tasks
-
-Order tasks by real dependencies, placing the work that unblocks more first when independent. For multiple tasks, rename every file with zero-padded numeric prefixes matching execution order.
-
-If Step 2 identified a necessary standalone refactor, prepend it now and renumber the remaining files. Its `Done When` must require the structural change and all existing tests to pass.
-
-Write `<change-dir>/tasks.md`:
+Order multiple tasks by real dependencies and use matching zero-padded prefixes. Write
+`<change-dir>/tasks.md` with one linked checkbox per task:
 
 ```markdown
 - [ ] <Task title> (`tasks/01-<slug>.md`)
 - [ ] <Task title> (`tasks/02-<slug>.md`)
 ```
 
-Use one checkbox per task in execution order. For a single task, link its unnumbered filename.
-
-## 6. Report
-
-Exit without invoking another skill or asking about execution mode. Report:
-
-- task count and titles;
-- the `tasks.md` path;
-- what is now unlocked.
+Report the task count, titles, and index path. Do not invoke another lifecycle skill.
