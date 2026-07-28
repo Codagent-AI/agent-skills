@@ -34,3 +34,16 @@ Every finding must be correctable only in the task index or detailed task files.
 section and controlling artifact section, explain the implementation risk, and recommend the specific
 task edit. Rank findings by impact and end with a readiness assessment; say explicitly when no
 actionable task defect remains.
+
+```markdown
+## Findings
+
+### [high|medium|low] <title>
+- Task: <task file and section>
+- Controlling artifact: <artifact and section>
+- Risk: <implementation consequence>
+- Correction: <specific task edit>
+
+## Readiness Assessment
+<Whether the task plan is ready and why.>
+```

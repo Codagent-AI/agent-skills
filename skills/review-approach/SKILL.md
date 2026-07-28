@@ -40,3 +40,19 @@ and recommend a resolution or small set of real alternatives with a preferred ch
 
 Rank findings by impact and end with a direct readiness assessment. Say explicitly when the approach
 is sound and no consequential gap remains. Do not edit artifacts.
+
+```markdown
+## Findings
+
+### [high|medium|low] <title>
+- Artifacts: <exact sections and repository evidence>
+- Type: <inconsistency | missing decision | challenged decision>
+- Risk: <concrete consequence>
+- Recommendation: <preferred resolution and material alternatives>
+
+## Open Questions
+<Only decisions needed to resolve findings, or "None.">
+
+## Overall Assessment
+<Whether the definition is ready for task planning and why.>
+```

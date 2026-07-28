@@ -26,3 +26,15 @@ when more than one is possible.
 
 Do not critique product intent or architecture, search for missing behavior or failure-mode decisions,
 review implementation code, invent missing artifacts, or rewrite the artifacts.
+
+```markdown
+## Findings
+
+### [high|medium|low] <title>
+- Artifact: <path and section>
+- Issue: <consistency, testability, traceability, or coherence defect>
+- Fix: <smallest safe correction>
+
+## Assessment
+<Artifact readiness, or "No findings.">
+```
