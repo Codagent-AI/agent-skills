@@ -95,9 +95,16 @@ Output fields:
 
 Unresolved review threads are blocking regardless of author. Top-level bot comments do not set `has_comments`; only unresolved threads and human top-level comments do.
 
-After checks are terminal, inspect `informational_bot_comments`. If a bot explicitly reports that its review is pending or in progress, or asks the caller to check back, wait 10 seconds and call `get-pr-comments.sh` again while time remains before the overall deadline. Re-evaluate the latest evidence on every poll. Do not hard-code bot vendors or exact phrases; use the comment's meaning. Completed summaries and ordinary status notices remain informational and do not delay completion.
+After checks are terminal, inspect `informational_bot_comments`. If a bot explicitly reports that its review is pending or in progress, or asks the caller to check back, wait 10 seconds and call `get-pr-comments.sh` again while time remains before the overall deadline. Re-evaluate the latest evidence on every poll. Do not hard-code bot vendors or exact phrases; use the comment's meaning. A terminal current-head check from that bot supersedes an older progress notice. Completed summaries and ordinary status notices remain informational and do not delay completion.
 
-If a bot still explicitly reports unfinished review work when the overall deadline is reached, report `pending`. Preserve its comment in the output so the reason is visible. Never extend the overall deadline while waiting for review bots.
+At the overall deadline, use this precedence:
+
+1. `failed` for failed checks or blocking reviews.
+2. `comments` when actionable unresolved feedback exists, even if a review bot is still unfinished.
+3. `pending` when checks or a review bot remain unfinished and no actionable feedback exists.
+4. `passed` when CI is green or explicitly absent, no actionable feedback exists, and no review bot remains unfinished.
+
+Preserve unfinished bot notices in the report even when actionable feedback makes the status `comments`. Never extend the overall deadline while waiting for review bots.
 
 **Status upgrade:** If checks returned `passed` but `get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments`.
 
@@ -139,8 +146,8 @@ If a bot still explicitly reports unfinished review work when the overall deadli
 Status meanings:
 - `passed` — CI green, no blocking reviews or comments, and no bot review still in progress
 - `failed` — CI failures or `CHANGES_REQUESTED` reviews (with logs)
-- `comments` — CI green but unresolved PR comments need addressing
-- `pending` — checks or an explicitly unfinished bot review remain after max wait
+- `comments` — CI green but unresolved PR comments need addressing; known actionable feedback takes precedence over unfinished review automation
+- `pending` — checks or an explicitly unfinished bot review remain after max wait, with no actionable feedback available
 
 ## Notes
 

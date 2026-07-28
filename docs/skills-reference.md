@@ -82,7 +82,7 @@ predecessors as history.
 
 ### `wait-ci`
 
-Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews; and surfaces unresolved PR comments.
+Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews; and surfaces unresolved PR comments. Actionable feedback takes precedence over unfinished review automation so callers can address known findings instead of waiting indefinitely.
 
 ### `prepare-acceptance`
 

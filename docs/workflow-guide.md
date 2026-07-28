@@ -79,7 +79,7 @@ without changing an approved definition artifact or asking the user for a new de
 head branch after running validation when applicable. Merged or closed predecessors do not substitute
 for the active PR.
 
-`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments.
+`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
 
 `prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance.
 When `test-plan.md` exists, its applicable required `AT-*` flows are authoritative and cannot be
