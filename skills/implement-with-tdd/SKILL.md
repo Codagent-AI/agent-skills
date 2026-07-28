@@ -48,17 +48,17 @@ Implement fresh from tests. Period.
 
 ## Choosing Test Type
 
-Follow assigned `INT-*` and `E2E-*` obligations from an approved `test-plan.md` when the task supplies
-them. For behavior not assigned a higher-layer obligation, prove it at the lowest layer that can
-adequately detect the relevant failure:
+Honor any integration or E2E coverage explicitly required by the task's supplied requirements or test
+plan. For behavior without a higher-layer requirement, prove it at the lowest layer that can adequately
+detect the relevant failure:
 
 - **Unit** — pure logic, validation, transformations, calculations. No I/O, no wiring. Fast (<100ms).
 - **Integration** — components wired together: database queries, middleware chains, API clients, config reaching runtime. If the bug would only manifest when components connect, it needs an integration test.
 - **E2E** — critical user flows only (login, checkout, onboarding). Expensive, slow, flaky-prone. Don't use for logic that can be tested at a lower level.
 
-Do not substitute a unit test for an assigned integration or E2E obligation, and do not duplicate the
-same assertion at multiple layers without a distinct risk. Keep each automated obligation in the same
-implementation task as the behavior it protects.
+Do not substitute a unit test for required integration or E2E coverage, and do not duplicate the
+same assertion at multiple layers without a distinct risk. When implementation tasks are supplied,
+keep each automated obligation in the same task as the behavior it protects.
 
 When in doubt: can you test it with a function call and an assertion? Unit test. Does the risk exist only
 when real components connect? Integration test. Does only a complete public journey prove it? E2E test.
@@ -67,8 +67,8 @@ when real components connect? Integration test. Does only a complete public jour
 
 Trace each specification scenario to automated coverage and write the relevant failing test before
 implementation. A scenario normally becomes one focused test at the lowest adequate layer, but an
-assigned `INT-*` or `E2E-*` obligation controls when higher-layer coverage is required. Do not reproduce
-the same scenario mechanically at every layer.
+explicit integration or E2E requirement controls when higher-layer coverage is required. Do not
+reproduce the same scenario mechanically at every layer.
 
 **Spec scenario:**
 > **WHEN** a user with an expired session requests a protected resource

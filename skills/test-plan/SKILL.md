@@ -29,8 +29,8 @@ would otherwise have to invent.
 Use the pyramid as an economic and risk model, not a fixed ratio or test-count quota:
 
 1. **Unit tests** form the broad base. Use them for isolated logic, validation, transformations,
-   decisions, and edge cases. Record only the strategy and notable risk areas; TDD determines the
-   concrete cases during implementation.
+   decisions, and edge cases. Specifications remain the source of unit-test requirements, and TDD
+   determines the concrete cases during implementation; do not restate them in this plan.
 2. **Integration tests** form the middle layer. Create an `INT-*` obligation for an important boundary
    whose behavior depends on real components working together, such as adapters, databases, filesystems,
    subprocesses, APIs, queues, configuration-to-runtime wiring, or workflow handoffs. Prefer controlled
@@ -93,8 +93,9 @@ The ordinary discretionary human review conversation does not need to become a m
 
 ## 5. Check coverage and obtain approval
 
-Build a coverage map from important requirements and critical journeys to `INT-*`, `E2E-*`, `AT-*`,
-and `HT-*` identifiers. Unit coverage may be summarized by strategy rather than enumerated. Check that:
+Build a coverage map only for the additional `INT-*`, `E2E-*`, `AT-*`, and `HT-*` obligations in this
+plan, linking each to the requirements or critical journeys it covers. Do not add rows for requirements
+that rely only on specification-driven unit coverage. Check that:
 
 - important boundary risk has an integration obligation;
 - only critical complete journeys use automated E2E coverage;
@@ -112,8 +113,8 @@ tests, execute tests, or invoke another lifecycle phase.
 ```markdown
 ## Coverage Strategy
 
-### Unit Test Strategy
-<Important logic risks and lower-layer guidance; do not inventory every unit test.>
+Specifications remain the source of unit-test requirements. This plan records only additional
+integration, end-to-end, agent-acceptance, and exceptional human-only obligations.
 
 ## Integration Tests
 
@@ -154,7 +155,10 @@ None.
 
 ## Coverage Map
 
-| Requirement or journey | Unit strategy | INT | E2E | AT | HT |
-| --- | --- | --- | --- | --- | --- |
-| <item> | <guidance> | <IDs or —> | <IDs or —> | <IDs or —> | <IDs or —> |
+Include only requirements or journeys with an additional obligation in this plan; do not inventory
+specification-driven unit coverage.
+
+| Requirement or journey | INT | E2E | AT | HT |
+| --- | --- | --- | --- | --- |
+| <item> | <IDs or —> | <IDs or —> | <IDs or —> | <IDs or —> |
 ```
