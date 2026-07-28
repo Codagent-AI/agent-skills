@@ -1,20 +1,21 @@
 ---
-description: Performs the final review of a completed proposal, product specification, and technical design for cross-artifact consistency, consequential gaps, missing decisions, weak tradeoffs, failure modes, and better alternatives. Use when asked to review an approach, challenge design decisions, find gaps in completed definition artifacts, or provide a second opinion before task planning or implementation.
+description: Performs the final review of a completed proposal, product specification, technical design, and test plan for cross-artifact consistency, consequential gaps, missing decisions, weak tradeoffs, failure modes, testing strategy, and better alternatives. Use when asked to review an approach, challenge design or testing decisions, find gaps in completed definition artifacts, or provide a second opinion before task planning or implementation.
 ---
 
 ## Review Approach
 
 Review whether a completed definition is internally consistent and gives implementers the right
-behavioral and technical decisions. This is the final review of the proposal, specifications, and design
-before task planning. Be constructively skeptical and spend review depth in proportion to the impact and
-reversibility of each decision.
+behavioral, technical, and testing decisions. This is the final review of the proposal, specifications,
+design, and test plan before task planning. Be constructively skeptical and spend review depth in
+proportion to the impact and reversibility of each decision.
 
 ### 1. Understand the intended change
 
-Read the proposal, all specifications, the design, and relevant repository instructions. Inspect the
-existing code and established patterns around the affected areas before judging the approach. Treat the
-specification and design as complete enough to review: an omitted decision is a finding when an
-implementer would otherwise have to invent consequential product behavior or architecture.
+Read the proposal, all specifications, the design, the test plan, and relevant repository instructions.
+Inspect the existing code, test structure, and established patterns around the affected areas before
+judging the approach. Treat the specification, design, and test plan as complete enough to review: an
+omitted decision is a finding when an implementer or acceptance tester would otherwise have to invent
+consequential product behavior, architecture, or required verification.
 
 ### 2. Review the substance
 
@@ -28,6 +29,11 @@ Trace the important user flows and system interactions end to end. Look for mate
   lifecycle, compatibility, or migration that the specification should decide;
 - architectural gaps in ownership, component boundaries, data flow, concurrency, failure recovery,
   security, operability, rollout, or observability that the design should decide;
+- a test plan that conflicts with the requirements or design, misses important integration boundaries,
+  overuses end-to-end tests for lower-layer behavior, omits a critical automated journey, or fails to
+  make required agent-acceptance flows and permitted substitutes explicit;
+- human-only checks that an agent could perform, or consequential human judgment that is implicitly
+  required but absent from the test plan;
 - choices that conflict with established repository patterns or impose avoidable coupling, complexity,
   maintenance burden, or irreversible commitments;
 - decisions presented without enough rationale, plausible alternatives that were not considered, and
@@ -71,7 +77,8 @@ When there are no findings, write `None.` under Findings and still provide the o
 ### Guardrails
 
 - Do not reduce the review to formatting or parser mechanics. Still check cross-artifact consistency,
-  requirement testability, and whether the completed definition has the information implementation needs.
+  requirement testability, testing-layer choices, and whether the completed definition has the
+  information implementation and acceptance testing need.
 - Do not review implementation tasks. Task coverage, decomposition, ordering, dependencies, and task
   acceptance criteria belong to `review-tasks`.
 - Do not relitigate whether the approved feature should exist or broaden its approved scope. Challenge

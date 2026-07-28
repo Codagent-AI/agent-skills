@@ -1,16 +1,19 @@
 ---
-description: Creates a structured implementation task breakdown for a structured change, synthesizing proposal, design, and specs into self-contained per-task files. Use when the tasks artifact is the next step in a change.
+description: Creates a structured implementation task breakdown for a structured change, synthesizing proposal, design, specs, and test-plan obligations into self-contained per-task files. Use when the tasks artifact is the next step in a change.
 ---
 
 # Plan Tasks
 
-Create self-contained task files from a change's proposal, design, and specs. Assume each task goes to a skilled agent with no prior context. Include the decisions, paths, constraints, and verbatim scenarios that agent needs, but avoid line-by-line implementation instructions.
+Create self-contained task files from a change's proposal, design, specs, and test plan. Assume each task
+goes to a skilled agent with no prior context. Include the decisions, paths, constraints, scenarios, and
+assigned automated-test obligations that agent needs, but avoid line-by-line implementation instructions.
 
 Announce: "I'm using the plan-tasks skill to create the task breakdown."
 
 ## 1. Read inputs and code
 
-Read `proposal.md`, `design.md`, and every `specs/**/*.md` in the provided change directory. Skip material already read in this session.
+Read `proposal.md`, `design.md`, `test-plan.md`, and every `specs/**/*.md` in the provided change
+directory. Skip material already read in this session.
 
 Research only enough code to identify:
 
@@ -51,6 +54,20 @@ Apply these rules:
 
 Do not create standalone tasks for tests, ordinary documentation, setup surfaces, adapter flags, or other plumbing belonging to an outcome. Prompt-, config-, or skill-only changes are usually one task unless they deliver independently releasable capabilities.
 
+Assign each `INT-*` and `E2E-*` obligation from `test-plan.md` to the delivery task that first makes the
+covered boundary or journey executable:
+
+- keep the automated test in the same task as the behavior it protects;
+- when a journey spans multiple tasks, assign its E2E obligation to the final task that completes the
+  public journey while earlier tasks use unit and integration TDD appropriate to their portions;
+- create a separate test-infrastructure task only when that infrastructure is itself substantial,
+  risky, and independently reviewable; and
+- do not assign `AT-*` or `HT-*` execution to implementers. Tasks may create setup or observability the
+  approved acceptance flow requires, but acceptance is performed later.
+
+Unit-test cases remain implementation-time TDD decisions. Include the test plan's unit strategy and
+relevant risk guidance without turning each anticipated unit test into a task requirement.
+
 ### Cross-check the count
 
 Compare the candidate count with the independent LOE budget:
@@ -88,12 +105,13 @@ Reference the design and every spec by exact relative path instead of duplicatin
 You MUST read these files before starting:
 - `design.md` for <relevant details>
 - `specs/<capability>/spec.md` for <acceptance criteria>
+- `test-plan.md` for <assigned INT/E2E obligations and relevant unit strategy>
 
 <Brief motivation, key paths, decisions, and constraints>
 
 ## Done When
 
-<Concrete completion signal covering all scenarios>
+<Concrete completion signal covering all scenarios and assigned automated-test obligations>
 ```
 
 ### Multi-task format
@@ -115,9 +133,13 @@ Each file must stand alone. Never reference another task; its agent will not see
 
 <Copy every relevant requirement and scenario verbatim from the specs>
 
+## Test Plan
+
+<Copy each assigned INT/E2E obligation and cite relevant unit-strategy guidance. Do not assign AT/HT execution.>
+
 ## Done When
 
-<Tests for the scenarios pass, plus any concrete end-to-end signal>
+<Tests for the scenarios and assigned automated obligations pass, plus any concrete delivery signal>
 ```
 
 Scenarios map to behavior, not task count. Keep variations of one behavior together. When multiple tasks genuinely contribute to one scenario, copy the full scenario into each and identify that task's portion. Omit `## Spec` only for rare, purely internal work with no behavioral scenario.
