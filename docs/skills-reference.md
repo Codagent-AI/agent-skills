@@ -87,10 +87,11 @@ Polls CI for the current branch PR. It reports pass, fail, pending, or comments 
 ### `prepare-acceptance`
 
 Prepares the currently checked-out implementation for human acceptance. When an approved test plan
-exists, its applicable required `AT-*` flows, evidence, authorized effects, and permitted substitutes
-are authoritative; otherwise the skill derives a concise representative flow set. It groups equivalent
-variants within a flow instead of replaying every specification scenario or edge case. After a fix, the
-caller can attest to an impact scope so the skill retests only affected and directly dependent flows
+exists, its required and activated conditional `AT-*` flows, evidence, authorized effects, and
+permitted substitutes are authoritative; otherwise the skill derives a concise representative flow
+set. It groups equivalent variants within a flow instead of replaying every specification scenario or
+edge case. After a fix, the caller can attest to an impact scope so the skill retests only affected and
+directly dependent flows
 while preserving unaffected baseline evidence as caller-scoped provenance. It captures screenshots for
 tested UI flows or client-style evidence for non-UI flows. Fixes and automated validation are handled
 by the caller.

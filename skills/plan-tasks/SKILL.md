@@ -1,13 +1,17 @@
 ---
-description: Creates a structured implementation task breakdown for a structured change, synthesizing proposal, design, specs, and test-plan obligations into self-contained per-task files. Use when the tasks artifact is the next step in a change.
+description: Creates a structured implementation task breakdown for a structured change, synthesizing proposal, design, specs, and any supplied test-plan obligations into self-contained per-task files; use when the tasks artifact is the next step in a change.
 ---
 
 # Plan Tasks
 
-Create a small set of self-contained delivery tasks from the proposal, specifications, design, test
-plan, and relevant repository context. Each task goes to a skilled agent with no prior conversation;
-include necessary decisions, paths, constraints, scenarios, and automated-test obligations without
-dictating line-by-line implementation.
+Create a small set of self-contained delivery tasks from the proposal, specifications, design, any
+supplied test plan, and relevant repository context. Each task goes to a skilled agent with no prior
+conversation; include necessary decisions, paths, constraints, scenarios, and automated-test
+obligations without dictating line-by-line implementation.
+
+Read the proposal, design, specifications, and relevant repository context. When `test-plan.md` exists
+or the caller supplies a test plan, read it and include its obligations; otherwise plan from the
+available definition artifacts without requiring or inventing test-plan content.
 
 ## Size before decomposing
 
@@ -37,9 +41,10 @@ independently verifiable foundation. Merge boundaries that create broad unfinish
 edits, or a large implicit handoff. Fold ordinary scaffolding, migrations, refactors, test setup, and
 documentation into the outcome they support.
 
-Assign each `INT-*` and `E2E-*` obligation to the task that first makes its boundary or journey
-executable; a cross-task E2E belongs to the final task completing that journey. Do not assign `AT-*` or
-`HT-*` execution to implementors. Unit cases remain implementation-time TDD decisions.
+When a test plan is supplied, assign each `INT-*` and `E2E-*` obligation to the task that first makes
+its boundary or journey executable; a cross-task E2E belongs to the final task completing that journey.
+Do not assign `AT-*` or `HT-*` execution to implementors. Unit cases remain implementation-time TDD
+decisions.
 
 Compare the result with the independent LOE estimate. Merge coupled candidates above the band; never
 invent work to reach a count. Use repository context to resolve ordinary planning choices. Stop only
@@ -51,7 +56,8 @@ planned. Do not ask the user to approve the task count or grouping.
 Write tasks under `<change-dir>/tasks/`. Use an unnumbered `<slug>.md` for one task or ordered
 `<NN>-<slug>.md` files for multiple tasks. Use real repository paths and no placeholders.
 
-For one task, exact references to the design, specs, and test plan may replace copied artifact text:
+For one task, exact references to the design and specs may replace copied artifact text. When a test
+plan is supplied, also cite it for the assigned `INT-*` and `E2E-*` obligations:
 
 ```markdown
 # Task: <Title>
@@ -63,13 +69,15 @@ For one task, exact references to the design, specs, and test plan may replace c
 You MUST read:
 - `design.md` for <relevant decisions>
 - `specs/<capability>/spec.md` for <requirements and scenarios>
-- `test-plan.md` for <assigned INT/E2E obligations>
 
 <Relevant paths, constraints, and context>
 
 ## Done When
 <Concrete completion signals>
 ```
+
+Add `- test-plan.md for <assigned INT/E2E obligations>` to `You MUST read` only when that artifact is
+supplied.
 
 For multiple tasks, each file must stand alone and must not refer to another task:
 
@@ -85,12 +93,13 @@ For multiple tasks, each file must stand alone and must not refer to another tas
 ## Spec
 <Relevant requirements and scenarios copied verbatim>
 
-## Test Plan
-<Assigned INT/E2E obligations and relevant strategy>
-
 ## Done When
 <Scenarios and automated obligations pass, plus concrete delivery signals>
 ```
+
+When a test plan is supplied, add a `## Test Plan` section with the assigned `INT-*` and `E2E-*`
+obligations and relevant strategy; otherwise omit that section and test-plan-specific completion
+signals.
 
 Keep all variants of one behavior together. If tasks genuinely share a scenario, copy it into each and
 state that task's portion. A standalone refactor is justified only when it is independently risky and

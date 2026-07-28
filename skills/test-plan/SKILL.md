@@ -1,5 +1,5 @@
 ---
-description: Collaboratively creates a risk-based test plan for a defined software change using the automated test pyramid plus agent acceptance and exceptional human-only testing. Use after specifications and design are complete, when asked to plan testing, define integration or end-to-end coverage, establish acceptance flows, or create test-plan.md before implementation planning.
+description: Collaboratively creates a risk-based test plan for a defined software change using the automated test pyramid plus agent acceptance and exceptional human-only testing; use after specifications and design are complete, when asked to plan testing, define integration or end-to-end coverage, establish acceptance flows, or create test-plan.md before implementation planning.
 ---
 
 # Test Plan

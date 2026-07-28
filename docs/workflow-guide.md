@@ -82,12 +82,13 @@ for the active PR.
 `wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
 
 `prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance.
-When `test-plan.md` exists, its applicable required `AT-*` flows are authoritative and cannot be
-downgraded to limitations or replaced by unapproved substitutes. Otherwise the skill derives a concise
-representative set of public flows. After a fix, the caller attests to an impact scope so only affected
-and directly dependent flows are retested; unaffected baseline evidence remains available as
-caller-scoped provenance. It captures screenshots for tested UI flows or client-style evidence for
-APIs and CLIs. Publication, fixes, and automated validation remain the caller's responsibility.
+When `test-plan.md` exists, its required and activated conditional `AT-*` flows are authoritative and
+cannot be downgraded to limitations or replaced by unapproved substitutes. Otherwise the skill derives
+a concise representative set of public flows. After a fix, the caller attests to an impact scope so
+only affected and directly dependent flows are retested; unaffected baseline evidence remains
+available as caller-scoped provenance. It captures screenshots for tested UI flows or client-style
+evidence for APIs and CLIs. Publication, fixes, and automated validation remain the caller's
+responsibility.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 

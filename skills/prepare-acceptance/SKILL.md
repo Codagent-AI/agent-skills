@@ -28,7 +28,7 @@ Resolve these from the caller before acting:
 
 If source-of-truth artifacts or the evidence directory are missing, report what is missing and stop
 before flow execution. Do not infer product behavior from implementation alone. When an approved
-test plan exists, treat its required and activated conditional acceptance flows, evidence requirements,
+test plan exists, treat its required and activated conditional `AT-*` flows, evidence requirements,
 authorized effects, and permitted substitutes as authoritative. Use `full` when the caller does not
 supply a scope or no trustworthy full-pass baseline exists. Targeted and evidence-only reuse depend on
 the caller's impact or content attestation: reconcile it with the approved flow inventory, but do not
@@ -56,16 +56,18 @@ instead of asking the user here.
 
 #### 2. Exercise the product like a user
 
-When an approved test plan exists, use its required and activated conditional acceptance flows as the
-flow inventory, regardless of how the plan labels or structures them.
+When an approved test plan exists, use its required and activated conditional `AT-*` obligations as the
+executable flow inventory, regardless of how the plan structures them. Identify applicable `HT-*`
+obligations separately and carry them forward only as human-review instructions, never as flows for the
+agent to execute or support with passing evidence.
 Otherwise derive a concise list of representative user or client flows from the approved artifacts and
 the caller-supplied implementation evidence. Do not inspect a diff to discover behavior. A flow is a
 meaningful journey or operation through a public surface, not an individual requirement scenario, input
 permutation, internal branch, or automated-test case. Group equivalent variants within a flow and choose
 typical data, configuration, and roles that demonstrate the delivered behavior.
 
-- For `full` scope, exercise every required or activated conditional acceptance flow from the approved
-  test plan. When no test plan exists, exercise the representative flows that collectively cover the
+- For `full` scope, exercise every required or activated conditional `AT-*` flow from the approved test
+  plan. When no test plan exists, exercise the representative flows that collectively cover the
   delivered user or client journeys and primary public surfaces. Do not turn every specification
   scenario into a separate manual case.
 - For targeted scope, exercise only the affected flows and directly dependent flows named by the
@@ -85,11 +87,12 @@ typical data, configuration, and roles that demonstrate the delivered behavior.
 
 Exercise the selected flows through the same public surface a real user or client would use.
 
-Do not omit a required or activated conditional acceptance flow because it is slow, expensive, needs
+Do not omit a required or activated conditional `AT-*` flow because it is slow, expensive, needs
 credentials, or causes external effects when the approved test plan explicitly authorizes those
-conditions. Use a mock, dry run, sandbox, or other substitute only when that flow explicitly permits it.
-If its prerequisites are unavailable or it cannot be exercised safely within its approved conditions,
-record the impediment and do not claim the full pass or final acceptance evidence is complete.
+conditions. Use a mock, dry run, sandbox, or other substitute only when that flow explicitly permits
+it. If its prerequisites are unavailable or it cannot be exercised safely within its approved
+conditions, record the impediment and do not claim the full pass or final acceptance evidence is
+complete.
 
 - For a web, mobile, desktop, or terminal UI, navigate and operate it through its real interface.
 - For an API, call it through its documented HTTP, SDK, or CLI surface as a client would. Record a
@@ -116,9 +119,10 @@ unreachable, unsafe, or incapable of producing trustworthy evidence. Record ever
 in-scope flow and the defect that blocked it.
 
 After every pass, write or update `<evidence-directory>/acceptance-flow-evidence.md`. Record the
-representative flow inventory, including each applicable identifier when the test plan supplies one,
-the current verification scope and rationale, and for each flow its most recent tested SHA, outcome,
-evidence paths, and limitations. A full pass establishes the baseline. A
+representative executable flow inventory, including each applicable `AT-*` identifier when the test
+plan supplies one, the current verification scope and rationale, and for each flow its most recent
+tested SHA, outcome, evidence paths, and limitations. List applicable `HT-*` obligations separately as
+human-review instructions without execution outcomes. A full pass establishes the baseline. A
 targeted pass replaces evidence for its selected flows and retains prior evidence for flows the caller
 identified as unaffected, preserving the original SHA and provenance rather than relabeling it as
 current-head evidence. Label retained evidence as caller-scoped provenance, not as an independently
@@ -191,10 +195,10 @@ proof that associated behavior passed.
 Write `acceptance-test.md` in the evidence directory only after CI passes or is explicitly absent, the
 required verification makes no tracked changes, `acceptance-flow-evidence.md` covers the current
 tracked contents under the caller's supplied scope or content attestation, every required or activated
-conditional acceptance flow or derived representative flow has passing evidence from either the full
+conditional `AT-*` flow or derived representative flow has passing evidence from either the full
 baseline or a subsequent targeted pass, and any automated-validation evidence supplied by the caller
-applies to the current pushed head. Do not require automated-validation evidence when none was supplied;
-explicitly record its absence instead. Include:
+applies to the current pushed head. Do not require automated-validation evidence when none was
+supplied; explicitly record its absence instead. Include:
 
 - exact current local/PR head SHA;
 - the representative flows, their outcomes, most recent tested SHA, and whether evidence came from the
@@ -209,8 +213,8 @@ explicitly record its absence instead. Include:
 - unavailable flows, environment limitations, warnings, and residual risks;
 - new unresolved assumptions added to the canonical ledger.
 
-List any approved `HT-*` obligations separately as human-review instructions. Do not perform or claim
-human-only testing.
+List any applicable approved `HT-*` obligations separately as human-review instructions. Do not
+perform or claim human-only testing.
 
 Prefer concise conclusions with durable log paths over raw log dumps.
 
@@ -247,9 +251,10 @@ Before reporting readiness:
    inventory under the caller's supplied scope or content attestation and preserve the actual SHA of
    every retained or refreshed observation.
 3. Require CI evidence for that SHA to be passing, or explicitly record that no checks exist.
-4. Verify every required or activated conditional acceptance flow is accounted for, every referenced
+4. Verify every required or activated conditional `AT-*` flow is accounted for, every referenced
    evidence and screenshot path exists, and every UI flow has visual evidence from the baseline or an
-   applicable targeted pass.
+   applicable targeted pass. Verify applicable `HT-*` obligations are listed only as human-review
+   instructions.
 5. Ensure persisted evidence does not expose secrets, credentials, tokens, private data, or unrelated
    user content.
 6. Record the current PR state for the caller without changing it.

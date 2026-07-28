@@ -41,20 +41,21 @@ Use **`timeout: 120000`** on the Bash call. Check the exit code:
 | Exit code | Meaning | Action |
 |---|---|---|
 | `0` | Terminal (`passed` or `failed`) | Break out of loop, proceed to Step 2 |
-| `2` | Not yet terminal (`pending` or `no_checks`) | If `run < max_runs`, re-run; else report timeout |
+| `2` | Not yet terminal (`pending` or `no_checks`) | If `run < max_runs`, re-run; else preserve the result and proceed to Step 3 |
 | `1` | Fatal error | Report error and stop |
 
 After each exit-2 result, set `ever_had_checks = ever_had_checks OR result.had_checks`.
 
 **Timeout handling:** When all runs are exhausted (exit code 2 on the last run):
 - If `ever_had_checks` is false → treat CI as non-blocking, then still run Step 3 before reporting a final status
-- Otherwise → report `pending` with the list of still-running checks
+- Otherwise → preserve `pending` and the list of still-running checks, then run Step 3 before
+  classifying the final status
 
 The script outputs a JSON object with these fields:
 
 | Field | Type | Description |
 |---|---|---|
-| `status` | string | `passed`, `failed`, `pending`, `no_checks`, or `comments` (set by caller) |
+| `status` | string | `passed`, `failed`, `pending`, `no_checks`, or `comments` (set by caller; may coexist with pending-check evidence) |
 | `pr_url` | string | PR URL |
 | `pr_number` | number | PR number |
 | `head_sha` | string | PR head commit queried for this invocation; preserve it when upgrading the status to `comments` |
@@ -76,7 +77,9 @@ gh run view <run-id> --log-failed
 
 Keep the last 100 lines if output is longer. External checks (no run ID) get no logs.
 
-### 3. Gather PR comments (when checks are terminal or no checks exist)
+### 3. Gather PR comments
+
+Run this step after checks are terminal, checks time out as pending, or no checks exist:
 
 ```bash
 bash skills/wait-ci/scripts/get-pr-comments.sh <owner> <repo> <pr-number> [<pr-author-login>]
@@ -95,7 +98,12 @@ Output fields:
 
 Unresolved review threads are blocking regardless of author. Top-level bot comments do not set `has_comments`; only unresolved threads and human top-level comments do.
 
-After checks are terminal, inspect `informational_bot_comments`. If a bot explicitly reports that its review is pending or in progress, or asks the caller to check back, wait 10 seconds and call `get-pr-comments.sh` again while time remains before the overall deadline. Re-evaluate the latest evidence on every poll. Do not hard-code bot vendors or exact phrases; use the comment's meaning. A terminal current-head check from that bot supersedes an older progress notice. Completed summaries and ordinary status notices remain informational and do not delay completion.
+When checks are terminal or no checks exist, inspect `informational_bot_comments`. If a bot explicitly
+reports that its review is pending or in progress, or asks the caller to check back, wait 10 seconds and
+call `get-pr-comments.sh` again while time remains before the overall deadline. Re-evaluate the latest
+evidence on every poll. Do not hard-code bot vendors or exact phrases; use the comment's meaning. A
+terminal current-head check from that bot supersedes an older progress notice. Completed summaries and
+ordinary status notices remain informational and do not delay completion.
 
 At the overall deadline, use this precedence:
 
@@ -106,9 +114,14 @@ At the overall deadline, use this precedence:
 
 Preserve unfinished bot notices in the report even when actionable feedback makes the status `comments`. Never extend the overall deadline while waiting for review bots.
 
-**Status upgrade:** If checks returned `passed` but `get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments`.
+**Status upgrade:** If checks returned `passed`, timed out as `pending`, or were absent, but
+`get-pr-comments.sh` returns `has_comments: true`, report the final status as `comments` unless failed
+checks or blocking reviews require `failed`. Preserve the check result, including `pending_checks`,
+when upgrading the status.
 
-**No-checks handling:** If polling timed out with no checks ever observed, run `get-pr-comments.sh` before reporting success. Report `comments` when `has_comments` is true; otherwise report `passed`.
+**No-checks handling:** If polling timed out with no checks ever observed, run `get-pr-comments.sh`
+before reporting success. Report `comments` when `has_comments` is true, `pending` when a review bot
+remains explicitly unfinished at the deadline, and otherwise `passed`.
 
 ## Output Format
 
@@ -146,7 +159,8 @@ Preserve unfinished bot notices in the report even when actionable feedback make
 Status meanings:
 - `passed` — CI green, no blocking reviews or comments, and no bot review still in progress
 - `failed` — CI failures or `CHANGES_REQUESTED` reviews (with logs)
-- `comments` — CI green but unresolved PR comments need addressing; known actionable feedback takes precedence over unfinished review automation
+- `comments` — unresolved PR comments need addressing; known actionable feedback takes precedence
+  over unfinished checks or review automation, whose pending evidence remains in the report
 - `pending` — checks or an explicitly unfinished bot review remain after max wait, with no actionable feedback available
 
 ## Notes
@@ -155,7 +169,7 @@ Status meanings:
 - Default: 10 runs × 90 seconds = ~15 minutes max wait; pass `--max-minutes N` to override
 - **Never ask the user for permission mid-execution** — always run the full duration
 - `CHANGES_REQUESTED` is a hard block; `APPROVED` and `COMMENTED` alone do not block
-- Comment gathering runs after checks complete — bots post comments as part of their check, so they're available once the check finishes
+- Comment gathering runs after polling ends, including pending-check timeouts and the no-checks path
 - Log enrichment only works for GitHub Actions checks (not external status checks)
 
 ## Scripts Reference

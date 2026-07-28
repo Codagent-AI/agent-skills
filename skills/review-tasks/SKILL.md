@@ -1,5 +1,5 @@
 ---
-description: Reviews an implementation task plan against its approved proposal, specifications, design, and test plan, finding only defects that can be corrected in the task files. Use when asked to review tasks, review an implementation plan, verify task and automated-test coverage, or check whether a task breakdown is ready for autonomous implementation.
+description: Reviews an implementation task plan against its approved proposal, specifications, design, and test plan, finding only defects that can be corrected in the task files; use when asked to review tasks, review an implementation plan, verify task and automated-test coverage, or check whether a task breakdown is ready for autonomous implementation.
 ---
 
 # Review Tasks
