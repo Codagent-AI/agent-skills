@@ -72,6 +72,24 @@ Implements one task end to end. It uses `implement-with-tdd`, performs self-revi
 
 Coordinates a full change. It dispatches one `implement-and-validate` subagent per task sequentially, handles task failures, runs Agent Validator, archives OpenSpec changes when applicable, and invokes PR finalization.
 
+## Testing
+
+### `test-flows`
+
+Exercises a small or branch-local change through representative public user or client flows. It uses
+typical data, captures meaningful screenshots for tested UI flows or client-visible evidence for
+non-UI surfaces, and reports defects, ambiguities, and limitations. It does not run automated suites,
+fix defects, require a PR, wait for CI, or prepare a formal acceptance handoff.
+
+### `prepare-acceptance`
+
+Prepares the currently checked-out implementation for formal human acceptance. When an approved test
+plan exists, its required and activated conditional `AT-*` flows, evidence, authorized effects, and
+permitted substitutes are authoritative; otherwise the skill derives a concise representative flow
+set. It supports targeted post-fix verification while preserving unaffected baseline evidence,
+captures visual or client evidence, waits for aligned current-head CI, and produces the acceptance
+handoff. Fixes and automated validation are handled by the caller.
+
 ## Pull Requests
 
 ### `push-pr`
@@ -83,18 +101,6 @@ predecessors as history.
 ### `wait-ci`
 
 Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews; and surfaces unresolved PR comments. Actionable feedback takes precedence over unfinished review automation so callers can address known findings instead of waiting indefinitely.
-
-### `prepare-acceptance`
-
-Prepares the currently checked-out implementation for human acceptance. When an approved test plan
-exists, its required and activated conditional `AT-*` flows, evidence, authorized effects, and
-permitted substitutes are authoritative; otherwise the skill derives a concise representative flow
-set. It groups equivalent variants within a flow instead of replaying every specification scenario or
-edge case. After a fix, the caller can attest to an impact scope so the skill retests only affected and
-directly dependent flows
-while preserving unaffected baseline evidence as caller-scoped provenance. It captures screenshots for
-tested UI flows or client-style evidence for non-UI flows. Fixes and automated validation are handled
-by the caller.
 
 ### `fix-pr`
 

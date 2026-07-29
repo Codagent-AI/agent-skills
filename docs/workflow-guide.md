@@ -73,22 +73,27 @@ without changing an approved definition artifact or asking the user for a new de
 
 `implement-with-tdd` enforces the red-green-refactor loop for new features, bug fixes, refactors, and behavior changes. It skips TDD only for the exceptions documented in the skill, such as generated code and configuration-only changes.
 
-### 9. Finalize The PR
+### 9. Test And Accept
+
+`test-flows` exercises representative public flows for small or branch-local changes, captures
+meaningful UI screenshots or client-visible evidence, and reports findings without requiring PR
+alignment, CI, formal acceptance artifacts, or caller-managed status protocols.
+
+`prepare-acceptance` supports workflows that separate autonomous implementation from formal human
+acceptance. When `test-plan.md` exists, its required and activated conditional `AT-*` flows are
+authoritative and cannot be downgraded to limitations or replaced by unapproved substitutes.
+Otherwise the skill derives a concise representative set of public flows. After a fix, the caller
+attests to an impact scope so only affected and directly dependent flows are retested; unaffected
+baseline evidence remains available as caller-scoped provenance. Publication, fixes, and automated
+validation remain the caller's responsibility.
+
+### 10. Finalize The PR
 
 `push-pr` commits changes, pushes the branch, and creates or updates the open PR for the exact current
 head branch after running validation when applicable. Merged or closed predecessors do not substitute
 for the active PR.
 
 `wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
-
-`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance.
-When `test-plan.md` exists, its required and activated conditional `AT-*` flows are authoritative and
-cannot be downgraded to limitations or replaced by unapproved substitutes. Otherwise the skill derives
-a concise representative set of public flows. After a fix, the caller attests to an impact scope so
-only affected and directly dependent flows are retested; unaffected baseline evidence remains
-available as caller-scoped provenance. It captures screenshots for tested UI flows or client-style
-evidence for APIs and CLIs. Publication, fixes, and automated validation remain the caller's
-responsibility.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
@@ -103,8 +108,12 @@ Use `simple-plan` for small, bounded changes that do not need the full proposal,
 Typical lightweight flow:
 
 ```text
-simple-plan -> implement-change -> finalize-pr
+simple-plan -> implement-and-validate -> test-flows
 ```
+
+A lead can present the tester's exact findings to the user, apply approved fixes, and request one
+targeted verification of the affected flow when useful. The human decision to continue is the gate;
+the lightweight flow does not need a formal acceptance-status protocol.
 
 ## Support Skills
 
