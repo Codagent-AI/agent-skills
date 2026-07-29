@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.10.0
+
+### Minor Changes
+
+- [#45](https://github.com/Codagent-AI/agent-skills/pull/45) Add reusable child-agent orchestration, dedicated approach and task reviews, targeted acceptance re-verification, and safer exact-branch pull request handling.
+- [#46](https://github.com/Codagent-AI/agent-skills/pull/46) Add layered risk-based test planning and lightweight public-flow testing, integrate test obligations across planning, TDD, and acceptance, improve review-aware CI waiting, and simplify frontier-agent guidance while preserving output contracts.
+
 ## 0.9.0
 
 ### Minor Changes
