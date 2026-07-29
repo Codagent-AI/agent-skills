@@ -98,12 +98,13 @@ Output fields:
 
 Unresolved review threads are blocking regardless of author. Top-level bot comments do not set `has_comments`; only unresolved threads and human top-level comments do.
 
-When checks are terminal or no checks exist, inspect `informational_bot_comments`. If a bot explicitly
-reports that its review is pending or in progress, or asks the caller to check back, wait 10 seconds and
-call `get-pr-comments.sh` again while time remains before the overall deadline. Re-evaluate the latest
-evidence on every poll. Do not hard-code bot vendors or exact phrases; use the comment's meaning. A
-terminal current-head check from that bot supersedes an older progress notice. Completed summaries and
-ordinary status notices remain informational and do not delay completion.
+When checks are terminal, time out as pending, or do not exist, inspect
+`informational_bot_comments`. If a bot explicitly reports that its review is pending or in progress,
+or asks the caller to check back, wait 10 seconds and call `get-pr-comments.sh` again while time
+remains before the overall deadline. Re-evaluate the latest evidence on every poll. Do not hard-code
+bot vendors or exact phrases; use the comment's meaning. A terminal current-head check from that bot
+supersedes an older progress notice. Completed summaries and ordinary status notices remain
+informational and do not delay completion.
 
 At the overall deadline, use this precedence:
 

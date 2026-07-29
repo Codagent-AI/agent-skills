@@ -14,10 +14,12 @@ Read the caller-supplied:
 - approved behavior or planning artifacts;
 - concise implementation summary;
 - verification scope: representative full pass or named targeted flows;
-- evidence directory when screenshots or durable evidence are requested.
+- evidence directory when the selected scope includes UI flows or durable evidence is requested.
 
 If expected behavior is unavailable, report what is missing instead of inferring the contract from
 implementation alone.
+If a selected UI flow has no evidence directory, report the missing input instead of testing that
+flow without its required screenshot.
 
 ## Select flows
 

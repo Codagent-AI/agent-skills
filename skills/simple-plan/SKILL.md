@@ -26,9 +26,9 @@ an implementing agent with no conversation history.
    assumptions for user approval.
 5. Write all artifacts in one pass, then check them together for missing decisions or contradictions.
 
-Follow a project-defined location. Otherwise propose `changes/<kebab-slug>/` and confirm it before
-writing. Do not turn this into the full propose/spec/design ceremony or write a detailed task
-breakdown.
+Follow a project-defined location. Otherwise propose
+`~/.agent-skills/changes/<kebab-slug>/` and confirm it before writing. Do not turn this into the full
+propose/spec/design ceremony or write a detailed task breakdown.
 
 ## Artifact requirements
 

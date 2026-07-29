@@ -72,12 +72,16 @@ You MUST read:
 
 <Relevant paths, constraints, and context>
 
+## Test Plan
+- `<INT-* or E2E-*>`: <strategy and completion signal>
+
 ## Done When
-<Concrete completion signals>
+<Concrete delivery signals, including the assigned automated obligations>
 ```
 
-Add `- test-plan.md for <assigned INT/E2E obligations>` to `You MUST read` only when that artifact is
-supplied.
+When a test plan is supplied, include `- test-plan.md for <assigned INT/E2E obligations>` under
+`You MUST read` and the `## Test Plan` section shown above. Otherwise omit both and use ordinary
+completion signals under `## Done When`.
 
 For multiple tasks, each file must stand alone and must not refer to another task:
 
