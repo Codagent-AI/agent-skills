@@ -31,17 +31,24 @@ Turns proposal capabilities into requirements. It asks behavior, boundary, error
 
 Turns specs into a technical design. It reads all relevant specs first, explores code context, asks architecture and trade-off questions, proposes approaches, gets approval, writes `design.md`, and applies any spec edits discovered during design.
 
+### `test-plan`
+
+Creates an approved `test-plan.md` after design. It applies the automated test pyramid without fixed
+ratios, records important integration (`INT-*`) and critical end-to-end (`E2E-*`) obligations, defines
+authoritative agent acceptance flows (`AT-*`), minimizes human-only checks (`HT-*`), and maps them to
+requirements and critical journeys.
+
 ### `review-approach`
 
-Performs the final review of a completed proposal, specification, and design. It checks cross-artifact consistency and testability, then challenges consequential behavioral gaps, missing architectural decisions, weak tradeoffs, failure modes, and better alternatives without editing the artifacts.
+Performs the final review of a completed proposal, specification, design, and test plan. It checks cross-artifact consistency and testability, then challenges consequential behavioral gaps, missing architectural or testing decisions, weak tradeoffs, failure modes, and better alternatives without editing the artifacts.
 
 ### `plan-tasks`
 
-Creates a structured implementation task breakdown. Each task file includes the relevant motivation, design context, exact spec scenarios, and done criteria needed by a separate implementer.
+Creates a structured implementation task breakdown. Each task file includes the relevant motivation, design context, exact spec scenarios, assigned `INT-*` and `E2E-*` obligations, and done criteria needed by a separate implementer.
 
 ### `review-tasks`
 
-Reviews an implementation task plan against the approved proposal, specifications, and design. It must read those source artifacts, but reports only task-plan defects that can be corrected in the task index or detailed task files.
+Reviews an implementation task plan against the approved proposal, specifications, design, and test plan. It must read those source artifacts, but reports only task-plan defects that can be corrected in the task index or detailed task files.
 
 ### `review-spec`
 
@@ -65,6 +72,24 @@ Implements one task end to end. It uses `implement-with-tdd`, performs self-revi
 
 Coordinates a full change. It dispatches one `implement-and-validate` subagent per task sequentially, handles task failures, runs Agent Validator, archives OpenSpec changes when applicable, and invokes PR finalization.
 
+## Testing
+
+### `test-flows`
+
+Exercises a small or branch-local change through representative public user or client flows. It uses
+typical data, captures meaningful screenshots for tested UI flows or client-visible evidence for
+non-UI surfaces, and reports defects, ambiguities, and limitations. It does not run automated suites,
+fix defects, require a PR, wait for CI, or prepare a formal acceptance handoff.
+
+### `prepare-acceptance`
+
+Prepares the currently checked-out implementation for formal human acceptance. When an approved test
+plan exists, its required and activated conditional `AT-*` flows, evidence, authorized effects, and
+permitted substitutes are authoritative; otherwise the skill derives a concise representative flow
+set. It supports targeted post-fix verification while preserving unaffected baseline evidence,
+captures visual or client evidence, waits for aligned current-head CI, and produces the acceptance
+handoff. Fixes and automated validation are handled by the caller.
+
 ## Pull Requests
 
 ### `push-pr`
@@ -75,11 +100,7 @@ predecessors as history.
 
 ### `wait-ci`
 
-Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews; and surfaces unresolved PR comments.
-
-### `prepare-acceptance`
-
-Prepares the currently checked-out implementation for human acceptance. It uses normal setup and build commands when needed, exercises a concise representative set of user or client journeys through the real product surface, and persists per-flow evidence. It groups equivalent variants instead of manually replaying every specification scenario or edge case. After a fix, the caller can attest to an impact scope so the skill retests only affected and directly dependent flows while preserving unaffected baseline evidence as caller-scoped provenance. When the caller attests that tracked contents match the recorded coverage revision, it can reuse existing flow evidence and refresh only PR, CI, and handoff evidence. It does not inspect diffs or publish changes itself. It captures screenshots for tested UI flows or client-style evidence for non-UI flows. Fixes and any automated validation are handled by the caller.
+Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews; and surfaces unresolved PR comments. Actionable feedback takes precedence over unfinished review automation so callers can address known findings instead of waiting indefinitely.
 
 ### `fix-pr`
 
@@ -114,7 +135,9 @@ Audits a session for risky or notable assumptions and context gaps. It is intend
 
 ### `review-assumptions`
 
-Reviews assumptions from implementor session reports. It builds a finding ledger, fixes high-confidence issues directly, asks for clarification on ambiguous findings, and summarizes final dispositions.
+Reviews assumptions from implementor session reports. It verifies each finding against the approved
+plan and source, fixes high-confidence issues directly, asks for clarification on ambiguous findings,
+and summarizes final dispositions.
 
 ### `task-compliance`
 

@@ -43,6 +43,7 @@ Available skills:
 - /codagent:propose — evaluate an idea and write a proposal
 - /codagent:spec — interview-driven requirement discovery
 - /codagent:design — brainstorm architecture and write a design doc
+- /codagent:test-plan — plan automated and acceptance testing
 - /codagent:plan-tasks — break a change into scoped task files
 - /codagent:implement-and-validate — implement a single task and verify with the validator
 - /codagent:finalize-pr — push PR, wait for CI, fix failures

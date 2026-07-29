@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Plan"
+  short_description: "Plan layered automated and acceptance tests"
+  default_prompt: "Use $test-plan to create a risk-based test plan for this defined change."

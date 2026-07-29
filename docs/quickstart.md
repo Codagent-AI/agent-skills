@@ -85,11 +85,12 @@ For a larger change:
 2. Run `codagent:proposal-review` for an adversarial review before confirming the proposal.
 3. Run `codagent:spec` to turn the proposal into testable requirements.
 4. Ask `codagent:design` to settle architecture and implementation approach.
-5. Run `codagent:review-approach` for the final consistency, gap, and decision review of the proposal, specs, and design.
-6. Use `codagent:plan-tasks` to create task files for implementation.
-7. Run `codagent:review-tasks` to verify the task plan against the approved definition.
-8. Ask `codagent:implement-change` to run the implementation loop.
-9. Use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
+5. Use `codagent:test-plan` to define the automated test pyramid, agent acceptance flows, and any exceptional human-only checks.
+6. Run `codagent:review-approach` for the final consistency, gap, and decision review of the proposal, specs, design, and test plan.
+7. Use `codagent:plan-tasks` to create task files for implementation.
+8. Run `codagent:review-tasks` to verify the task plan against the approved definition and automated-test obligations.
+9. Ask `codagent:implement-change` to run the implementation loop.
+10. Use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
 
 For a small change:
 

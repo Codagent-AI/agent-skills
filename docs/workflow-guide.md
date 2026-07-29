@@ -14,7 +14,7 @@ Codagent skills are designed to preserve intent across phases. Each planning ski
 Use the standard flow for feature work, behavior changes, risky refactors, or anything that needs requirements before implementation.
 
 ```text
-propose -> proposal-review -> spec -> design -> review-approach -> plan-tasks -> review-tasks -> implement-change -> finalize-pr
+propose -> proposal-review -> spec -> design -> test-plan -> review-approach -> plan-tasks -> review-tasks -> implement-change -> finalize-pr
 ```
 
 ### 1. Propose
@@ -35,21 +35,37 @@ Spec scenarios use requirement blocks and WHEN/THEN scenarios so implementation 
 
 If the design phase discovers a spec implication, it applies the corresponding spec edits after approval.
 
-### 4. Review The Approach
+### 4. Plan Testing
 
-Use `review-approach` after the proposal, specification, and design are complete. It is the final review of those definition artifacts: it checks their consistency and testability, then challenges consequential behavioral gaps, architecture decisions, tradeoffs, failure modes, and alternatives.
+`test-plan` applies the automated test pyramid after requirements and design are settled. It keeps unit
+testing broad and implementation-driven, records important integration boundaries as `INT-*`, reserves
+`E2E-*` for critical complete journeys, defines authoritative human-style agent acceptance as `AT-*`,
+and defaults genuinely human-only `HT-*` checks to none.
 
-### 5. Plan Tasks
+### 5. Review The Approach
 
-`plan-tasks` creates self-contained task files. Each task includes the relevant why, how, exact spec scenarios, and done criteria needed by a separate implementer that has no shared session context.
+Use `review-approach` after the proposal, specification, design, and test plan are complete. It is the
+final review of those definition artifacts: it checks their consistency and testability, then challenges
+consequential behavioral gaps, architecture and testing decisions, tradeoffs, failure modes, and
+alternatives.
+
+### 6. Plan Tasks
+
+`plan-tasks` creates self-contained task files. Each task includes the relevant why, how, exact spec
+scenarios, assigned `INT-*` and `E2E-*` obligations, and done criteria needed by a separate implementer
+that has no shared session context. Automated tests stay with the task that delivers their behavior;
+unit details are chosen through TDD, and acceptance execution is not assigned to implementers.
 
 Tasks are ordered so dependent work stays sequential.
 
-### 6. Review The Tasks
+### 7. Review The Tasks
 
-`review-tasks` must read the approved proposal, specifications, and design, but reviews only the task plan. It checks task coverage, fidelity, decomposition, dependencies, ordering, self-contained context, and done criteria. Every finding must be correctable in the task files without changing an approved definition artifact or asking the user for a new decision.
+`review-tasks` must read the approved proposal, specifications, design, and test plan, but reviews only
+the task plan. It checks requirement and automated-test coverage, fidelity, decomposition, dependencies,
+ordering, self-contained context, and done criteria. Every finding must be correctable in the task files
+without changing an approved definition artifact or asking the user for a new decision.
 
-### 7. Implement
+### 8. Implement
 
 `implement-change` acts as the coordinating skill for a full change. It reads the tasks and context, dispatches one `implement-and-validate` subagent per task sequentially, runs Agent Validator, archives OpenSpec changes when applicable, and moves into PR finalization.
 
@@ -57,15 +73,27 @@ Tasks are ordered so dependent work stays sequential.
 
 `implement-with-tdd` enforces the red-green-refactor loop for new features, bug fixes, refactors, and behavior changes. It skips TDD only for the exceptions documented in the skill, such as generated code and configuration-only changes.
 
-### 8. Finalize The PR
+### 9. Test And Accept
+
+`test-flows` exercises representative public flows for small or branch-local changes, captures
+meaningful UI screenshots or client-visible evidence, and reports findings without requiring PR
+alignment, CI, formal acceptance artifacts, or caller-managed status protocols.
+
+`prepare-acceptance` supports workflows that separate autonomous implementation from formal human
+acceptance. When an approved `test-plan.md` exists, its required and activated conditional `AT-*`
+flows are authoritative and cannot be downgraded to limitations or replaced by unapproved
+substitutes. Otherwise the skill derives a concise representative set of public flows. After a fix,
+the caller attests to an impact scope so only affected and directly dependent flows are retested;
+unaffected baseline evidence remains available as caller-scoped provenance. Publication, fixes, and
+automated validation remain the caller's responsibility.
+
+### 10. Finalize The PR
 
 `push-pr` commits changes, pushes the branch, and creates or updates the open PR for the exact current
 head branch after running validation when applicable. Merged or closed predecessors do not substitute
 for the active PR.
 
-`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments.
-
-`prepare-acceptance` supports workflows that separate autonomous implementation from human acceptance. Its initial pass exercises a concise representative set of user or client journeys through the real product surface rather than replaying every specification scenario or edge case. After a fix, the caller attests to an impact scope so only affected and directly dependent flows are retested; unaffected baseline evidence remains available as caller-scoped provenance with its original revision. If the caller attests that tracked contents match the recorded coverage revision, the skill reuses that flow evidence and refreshes only PR, CI, and handoff evidence. The tester reconciles caller scope against approved flows without inspecting a diff. It captures screenshots for tested UI flows or client-style evidence for APIs and CLIs. Publication, fixes, and automated validation remain the caller's responsibility.
+`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
@@ -80,8 +108,12 @@ Use `simple-plan` for small, bounded changes that do not need the full proposal,
 Typical lightweight flow:
 
 ```text
-simple-plan -> implement-change -> finalize-pr
+simple-plan -> implement-and-validate -> test-flows
 ```
+
+A lead can present the tester's exact findings to the user, apply approved fixes, and request one
+targeted verification of the affected flow when useful. The human decision to continue is the gate;
+the lightweight flow does not need a formal acceptance-status protocol.
 
 ## Support Skills
 

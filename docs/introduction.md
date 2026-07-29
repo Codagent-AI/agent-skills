@@ -15,9 +15,10 @@ The bundle is distributed for Claude Code, Codex, and Cursor from the same repos
 
 The core skills cover four parts of the development lifecycle:
 
-- Planning: `propose`, `proposal-review`, `spec`, `design`, `review-approach`, `plan-tasks`, `review-tasks`, `review-spec`, and `simple-plan`
+- Planning: `propose`, `proposal-review`, `spec`, `design`, `test-plan`, `review-approach`, `plan-tasks`, `review-tasks`, `review-spec`, and `simple-plan`
 - Implementation: `implement-with-tdd`, `implement-and-validate`, and `implement-change`
-- Pull requests: `push-pr`, `wait-ci`, `prepare-acceptance`, `fix-pr`, and `finalize-pr`
+- Testing: `test-flows` and `prepare-acceptance`
+- Pull requests: `push-pr`, `wait-ci`, `fix-pr`, and `finalize-pr`
 - Support and review: `init`, `ask-questions`, `handoff`, `session-report`, `review-assumptions`, and `task-compliance`
 
 The repository also includes a separate release skill under `.agents/skills/release` and `.claude/skills/release`. That release skill is for maintainers of this repository, not part of the installed user-facing Codagent workflow.
@@ -27,10 +28,11 @@ The repository also includes a separate release skill under `.agents/skills/rele
 Codagent works best when the agent has explicit artifacts to hand off between phases. A typical larger change moves through:
 
 ```text
-propose -> proposal-review -> spec -> design -> review-approach -> plan-tasks -> review-tasks -> implement-change -> finalize-pr
+propose -> proposal-review -> spec -> design -> test-plan -> review-approach -> plan-tasks -> review-tasks -> implement-change -> finalize-pr
 ```
 
-For smaller changes, `simple-plan` compresses the planning phase into one lightweight pass while still writing enough artifacts for another agent to continue safely.
+For smaller changes, `simple-plan` compresses planning into one lightweight pass and `test-flows`
+provides a proportional branch-local user-flow check without requiring PR finalization.
 
 ## Relationship To Agent Validator
 
