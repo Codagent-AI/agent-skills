@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.10.1
+
+### Patch Changes
+
+- Correct the task-planning skill's index example to emit actual Markdown links, preventing valid task files from failing planning-artifact validation.
+
 ## 0.10.0
 
 ### Minor Changes
@@ -118,4 +124,3 @@
 ### Minor Changes
 
 - [#12](https://github.com/Codagent-AI/agent-skills/pull/12) Improve the implementor skill with better task dispatch and update the agent-validator dependency.
-
