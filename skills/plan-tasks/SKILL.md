@@ -113,8 +113,10 @@ Order multiple tasks by real dependencies and use matching zero-padded prefixes.
 `<change-dir>/tasks.md` with one linked checkbox per task:
 
 ```markdown
-- [ ] <Task title> (`tasks/01-<slug>.md`)
-- [ ] <Task title> (`tasks/02-<slug>.md`)
+- [ ] [<Task title>](tasks/01-<slug>.md)
+- [ ] [<Task title>](tasks/02-<slug>.md)
 ```
+
+The task title MUST be an actual Markdown link. A path in an inline code span is not a link.
 
 Report the task count, titles, and index path. Do not invoke another lifecycle skill.
