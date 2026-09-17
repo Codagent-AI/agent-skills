@@ -60,13 +60,9 @@ Compresses planning for small changes into one lightweight flow. It writes a pro
 
 ## Implementation
 
-### `implement-with-tdd`
-
-Enforces test-driven development. It requires a failing test before production code for features, bug fixes, refactors, and behavior changes, then follows red-green-refactor.
-
 ### `implement-and-validate`
 
-Implements one task end to end. It uses `implement-with-tdd`, performs self-review, runs Agent Validator when gates apply, commits on success, and returns a structured report.
+Implements one task end to end. It performs self-review, runs Agent Validator when gates apply, commits on success, and returns a structured report.
 
 ### `implement-change`
 
