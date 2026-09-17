@@ -38,18 +38,33 @@ however long it takes; a child can legitimately run for many minutes.
 
 On a host that cannot hold a request open that long, `call_agent` instead returns a
 `call_id` with a non-terminal status (`accepted` or `running`), which is not the child's
-final response. It is also what a host timeout error means: the child is still running.
-In either case, poll `get_agent_call` with that `call_id` until status is terminal. Do not
-report child findings, claim the work completed, or start another child while status is
-`accepted` or `running`. If `get_agent_call` is missing after a start that returned a
-`call_id`, report that missing capability as a blocker; do not substitute another
-collection path.
+final response. Poll `get_agent_call` with that `call_id` until status is terminal, within
+the polling bounds below. Do not report child findings, claim the work completed, or start
+another child while status is `accepted` or `running`.
+
+If `call_agent` fails with a timeout or transport error, do not assume the child stopped
+or finished; MCP does not standardize this error. If the error payload includes a
+`call_id`, treat it like a non-terminal start: poll it or cancel it. If it includes no
+`call_id`, report that the child may still be running and cannot be tracked or canceled
+from this skill; do not start another child in its place.
+
+Bound polling. Wait about 5 seconds before the first `get_agent_call`, then double the
+interval after each non-terminal result up to 60 seconds. Stop at the caller's deadline
+or call budget, or after 60 minutes of polling if the caller sets none. When that limit
+is reached, cancel the call as below and report the timeout.
+
+If `get_agent_call` is unavailable after a start that returned a non-terminal `call_id`,
+invoke `cancel_agent_call` with that `call_id`, then report the missing capability as a
+blocker; do not substitute another collection path. If `cancel_agent_call` is also
+unavailable, report that the child may still be running.
 
 To abort an in-flight child without ending the parent step, invoke `cancel_agent_call`
 with the active `call_id`. Do not rely on canceling a `call_agent` or `get_agent_call`
 MCP request to stop the child. `cancel_agent_call` can return while status is still
-`accepted` or `running`; keep polling `get_agent_call` until the call is terminal.
-Do not treat the cancel result as a freed slot or start another child until then.
+`accepted` or `running`; when `get_agent_call` is available, keep polling it with the same
+backoff for up to 5 more minutes. If the call is still not terminal, report that
+cancellation did not settle and the child may still be running. Do not treat the cancel
+result as a freed slot or start another child until status is terminal.
 
 A later skill invocation may start another serial call only when the enclosing workflow
 permits it and no child is in flight.
