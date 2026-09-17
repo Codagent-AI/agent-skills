@@ -66,4 +66,10 @@ jq -e '.has_comments == true' <<<"$result" >/dev/null
 jq -e '.unresolved_threads == [{"file":"openspec/foo.md","line":3,"author":"coderabbitai[bot]","body":"Unused export"}]' <<<"$result" >/dev/null
 jq -e '.deferred_threads == []' <<<"$result" >/dev/null
 
+bot_session_deferral_with_bot_ack='{"data":{"repository":{"pullRequest":{"author":{"login":"pr-author","__typename":"User"},"reviewThreads":{"nodes":[{"isResolved":false,"comments":{"nodes":[{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Unused export","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"codagent-ai[bot]","__typename":"Bot"},"body":"Out of scope — leaving unresolved.","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Acknowledged.","path":"openspec/foo.md","line":3,"originalLine":null}]}}]},"comments":{"nodes":[]}}}}}'
+result=$(run_script "$bot_session_deferral_with_bot_ack")
+jq -e '.has_comments == false' <<<"$result" >/dev/null
+jq -e '.unresolved_threads == []' <<<"$result" >/dev/null
+jq -e '.deferred_threads == [{"file":"openspec/foo.md","line":3,"author":"coderabbitai[bot]","body":"Unused export"}]' <<<"$result" >/dev/null
+
 echo "get-pr-comments tests passed"

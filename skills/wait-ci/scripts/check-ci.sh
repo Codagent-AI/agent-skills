@@ -242,5 +242,9 @@ failed_checks='[]'
 passed_checks='[]'
 blocking_reviews='[]'
 failed_run_ids_json='[]'
-emit_ci_json "$( [[ $had_checks == true ]] && echo "pending" || echo "no_checks" )"
+if [[ "$mergeable" == "UNKNOWN" || $had_checks == true ]]; then
+  emit_ci_json "pending"
+else
+  emit_ci_json "no_checks"
+fi
 exit 2

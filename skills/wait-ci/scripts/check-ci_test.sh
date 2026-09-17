@@ -41,6 +41,7 @@ cat >"$MOCK_BIN/git" <<'EOF'
 set -euo pipefail
 
 if [[ "$1" == "cat-file" ]]; then
+  [[ "${MOCK_GIT_CAT_FILE_FAILS:-0}" == "1" ]] && exit 1
   exit 0
 fi
 
@@ -62,6 +63,7 @@ run_script() {
     MOCK_CHECKS="$2" \
     MOCK_REVIEWS="${3:-[]}" \
     MOCK_MERGE_TREE="${4:-}" \
+    MOCK_GIT_CAT_FILE_FAILS="${5:-0}" \
     bash "$SCRIPT" --max-seconds 1 --interval 1
 }
 
@@ -100,5 +102,22 @@ set -e
 assert_exit 0 "$code" "MERGEABLE with green checks"
 jq -e '.status == "passed"' <<<"$result" >/dev/null
 jq -e '.mergeable == "MERGEABLE"' <<<"$result" >/dev/null
+
+unknown_no_checks_pr='{"number":86,"url":"https://github.com/owner/repo/pull/86","headRefName":"branch","headRefOid":"abc123","baseRefOid":"def456","mergeable":"UNKNOWN","mergeStateStatus":"UNKNOWN"}'
+set +e
+result=$(run_script "$unknown_no_checks_pr" '[]')
+code=$?
+set -e
+assert_exit 2 "$code" "UNKNOWN with no checks"
+jq -e '.status == "pending"' <<<"$result" >/dev/null
+jq -e '.mergeable == "UNKNOWN"' <<<"$result" >/dev/null
+
+set +e
+result=$(run_script "$conflicting_pr" "$GREEN_CHECKS" '[]' '' 1)
+code=$?
+set -e
+assert_exit 0 "$code" "CONFLICTING without local git objects"
+jq -e '.status == "failed"' <<<"$result" >/dev/null
+jq -e '.conflicting_files == []' <<<"$result" >/dev/null
 
 echo "check-ci tests passed"

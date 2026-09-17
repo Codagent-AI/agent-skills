@@ -22,9 +22,10 @@
 # { "author": "...", "body": "..." }
 #
 # Notes:
-# - Unresolved review threads block unless the latest non-bot comment is from the
-#   PR author (fix-pr's reply-and-do-not-resolve deferral). Later bot acknowledgments
-#   do not re-block; a later human reviewer reply is actionable again.
+# - Unresolved review threads block unless fix-pr deferred them: the latest significant
+#   comment after stripping trailing reviewer-bot acks is from the PR author, or from a
+#   different bot than the original finding bot (factory fix-pr session). Later bot
+#   acknowledgments do not re-block; a later human reviewer reply is actionable again.
 # - Top-level comments by the PR creator are omitted.
 # - Top-level bot comments are returned as informational evidence, not blockers.
 # - Resolved threads are omitted.
@@ -87,24 +88,46 @@ fi
 
 # ── Unresolved review threads ─────────────────────────────────────────────────
 # Filter to threads where isResolved == false, then take the first comment's
-# metadata (file, line) and all comment bodies. A thread is deferred when the
-# latest non-bot comment is from the PR author; later bot acks do not re-block.
+# metadata (file, line) and all comment bodies. Deferral follows fix-pr's
+# reply-and-do-not-resolve protocol for both human PR authors and factory bots.
 classified_threads=$(echo "$result" | jq --arg pr_author "$PR_AUTHOR" '
+  def strip_trailing_finding_bot_acks($comments; $finding_author; $finding_is_bot):
+    if $finding_is_bot
+       and ($comments | length) > 1
+       and (($comments[-1].author.__typename // "") == "Bot")
+       and (($comments[-1].author.login // "") == $finding_author)
+    then strip_trailing_finding_bot_acks($comments[0:-1]; $finding_author; $finding_is_bot)
+    else $comments
+    end;
+
   [
     .data.repository.pullRequest.reviewThreads.nodes[]?
     | select(.isResolved == false)
     | .comments.nodes as $comments
     | ($comments | first) as $first
-    | ($comments | map(select((.author.__typename // "") != "Bot")) | last) as $latest_human
+    | ($first.author.login // "") as $finding_author
+    | (($first.author.__typename // "") == "Bot") as $finding_is_bot
+    | strip_trailing_finding_bot_acks($comments; $finding_author; $finding_is_bot) as $significant
+    | ($significant | last) as $latest
     | {
         file: ($first.path // ""),
         line: ($first.line // $first.originalLine // null),
         author: ($first.author.login // "unknown"),
         body: ($first.body // ""),
         deferred: (
-          ($pr_author != "")
-          and ($latest_human != null)
-          and (($latest_human.author.login // "") == $pr_author)
+          $latest != null
+          and (
+            (
+              ($latest.author.__typename // "") != "Bot"
+              and ($pr_author != "")
+              and (($latest.author.login // "") == $pr_author)
+            )
+            or (
+              ($latest.author.__typename // "") == "Bot"
+              and ($significant | length) > 1
+              and (($latest.author.login // "") != $finding_author)
+            )
+          )
         )
       }
   ]

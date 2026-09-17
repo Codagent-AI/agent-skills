@@ -98,11 +98,11 @@ Output fields:
 |---|---|---|
 | `has_comments` | bool | True if any actionable comments exist |
 | `unresolved_threads` | array | `{file, line, author, body}` per actionable unresolved review thread |
-| `deferred_threads` | array | `{file, line, author, body}` per unresolved thread whose latest non-bot comment is from the PR author |
+| `deferred_threads` | array | `{file, line, author, body}` per unresolved thread deferred by the PR author or fix-pr session |
 | `issue_comments` | array | `{author, body}` blocking top-level human comments (excluding PR creator) |
 | `informational_bot_comments` | array | `{author, body}` non-blocking top-level bot comments retained as evidence |
 
-`has_comments` is true only for actionable unresolved threads plus blocking issue comments. A thread is deferred (non-actionable) when the latest non-bot comment is from the PR author — fix-pr's reply-and-do-not-resolve protocol. Later bot acknowledgments do not re-block; a later human reviewer reply is actionable again. Green CI with only deferred threads is `passed`. Keep deferred threads visible under their own heading. Do not add a fourth CI status marker.
+`has_comments` is true only for actionable unresolved threads plus blocking issue comments. A thread is deferred (non-actionable) when fix-pr replied without resolving: the latest significant comment after stripping trailing reviewer-bot acks is from the PR author or from a different bot than the original finding bot (factory session identity). Later bot acknowledgments do not re-block; a later human reviewer reply is actionable again. Green CI with only deferred threads is `passed`. Keep deferred threads visible under their own heading. Do not add a fourth CI status marker.
 
 When checks are terminal, time out as pending, or do not exist, inspect
 `informational_bot_comments`. If a bot explicitly reports that its review is pending or in progress,
@@ -128,7 +128,7 @@ when upgrading the status.
 
 **No-checks handling:** If polling timed out with no checks ever observed, run `get-pr-comments.sh`
 before reporting success. Report `comments` when `has_comments` is true, `pending` when a review bot
-remains explicitly unfinished at the deadline, and otherwise `passed`.
+remains explicitly unfinished at the deadline or `mergeable` is `UNKNOWN`, and otherwise `passed`.
 
 ## Output Format
 
