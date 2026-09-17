@@ -10,7 +10,7 @@
 # {
 #   "has_comments": true | false,
 #   "unresolved_threads": [...],    # actionable unresolved review threads
-#   "deferred_threads": [...],      # unresolved threads deferred by the PR author
+#   "deferred_threads": [...],      # unresolved threads deferred by the PR author or fix-pr session
 #   "issue_comments": [...],        # blocking top-level human comments
 #   "informational_bot_comments": [...] # non-blocking top-level bot comments
 # }

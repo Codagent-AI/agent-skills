@@ -100,7 +100,7 @@ predecessors as history.
 
 ### `wait-ci`
 
-Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews and merge conflicts; and surfaces actionable PR comments. Author-deferred unresolved threads stay visible but do not block `passed`. Actionable feedback takes precedence over unfinished review automation so callers can address known findings instead of waiting indefinitely.
+Polls CI for the current branch PR. It reports pass, fail, pending, or comments status; fetches failed GitHub Actions logs; checks blocking reviews and merge conflicts; and surfaces actionable PR comments. Unresolved threads deferred by the PR author or fix-pr session stay visible but do not block `passed`. Actionable feedback takes precedence over unfinished review automation so callers can address known findings instead of waiting indefinitely.
 
 ### `fix-pr`
 
