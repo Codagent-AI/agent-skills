@@ -1,13 +1,13 @@
 ---
-description: Collaboratively creates a risk-based test plan for a defined software change using the automated test pyramid plus agent acceptance and exceptional human-only testing; use after specifications and design are complete, when asked to plan testing, define integration or end-to-end coverage, establish acceptance flows, or create test-plan.md before implementation planning.
+description: Collaboratively creates a risk-based test plan for a defined software change using the automated test pyramid plus the envelope an exploratory acceptance pass runs under and exceptional human-only testing; use after specifications and design are complete, when asked to plan testing, define integration or end-to-end coverage, set testing authorizations, or create test-plan.md before implementation planning.
 ---
 
 # Test Plan
 
 Create `<change-dir>/test-plan.md` after the proposal, specifications, and design are complete. The
-plan records important automated integration and end-to-end obligations, authoritative agent
-acceptance flows, and exceptional human-only checks. Specifications and implementation-time TDD remain
-the source of unit-test requirements.
+plan records important automated integration and end-to-end obligations, the envelope the later
+exploratory acceptance pass runs under, and exceptional human-only checks. Specifications and
+implementation-time TDD remain the source of unit-test requirements.
 
 Do not write the plan until the user approves the proposed coverage. Use `codagent:ask-questions` for
 consequential choices involving environments, external effects, cost, credentials, fidelity,
@@ -34,37 +34,36 @@ obligation is warranted and explain why.
 For each automated obligation, capture what it covers, the boundary or journey exercised, setup,
 stable assertions, constraints, and where it runs.
 
-## Define acceptance flows
+## Define the testing envelope
 
-Create concise `AT-*` obligations for human-style verification through the delivered UI, mobile
-interface, TUI, CLI, API, library, or other public surface. Acceptance complements automated tests; it
-does not rerun suites, enumerate edge cases, or fuzz inputs.
+Do not enumerate acceptance test cases. Acceptance is an exploratory pass sized to what actually
+changed, and a pre-written flow list only tells it to re-walk the happy path. The plan's job is to say
+what that pass is allowed to do, not what it must check.
 
-Each flow should state:
+Record the envelope:
 
-- whether it is required or conditional, and the activation condition;
-- actor, public surface, representative setup and data;
-- actions and expected observable result;
-- evidence, including meaningful screenshots for UI flows;
-- authorized external effects, credentials, cost, cleanup, and any explicitly permitted substitute.
+- environments, sandboxes, and test accounts available;
+- credentials and secrets that exist, and where;
+- external effects that are authorized, their cost, and required cleanup;
+- anything the pass must not touch, such as production data or irreversible operations;
+- substitutes permitted when a real dependency is unavailable.
 
-Applicable flows are authoritative. A later tester may group equivalent variants but may not omit a
-flow, replace it with a dry run or mock, or call its absence a harmless limitation unless this plan
-allows that substitute. If an applicable flow cannot run, acceptance testing is incomplete.
+Note known risk areas, prior defect clusters, and anything the design treats as an accepted limitation.
+These inform exploration without prescribing it.
 
 Default human-only testing to `None.` Add an `HT-*` only for judgment or authority unavailable to an
 agent with the product and tools—for example subjective preference, legal approval, physical
-perception, unavailable personal credentials, or an irreversible user-authorized act. Visual or
-interactive UI testing normally belongs in agent acceptance. For each `HT-*`, state why an agent
-cannot perform it, what prior testing must establish, concise user instructions, and the decision or
+perception, unavailable personal credentials, or an irreversible user-authorized act. Visual and
+interactive UI testing belongs to the exploratory pass. For each `HT-*`, state why an agent cannot
+perform it, what prior testing must establish, concise user instructions, and the decision or
 observation required.
 
 ## Approve and write
 
-Present the proposed obligations, meaningful omissions, and consequential testing choices. After user
-approval, write the plan and a coverage map containing only requirements or journeys with an
-additional `INT-*`, `E2E-*`, `AT-*`, or `HT-*` obligation. Do not create tasks, write tests, execute
-tests, or invoke another lifecycle phase.
+Present the proposed obligations, the envelope, meaningful omissions, and consequential testing
+choices. After user approval, write the plan and a coverage map containing only requirements or
+journeys with an additional `INT-*`, `E2E-*`, or `HT-*` obligation. Do not create tasks, write tests,
+execute tests, or invoke another lifecycle phase.
 
 ## Artifact template
 
@@ -72,7 +71,8 @@ tests, or invoke another lifecycle phase.
 ## Coverage Strategy
 
 Specifications remain the source of unit-test requirements. This plan records only additional
-integration, end-to-end, agent-acceptance, and exceptional human-only obligations.
+integration and end-to-end obligations, the acceptance testing envelope, and exceptional human-only
+obligations.
 
 ## Integration Tests
 
@@ -94,18 +94,14 @@ integration, end-to-end, agent-acceptance, and exceptional human-only obligation
 - Assertions: <stable observable results>
 - Execution: <test location or CI command/phase>
 
-## Agent Acceptance Tests
+## Acceptance Testing Envelope
 
-### AT-001: <delivered flow>
-- Classification: <Required | Conditional: condition>
-- Covers: <requirements or journey>
-- Actor and surface: <user/client and interface>
-- Setup: <data, environment, and credentials>
-- Steps: <human-style actions>
-- Expected: <observable result>
-- Evidence: <screenshots or client-visible evidence>
-- Effects and cleanup: <authorized effects, cost, and cleanup>
-- Permitted substitutes: <explicit substitute and condition, or None>
+- Environments and sandboxes: <available targets>
+- Credentials and secrets: <what exists and where>
+- Authorized effects: <external effects, cost, and required cleanup>
+- Off limits: <what must not be touched>
+- Permitted substitutes: <substitute and condition, or None>
+- Known risk areas: <prior defect clusters and accepted limitations>
 
 ## Human-Only Testing
 
@@ -121,7 +117,7 @@ None.
 
 ## Coverage Map
 
-| Requirement or journey | INT | E2E | AT | HT |
-| --- | --- | --- | --- | --- |
-| <item> | <IDs or —> | <IDs or —> | <IDs or —> | <IDs or —> |
+| Requirement or journey | INT | E2E | HT |
+| --- | --- | --- | --- |
+| <item> | <IDs or —> | <IDs or —> | <IDs or —> |
 ```

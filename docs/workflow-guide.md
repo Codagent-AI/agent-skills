@@ -39,8 +39,8 @@ If the design phase discovers a spec implication, it applies the corresponding s
 
 `test-plan` applies the automated test pyramid after requirements and design are settled. It keeps unit
 testing broad and implementation-driven, records important integration boundaries as `INT-*`, reserves
-`E2E-*` for critical complete journeys, defines authoritative human-style agent acceptance as `AT-*`,
-and defaults genuinely human-only `HT-*` checks to none.
+`E2E-*` for critical complete journeys, records the envelope the later exploratory acceptance pass runs
+under, and defaults genuinely human-only `HT-*` checks to none.
 
 ### 5. Review The Approach
 
@@ -80,12 +80,12 @@ meaningful UI screenshots or client-visible evidence, and reports findings witho
 alignment, CI, formal acceptance artifacts, or caller-managed status protocols.
 
 `prepare-acceptance` supports workflows that separate autonomous implementation from formal human
-acceptance. When an approved `test-plan.md` exists, its required and activated conditional `AT-*`
-flows are authoritative and cannot be downgraded to limitations or replaced by unapproved
-substitutes. Otherwise the skill derives a concise representative set of public flows. After a fix,
-the caller attests to an impact scope so only affected and directly dependent flows are retested;
-unaffected baseline evidence remains available as caller-scoped provenance. Publication, fixes, and
-automated validation remain the caller's responsibility.
+acceptance. It explores the change rather than replaying a pre-written case list, sizing the pass from
+the seams the change moved and always covering the primary public surface end to end. After a fix it
+reads the diff since its last pass and sizes new exploration from that, treating earlier work as
+history rather than as coverage. The approved `test-plan.md` supplies the envelope it runs under:
+environments, credentials, authorized effects, cleanup, and permitted substitutes. Publication, fixes,
+and automated validation remain the caller's responsibility.
 
 ### 10. Finalize The PR
 
