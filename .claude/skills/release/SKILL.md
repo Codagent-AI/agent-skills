@@ -21,10 +21,10 @@ This skill is **non-interactive**. Decide the version and changelog yourself; do
 Run the info script to collect merged PRs and calculate the version:
 
 ```bash
-bash .claude/skills/release/scripts/release-info.sh
+bash .claude/skills/release/scripts/release-info.sh 2>&1
 ```
 
-Capture the JSON output. If the output contains `"error"`, stop and report the message to the user.
+Capture the JSON output (errors may arrive on stderr, hence `2>&1`). If the error is `already_released`, the branch already carries its release commit (each branch gets exactly one; later commits such as review fixes ship under it). There is nothing to do, so skip the remaining steps and report that. This is not a failure. For any other `"error"`, stop and report the message to the user.
 
 ### 2. Decide the classification and version
 

@@ -54,6 +54,15 @@ PRS=$(gh pr list --repo "$REPO" --state merged --base main \
 
 # --- Add current branch PR if not on main and has unmerged commits ---
 if [ "$CURRENT_BRANCH" != "main" ] && [ "$AHEAD" -gt 0 ]; then
+  # A branch carries exactly one release: once it has a release commit, later commits
+  # (e.g. review fixes) ship under that release instead of triggering another bump.
+  RELEASE_COMMIT=$(git log --format='%h %s' --no-merges origin/main..HEAD | grep -m1 '^[0-9a-f]* chore: release v' || true)
+  if [ -n "$RELEASE_COMMIT" ]; then
+    jq -n --arg c "$RELEASE_COMMIT" '{"error": "already_released", "message": "Branch already carries its release commit (\($c))."}'
+    exit 0
+  fi
+  UNRELEASED_COMMITS=$(git log --format='%h %s' --no-merges origin/main..HEAD)
+
   BRANCH_STATE=""
   [ -n "$BRANCH_PR" ] && BRANCH_STATE=$(echo "$BRANCH_PR" | jq -r '.state')
   if [ "$BRANCH_STATE" = "OPEN" ]; then
@@ -62,10 +71,12 @@ if [ "$CURRENT_BRANCH" != "main" ] && [ "$AHEAD" -gt 0 ]; then
   elif [ -z "$BRANCH_STATE" ] || [ "$BRANCH_STATE" = "MERGED" ]; then
     # No PR yet (release runs before PR creation), or PR already merged with new commits since.
     # Generate a synthetic entry from the commit log so these changes appear in the release.
-    COMMIT_SUMMARY=$(git log --oneline origin/main..HEAD --no-merges | head -5 | paste -sd '; ' -)
-    SYNTHETIC_TITLE="fix: unmerged branch changes (${COMMIT_SUMMARY})"
-    SYNTHETIC_PR=$(jq -n --arg title "$SYNTHETIC_TITLE" --argjson number 0 '{number: $number, title: $title, labels: [], mergedAt: null, is_branch_commits: true}')
-    PRS=$(jq -s '.[0] + [.[1]]' <(echo "$PRS") <(echo "$SYNTHETIC_PR"))
+    if [ -n "$UNRELEASED_COMMITS" ]; then
+      COMMIT_SUMMARY=$(echo "$UNRELEASED_COMMITS" | head -5 | paste -sd '; ' -)
+      SYNTHETIC_TITLE="fix: unmerged branch changes (${COMMIT_SUMMARY})"
+      SYNTHETIC_PR=$(jq -n --arg title "$SYNTHETIC_TITLE" --argjson number 0 '{number: $number, title: $title, labels: [], mergedAt: null, is_branch_commits: true}')
+      PRS=$(jq -s '.[0] + [.[1]]' <(echo "$PRS") <(echo "$SYNTHETIC_PR"))
+    fi
   fi
 fi
 
