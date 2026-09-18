@@ -93,7 +93,7 @@ automated validation remain the caller's responsibility.
 head branch after running validation when applicable. Merged or closed predecessors do not substitute
 for the active PR.
 
-`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
+`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews and merge conflicts, and surfaces actionable PR comments. Unresolved threads deferred by the PR author or fix-pr session remain visible but do not keep the status on `comments`. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
