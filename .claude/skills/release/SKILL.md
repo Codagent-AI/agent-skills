@@ -1,10 +1,11 @@
 ---
 description: >-
-  Run this before creating or pushing every PR — all PRs must carry a release.
-  Bumps the plugin version and writes changelog entries: gathers merged PRs
-  since the last tag plus unmerged current-branch changes, decides the semver
-  bump, and commits the release onto the current branch (or opens a release PR
-  from main). Runs non-interactively. Also use when the user says "release",
+  Adds the release that every PR must carry, and runs before creating or
+  pushing any PR. Bumps the plugin version and writes changelog entries:
+  gathers merged PRs since the last tag plus unmerged current-branch changes,
+  decides the semver bump, and commits the release onto the current branch (or
+  opens a release PR from main). Runs non-interactively. Triggers when
+  preparing, pushing, or finalizing a PR, or when the user says "release",
   "cut a release", "create a release PR", "prepare a release", or "bump
   version".
 ---
