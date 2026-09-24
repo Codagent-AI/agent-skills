@@ -35,8 +35,8 @@ Turns specs into a technical design. It reads all relevant specs first, explores
 
 Creates an approved `test-plan.md` after design. It applies the automated test pyramid without fixed
 ratios, records important integration (`INT-*`) and critical end-to-end (`E2E-*`) obligations, defines
-authoritative agent acceptance flows (`AT-*`), minimizes human-only checks (`HT-*`), and maps them to
-requirements and critical journeys.
+the envelope the exploratory acceptance pass runs under, minimizes human-only checks (`HT-*`), and maps
+obligations to requirements and critical journeys.
 
 ### `review-approach`
 
@@ -83,12 +83,13 @@ fix defects, require a PR, wait for CI, or prepare a formal acceptance handoff.
 
 ### `prepare-acceptance`
 
-Prepares the currently checked-out implementation for formal human acceptance. When an approved test
-plan exists, its required and activated conditional `AT-*` flows, evidence, authorized effects, and
-permitted substitutes are authoritative; otherwise the skill derives a concise representative flow
-set. It supports targeted post-fix verification while preserving unaffected baseline evidence,
-captures visual or client evidence, waits for aligned current-head CI, and produces the acceptance
-handoff. Fixes and automated validation are handled by the caller.
+Prepares the currently checked-out implementation for formal human acceptance by exploring it for
+defects the green suite missed. It sizes the pass from the seams the change moved, reads existing tests
+to find what they only appear to assert, predicts each result before running it, and names what it
+deliberately did not exercise. The approved test plan supplies its envelope of environments,
+credentials, authorized effects, and permitted substitutes. After a fix it explores the diff since its
+last pass. It captures visual or client evidence, waits for aligned current-head CI, and produces the
+acceptance handoff. Fixes and automated validation are handled by the caller.
 
 ## Pull Requests
 

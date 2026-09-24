@@ -43,7 +43,7 @@ documentation into the outcome they support.
 
 When a test plan is supplied, assign each `INT-*` and `E2E-*` obligation to the task that first makes
 its boundary or journey executable; a cross-task E2E belongs to the final task completing that journey.
-Do not assign `AT-*` or `HT-*` execution to implementors. Unit cases remain implementation-time TDD
+Do not assign acceptance exploration or `HT-*` execution to implementors. Unit cases remain implementation-time TDD
 decisions.
 
 Compare the result with the independent LOE estimate. Merge coupled candidates above the band; never

@@ -1,280 +1,205 @@
 ---
-description: Exercises an implemented change through its user and client flows, reports clear defects without fixing them, waits for current-head CI, and prepares concise evidence for human review when preparing a change for acceptance, gathering review evidence, performing human-style flow testing, or invoking codagent:prepare-acceptance.
+description: Explores an implemented change to find defects its green test suite missed, sizes the pass to what actually changed, reports findings without fixing them, waits for current-head CI, and prepares evidence for human review when preparing a change for acceptance, gathering review evidence, performing exploratory or human-style testing, or invoking codagent:prepare-acceptance.
 ---
 
-## Prepare Acceptance
+# Prepare Acceptance
 
-Prepare an implemented change for a separate human acceptance session. Exercise it as a human user or
-real client would, report clear defects, wait for CI once no defects remain, and produce concise
-evidence for the code currently checked out. Fixes and automated validation belong to separate
-caller-managed steps when used. PR and commit identity establish final CI and handoff alignment; they
-are not prerequisites for exercising the product.
+Explore an implemented change for defects its green test suite missed. Produce concise evidence, the
+findings, and an honest list of what was not exercised, then hand all of it to a human acceptance
+session.
 
-### Required inputs
+Target what is true of the running system but asserted nowhere. The suite already covers what someone
+thought to assert, so re-running its scenarios by hand proves nothing. The failure mode to avoid is not
+missing a bug; it is producing a long plan that re-walks the happy path and finds nothing, because
+thoroughness is the easy thing to simulate.
 
-Resolve these from the caller before acting:
+## Targeting versus oracle
 
-- approved requirements, scenarios, design, test plan when one exists, and task artifacts;
-- caller-supplied implementation summary or completion evidence identifying delivered behavior;
-- evidence output directory;
-- unresolved-assumptions ledger path, when one exists;
-- verification scope:
-  - `full`;
-  - `targeted`, naming the affected flows, directly dependent flows, a concise impact rationale, and
-    prior full-pass evidence to retain, plus the caller's attestation that this scope covers the
-    tracked changes since that baseline; or
-  - `evidence-only`, identifying prior flow evidence whose coverage revision exactly matches the
-    current tracked contents and supplying the caller's attestation of that content match.
+Read the implementation, the diff, and the tests to decide **where to look**. Never use them to decide
+**what correct means**. Code is self-consistent, so an oracle drawn from it declares every defect
+correct. Draw expected behavior from the approved artifacts and from what a user would reasonably
+expect.
 
-If source-of-truth artifacts or the evidence directory are missing, report what is missing and stop
-before flow execution. Do not infer product behavior from implementation alone. When an approved
-test plan exists, treat its required and activated conditional `AT-*` flows, evidence requirements,
-authorized effects, and permitted substitutes as authoritative. Use `full` when the caller does not
-supply a scope or no trustworthy full-pass baseline exists. Targeted and evidence-only reuse depend on
-the caller's impact or content attestation: reconcile it with the approved flow inventory, but do not
-independently inspect a diff. Use `evidence-only` only when the caller attests that no tracked product
-contents changed after the recorded coverage revision; PR alignment, pushing the already-tested commit,
-waiting for CI, or a Validator run that made no tracked change do not invalidate flow evidence. When no
-assumptions-ledger path is supplied, use
-`<evidence-directory>/acceptance-assumptions.md` and create it if needed. Keep this preparation
-autonomous: preserve product, scope, or design ambiguity for the later human acceptance session
-instead of asking the user here.
+## Inputs
 
-### Procedure
+Resolve from the caller: approved artifacts, the testing envelope naming authorized effects,
+credentials, sandboxes, cost, cleanup, and any `HT-*` obligations reserved for humans; an
+implementation summary; and an evidence directory. If approved artifacts or the evidence directory are
+missing, report that and stop.
 
-#### 1. Establish the test context
+Carry `HT-*` obligations forward as human-review instructions. Never execute them or claim evidence for
+them.
 
-1. Read repository instructions, the approved artifacts, the unresolved-assumptions ledger, and the
-   existing automated-validation evidence supplied by the caller.
-2. Treat the code currently present in the checked-out worktree as the test target. Record local
-   `HEAD` and tracked worktree status as context, but do not require a clean worktree or PR-head
-   equality before exercising flows. Do not inspect or reconstruct a diff.
-3. Use the project's normal setup, build, install, seed, and start commands when needed to expose the
-   current worktree through its real public surface. These are test setup, not automated validation.
-   Do not require an executable to embed a Git SHA, compare executable and commit timestamps, or infer
-   source identity from a semantic version string.
+## Size the pass
 
-#### 2. Exercise the product like a user
+Size from seams moved, not lines changed. A change that only rearranges code inside one function
+rarely earns a hand-run. A change that moves a seam almost always does, because seams are where
+automated tests stop being able to see.
 
-When an approved test plan exists, use its required and activated conditional `AT-*` obligations as the
-executable flow inventory, regardless of how the plan structures them. Identify applicable `HT-*`
-obligations separately and carry them forward only as human-review instructions, never as flows for the
-agent to execute or support with passing evidence.
-Otherwise derive a concise list of representative user or client flows from the approved artifacts and
-the caller-supplied implementation evidence. Do not inspect a diff to discover behavior. A flow is a
-meaningful journey or operation through a public surface, not an individual requirement scenario, input
-permutation, internal branch, or automated-test case. Group equivalent variants within a flow and choose
-typical data, configuration, and roles that demonstrate the delivered behavior.
+| Kind of move | What it puts at risk |
+| --- | --- |
+| Process boundary | Load paths, environment inheritance, working directory, how failures surface |
+| Error surface | Which failures are now silent, and which rescue is too narrow |
+| Control-flow source | Whether the new source can express every state the old one could |
+| Data source | Shapes the fixture never contained |
+| Identity or ownership | Two writers, or none |
 
-- For `full` scope, exercise every required or activated conditional `AT-*` flow from the approved test
-  plan. When no test plan exists, exercise the representative flows that collectively cover the
-  delivered user or client journeys and primary public surfaces. Do not turn every specification
-  scenario into a separate manual case.
-- For targeted scope, exercise only the affected flows and directly dependent flows named by the
-  caller. Require an existing `<evidence-directory>/acceptance-flow-evidence.md` from a prior full
-  pass, plus the caller's impact attestation and rationale bounding why flows outside the scope are
-  unaffected; it may group them by surface or subsystem rather than enumerate them individually.
-  Reconcile that scope with the approved flow inventory without inspecting a diff. Do not expand a
-  targeted pass into a full pass merely because the revision changed. If the scope omits an obvious
-  dependency or cannot be reconciled with the approved flow list, report the scope gap instead of
-  silently guessing or rerunning everything.
-- For `evidence-only` scope, do not exercise flows or replace screenshots. Require
-  `acceptance-flow-evidence.md` to cover the representative flow inventory and identify a coverage
-  revision, plus the caller's attestation that current tracked contents match that revision. Do not
-  independently inspect a diff to establish the match. Continue directly to current-head CI and
-  handoff collation. If the attestation is absent, reports changed contents, or coverage is incomplete,
-  reject evidence-only reuse and require a full or targeted scope from the caller.
+Budget roughly one step per distinct seam, with a floor of one and a ceiling of eight. Write the
+budget and its rationale to `<evidence-directory>/exploration-plan.md` before testing. Do not expand it
+silently later.
 
-Exercise the selected flows through the same public surface a real user or client would use.
+Regardless of budget, always run one end-to-end pass through the change's primary public surface.
+Whether the headline behavior works at all is the one thing never skipped.
 
-Do not omit a required or activated conditional `AT-*` flow because it is slow, expensive, needs
-credentials, or causes external effects when the approved test plan explicitly authorizes those
-conditions. Use a mock, dry run, sandbox, or other substitute only when that flow explicitly permits
-it. If its prerequisites are unavailable or it cannot be exercised safely within its approved
-conditions, record the impediment and do not claim the full pass or final acceptance evidence is
-complete.
+## Step 0: establish what the suite already owns
 
-- For a web, mobile, desktop, or terminal UI, navigate and operate it through its real interface.
-- For an API, call it through its documented HTTP, SDK, or CLI surface as a client would. Record a
-  sanitized request shape, response status and relevant response excerpt, plus observable side effects.
-- For a CLI or library, invoke its public commands or API as a consumer would and retain representative
-  input, output, and resulting state.
-- For background behavior, trigger it through the normal entry point and inspect the user-visible or
-  externally observable result.
+Read the tests covering the changed surface, not the whole suite. Answer three questions:
 
-Use typical representative data, configuration, and roles. Run only the setup and build commands
-needed to expose the checked-out product for hands-on use. Do not run automated unit, integration, or
-end-to-end suites, linters, or other automated validation commands; those belong to the caller. Do not
-fuzz, try bizarre inputs, attempt to break the product, or build an exhaustive edge-case matrix. Test
-an error, empty, boundary, or transient state only when it is an approved flow or necessary to complete
-a normal flow.
+1. **What does each assertion prove, as opposed to appear to prove?** When one input feeds two outputs
+   and the test asserts the cheap one, the expensive one is uncovered. Names, ids, counts, and "returned
+   without raising" are the usual cheap ones.
+2. **What is structurally unreachable under the fixture strategy?** Look for a mismatch between what the
+   code reads and what the fixture is. Code that reads from git needs fixtures that exist in git.
+   Unreachable is fine; unreachable and undocumented means someone assumes it is covered.
+3. **Which behavior is newest, and does anything cover it?** A fix landing late in review is the likeliest
+   thing in the change to have no test at all.
 
-For each selected flow, record the action, observed outcome, concise evidence, and any limitation. Verify the
-resulting state instead of relying on task completion or agent assertions.
+## Where candidates come from
 
-When one or more clear implementation defects appear, do not fix them. Continue through every
-remaining in-scope flow that can still be exercised safely and independently; one finding alone is
-not a reason to end the scoped pass. Stop early only when a defect makes the remaining in-scope flows
-unreachable, unsafe, or incapable of producing trustworthy evidence. Record every unexercised
-in-scope flow and the defect that blocked it.
+In rough yield order:
 
-After every pass, write or update `<evidence-directory>/acceptance-flow-evidence.md`. Record the
-representative executable flow inventory, including each applicable `AT-*` identifier when the test
-plan supplies one, the current verification scope and rationale, and for each flow its most recent
-tested SHA, outcome, evidence paths, and limitations. List applicable `HT-*` obligations separately as
-human-review instructions without execution outcomes. A full pass establishes the baseline. A
-targeted pass replaces evidence for its selected flows and retains prior evidence for flows the caller
-identified as unaffected, preserving the original SHA and provenance rather than relabeling it as
-current-head evidence. Label retained evidence as caller-scoped provenance, not as an independently
-reverified current-head observation. Record the revision whose tracked contents this combined coverage
-supports according to the caller's impact or content attestation.
+- **Seams the change moved**, per the table above.
+- **Accepted gaps and known limitations.** Watching a specified-but-odd behavior actually happen is often
+  the highest-value step in a pass, and it is where a limitation turns out worse than documented.
+- **Interaction of two independently-correct changes.** Ask which two accepted behaviors have never been
+  exercised in the same run. Each was reviewed alone, so no test owns the pair.
+- **Negative space.** For each guard added, test the configuration where it cannot fire at all, not only
+  the value it rejects.
+- **Representation.** Live systems echo data in shapes fixtures never contained: floats for integers, a
+  bare value for a one-element collection, an explicit null for an omitted key.
+- **The environment.** Which secrets, refs, and versions actually exist where this runs, as opposed to
+  which ones the config names. These findings need no test run at all.
 
-Write `<evidence-directory>/acceptance-findings.md` with the tested SHA and all clear defects found,
-including each affected flow, expected and observed behavior, concise reproduction steps, and evidence
-paths. On a targeted pass, mark a prior finding resolved only when its affected flow is in scope and
-the observed behavior now passes; retain other prior findings with their original status and SHA. Do
-not wait for CI or write final acceptance evidence while a current finding remains. Report the
-aggregated findings clearly so the caller can run its fix and validation process.
+## What earns a run
 
-Append product, scope, or design ambiguity to the unresolved-assumptions ledger with the decision
-needed and likely impact; never silently choose an interpretation or report ambiguity as a clear
-defect. After a fix, require the caller to provide a new impact scope. Use a full pass only when the
-change is broad, cross-cutting, or its impact cannot be bounded confidently.
+Keep a candidate only if it clears all three:
 
-#### 3. Capture visual evidence
+1. **No automated test owns it**, established in Step 0 rather than assumed.
+2. **A mock could not settle it.** If reading the code answers the question, read it and report a
+   code-reading finding. That is cheaper and more certain than a run.
+3. **Being wrong has a consequence someone would care about.** "Writes to the wrong project" qualifies.
+   "Logs an odd string" does not.
 
-For any UI—including web, mobile, desktop, and TUI—store screenshots under
-`<evidence-directory>/acceptance-screenshots/` as the flows are exercised. Capture at least one
-meaningful stable result for every in-scope UI flow, and more only when multiple states are needed to
-understand that flow. Retain prior screenshots for out-of-scope flows with their original SHA and
-provenance. Do not capture loading, empty, error, responsive, or before/after states unless they are
-part of the flow being tested.
+Drop everything else.
 
-Record for every screenshot:
+## Run order
 
-- flow demonstrated;
-- expected behavior and what the reviewer should notice;
-- route or command, representative input, and user role when relevant;
-- tested head SHA;
-- concise text equivalent.
+Order steps so each introduces exactly one new source of reality. When a step fails, the newest
+dependency is the suspect.
 
-Screenshots support the observed interaction; they are not proof on their own. For non-visual surfaces,
-retain the corresponding client request/output evidence instead.
+1. Pure logic against saved fixtures, no network or credentials.
+2. The failure path, with the dependency deliberately absent.
+3. A real read against a sandbox.
+4. A real write against a sandbox.
+5. The same operation twice.
+6. The real runner or CI, which adds checkout, credentials, and environment.
 
-#### 4. Wait for current-head CI
+Step 5 is disproportionately productive. A large share of real defects are second-run defects:
+duplicated records, moved timestamps, replaced identity.
 
-Before invoking `codagent:wait-ci`, require a clean tracked worktree, a committed and pushed local
-`HEAD`, and a matching PR head. If any publication or alignment condition is absent, stop and tell the
-caller to commit, push, or align the PR as needed; do not perform those actions in this skill.
+## Two habits that find things
 
-Invoke `codagent:wait-ci` only after that alignment and after the required full or targeted pass finds
-no clear defects, or evidence-only reuse satisfies its caller attestation. After CI returns,
-immediately re-read local `HEAD` and the PR `headRefOid`. Require the returned `head_sha`, current local
-`HEAD`, and current PR head to be identical; otherwise report that final handoff evidence cannot yet
-be produced. If the caller reports tracked product-content changes after flow testing, require a new
-caller-supplied impact scope and run that verification before producing final evidence. A push that
-publishes already-tested contents, PR alignment, or a no-change Validator run does not invalidate the
-pass.
+**Predict before running.** Write the expected result first, in specifics: how many records, which
+values, what exit status. Predict from the approved behavior and from the mechanism separately. Where
+those two predictions differ, that difference is itself a candidate. A wrong prediction is the most
+valuable event in a pass, because the model and the system disagree and one of them is a defect.
 
-- `passed`: continue.
-- `failed` or `comments`: do not write final acceptance-test or handoff evidence or claim readiness.
-  When the failure or comment is clearly attributable to the implementation and actionable in the
-  repository, add it to `<evidence-directory>/acceptance-findings.md` with the tested SHA, failing
-  check or comment, relevant log or link, and concise expected-versus-observed behavior. Report it as
-  a clear defect so the caller can run its fix and validation process. Otherwise, report the external,
-  environmental, or infrastructure blocker without classifying it as an implementation defect.
-- `pending`: do not claim readiness. Report the pending checks and stop for the caller to resume or
-  retry later.
-- no configured checks: continue only after recording that CI coverage is absent.
+**Print values, not verdicts.** Emit the actual identifiers, timestamps, and objects rather than
+pass or fail. A boolean can only answer the question already thought of. For a UI, read the API for
+exact values and look at the interface for the mental model; some views are the only proof that a run
+wrote nothing.
 
-Treat skipped, neutral, cancelled, stale, and timed-out checks as explicit evidence states, never as
-proof that associated behavior passed.
+## When to stop
 
-#### 5. Write acceptance-test evidence
+Stop when the remaining untested paths are enumerable and named, not when they are empty. End with a
+sentence like: "Not exercised: the conflict path against live data, and behavior above the deletion
+cap." That is a complete result. "Everything tested" is never true.
 
-Write `acceptance-test.md` in the evidence directory only after CI passes or is explicitly absent, the
-required verification makes no tracked changes, `acceptance-flow-evidence.md` covers the current
-tracked contents under the caller's supplied scope or content attestation, every required or activated
-conditional `AT-*` flow or derived representative flow has passing evidence from either the full
-baseline or a subsequent targeted pass, and any automated-validation evidence supplied by the caller
-applies to the current pushed head. Do not require automated-validation evidence when none was
-supplied; explicitly record its absence instead. Include:
+Signs the pass has drifted into theatre: steps that mirror requirement names, re-running a journey the
+end-to-end suite already walks, hand-testing pure logic with no I/O, more than one step per seam, or a
+step with no recorded prediction.
 
-- exact current local/PR head SHA;
-- the representative flows, their outcomes, most recent tested SHA, and whether evidence came from the
-  full baseline or a targeted post-fix pass; label retained observations as caller-scoped provenance
-  rather than independently reverified current-head observations;
-- the caller-supplied impact scope and rationale for retaining unaffected-flow evidence;
-- clear-defect status and any prior fix evidence supplied by the caller;
-- existing automated-validation and CI status without rerunning either, explicitly noting when
-  automated-validation evidence was not supplied;
-- screenshot metadata and text equivalents for every UI flow;
-- representative API, CLI, library, or background-operation evidence for non-UI flows;
-- unavailable flows, environment limitations, warnings, and residual risks;
-- new unresolved assumptions added to the canonical ledger.
+If every step passed and nothing surprised, re-read Step 0; the pass probably covered ground the suite
+already owned. Never manufacture or escalate a finding to compensate. An honest empty pass is a better
+result than an inflated one.
 
-List any applicable approved `HT-*` obligations separately as human-review instructions. Do not
-perform or claim human-only testing.
+## Report
 
-Prefer concise conclusions with durable log paths over raw log dumps.
+Record defects in `<evidence-directory>/acceptance-findings.md` with the tested SHA, affected behavior,
+expected versus observed, concise reproduction, and evidence paths. Do not fix them, and continue
+through the remaining independent steps after finding one. Stop early only when a defect makes the rest
+unreachable or untrustworthy.
 
-#### 6. Prepare the human handoff
+Append product, scope, or design ambiguity to the assumptions ledger, defaulting to
+`<evidence-directory>/acceptance-assumptions.md`. Never report ambiguity as a defect or silently choose
+an interpretation. Keep this pass autonomous and leave those decisions to the human acceptance session.
 
-Collate existing implementation, acceptance-test, available automated-validation, and CI evidence. Do
-not run new acceptance tests, capture replacement screenshots, or fix issues during collation. If
-required evidence is missing or stale, stop and require the producing phase to run again. The explicit
-absence of caller-supplied automated-validation evidence is not missing evidence.
+Write `<evidence-directory>/exploration-log.md`: the budget and rationale, each step with its
+prediction, its observation, and the resulting finding or nothing, plus the named list of what was
+deliberately not exercised and why.
 
-Write `acceptance-handoff.md` in the evidence directory with:
+After every pass, overwrite `<evidence-directory>/acceptance-tested-revision.txt` with the exact SHA
+just tested. That file is the diff base for the next pass.
 
-1. **Decision brief** — unresolved decisions, delivered behavior, overall validation status, known
-   limitations, and suggested human review path.
-2. **Revision identity** — repository, PR URL, current head SHA, generation time, tracked worktree
-   status, full-baseline SHA, and subsequent targeted-pass SHAs.
-3. **Flow evidence** — each supported flow, what was done, the observed result, its evidence, most
-   recent tested SHA, baseline or targeted provenance, and any limitation; label retained observations
-   as caller-scoped provenance rather than independently reverified current-head observations.
-4. **Automated validation and CI** — concise status plus durable logs or links produced by separate
-   validation and CI steps; explicitly say when automated-validation evidence was not supplied.
-5. **Visual and client evidence** — screenshot metadata/text equivalents, API or CLI evidence, and
-   practical human review instructions.
-6. **Residual risk** — unavailable flows, environment limitations, warnings, and relevant omissions.
-7. **Assumption handoff** — canonical ledger path plus a concise summary of every unresolved item.
+For any UI, store screenshots under `<evidence-directory>/acceptance-screenshots/` with the behavior
+demonstrated, what the reviewer should notice, the tested SHA, and a concise text equivalent.
+Screenshots support an observation; they are not proof on their own.
 
-#### 7. Verify readiness
+## After a fix
 
-Before reporting readiness:
+A fix is a change. Apply this same method to it: read `<evidence-directory>/acceptance-tested-revision.txt`,
+diff the current worktree against that SHA, size the result by seams moved, and explore that. Do not
+re-run the previous pass, and do not derive the new scope from what was tested before.
 
-1. Require a clean tracked worktree.
-2. Require local `HEAD`, PR head, `acceptance-test.md`, and `acceptance-handoff.md` to name the same
-   current revision. Require `acceptance-flow-evidence.md` to account for the representative flow
-   inventory under the caller's supplied scope or content attestation and preserve the actual SHA of
-   every retained or refreshed observation.
-3. Require CI evidence for that SHA to be passing, or explicitly record that no checks exist.
-4. Verify every required or activated conditional `AT-*` flow is accounted for, every referenced
-   evidence and screenshot path exists, and every UI flow has visual evidence from the baseline or an
-   applicable targeted pass. Verify applicable `HT-*` obligations are listed only as human-review
-   instructions.
-5. Ensure persisted evidence does not expose secrets, credentials, tokens, private data, or unrelated
-   user content.
-6. Record the current PR state for the caller without changing it.
+If that file is missing, or names a SHA that does not resolve in this repository, report it as an
+impediment and explore the change as a whole rather than guessing a base.
 
-Use revision identity to show that final CI and handoff evidence describe the code under review.
-Preserved observations remain tied to their original revisions and claim only caller-scoped
-applicability to the current head. Do not require or inspect embedded executable revision metadata.
+Read the prior exploration log as history, meaning "this area already behaves this way," never as
+coverage, meaning "this area is signed off." An empty diff sizes to zero steps.
 
-Report the exact ready-for-acceptance SHA, PR URL, handoff path, unresolved-decision count, CI status,
-and known limitations. Do not mark the PR ready or perform human acceptance. The caller owns any
-machine-readable status file, terminal marker, or control-flow protocol.
+## Wait for CI and hand off
 
-### Out of scope
+Once no finding remains, require a clean tracked worktree, a pushed local `HEAD`, and a matching PR
+head before invoking `codagent:wait-ci`. If any of those is missing, tell the caller to commit, push, or
+align the PR; do not do it here. After CI returns, re-read local `HEAD` and the PR head and require both
+to match the returned SHA.
 
-- Do not obtain human acceptance; leave that to the later human acceptance session.
-- Do not fix implementation defects, modify tracked source or approved artifacts, commit, push, or
-  alter PR metadata. Disposable or ignored setup and build outputs are allowed.
-- Do not run automated test suites, linters, other automated checks, or automated validation; the
-  caller owns validation and reinvocation. Setup and builds needed to use the product are allowed.
-- Do not change approved requirements, product scope, or design to make tests pass.
-- Do not archive the change, mark the PR ready, merge, or release.
-- Do not perform fuzzing, adversarial testing, or exhaustive edge-case exploration.
-- Do not treat successful task execution, agent summaries, or screenshots alone as proof of behavior.
+On `failed` or `comments`, add anything clearly attributable to the implementation to the findings file
+and report it; report anything external as a blocker rather than a defect. On `pending`, report and stop.
+With no configured checks, continue after recording that CI coverage is absent. Treat skipped, neutral,
+cancelled, and timed-out checks as evidence states, never as passes.
+
+Then write `<evidence-directory>/acceptance-handoff.md`:
+
+1. **Decision brief** — delivered behavior, unresolved decisions, overall status, suggested review path.
+2. **Revision identity** — repository, PR URL, current head SHA, tracked worktree status.
+3. **Exploration** — the budget and rationale, what was exercised, what was found, and the named list of
+   what was not exercised.
+4. **CI** — status and durable links. Say plainly when no automated-validation evidence was supplied.
+5. **Visual and client evidence** — screenshot metadata, text equivalents, and practical review steps.
+6. **Human-only obligations** — applicable `HT-*` items as instructions, with no execution outcome.
+7. **Assumptions** — ledger path and a concise summary of each unresolved item.
+
+Before reporting ready, confirm every referenced path exists and that no persisted evidence exposes
+secrets, credentials, or private data. Report the ready SHA, PR URL, handoff path, unresolved-decision
+count, CI status, and known limitations.
+
+## Out of scope
+
+- Do not fix defects, modify tracked source or approved artifacts, commit, push, or alter PR metadata.
+  Disposable setup and build outputs are fine.
+- Do not run automated suites, linters, or the Validator. Setup and builds needed to use the product are fine.
+- Do not change approved requirements, scope, or design to make something pass.
+- Do not obtain human acceptance, mark the PR ready, merge, archive, or release.
+- Do not fuzz or build an exhaustive edge-case matrix. Exploration is targeted by risk, not by volume.
+- Do not treat a successful command exit, an agent summary, or a screenshot alone as proof of behavior.

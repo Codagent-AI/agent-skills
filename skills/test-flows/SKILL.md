@@ -23,17 +23,24 @@ flow without its required screenshot.
 
 ## Select flows
 
-For a representative full pass, identify the meaningful changed journeys and public surfaces that
-collectively demonstrate the delivered behavior. When an approved test plan exists, exercise its
-required and activated conditional `AT-*` flows. Otherwise keep the inventory proportional to the
-small change rather than replaying every requirement scenario or input variation.
+Size the pass to what changed. Identify the meaningful changed journeys and public surfaces, and keep
+the inventory proportional to the small change rather than replaying every requirement scenario or
+input variation. Skip anything an existing automated test already asserts properly; check before
+assuming it does.
 
 For targeted verification, exercise the named affected flows and obvious direct dependencies. Verify
 the prior finding first. Do not start a new broad review or search unrelated surfaces for additional
 issues.
 
-Use typical data, configuration, and roles. Do not fuzz, try bizarre inputs, or build an exhaustive
-edge-case matrix. Test an error or boundary state only when it belongs to a normal selected flow.
+Use typical data, configuration, and roles. Do not fuzz or build an exhaustive edge-case matrix; keep
+exploration targeted by risk rather than volume. Running the same operation twice is cheap and catches
+a large share of real defects.
+
+Before each flow, write down the expected result in specifics. A wrong prediction means the model and
+the system disagree, and one of them is a defect. Emit actual values rather than pass or fail, since a
+boolean can only answer the question already thought of.
+
+For a deeper pass on a substantial change, use codagent:prepare-acceptance instead.
 
 ## Exercise the public surface
 
@@ -62,6 +69,7 @@ Return a concise report containing:
 - each selected flow, action, expected result, observed result, and evidence;
 - clear defects with reproduction steps and affected flows;
 - product, scope, or design ambiguity separated from defects;
+- what was deliberately not exercised, and why;
 - untested or blocked flows and practical limitations.
 
 Write the same report to a caller-specified path when requested. Do not create status markers or
