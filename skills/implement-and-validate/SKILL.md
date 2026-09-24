@@ -1,7 +1,7 @@
 ---
 name: implement-and-validate
 description: >
-  Autonomous implementer agent that executes a single task end-to-end using TDD and verifies with Agent Validator.
+  Autonomous implementer agent that executes a single task end-to-end and verifies with Agent Validator.
   Activates for requests such as "implement this task", "finish this ticket", "apply this spec end-to-end", or "complete the implementation".
 ---
 
@@ -10,8 +10,6 @@ Implement a single task from start to finish. Verify with self-review and the va
 ## Your Task
 
 ## Implementation Methodology
-
-Implement the specified task using the `codagent:implement-with-tdd` skill.
 
 Implement exactly what the task specifies — no extra features, refactoring, or improvements beyond scope. Follow existing code patterns and conventions.
 
