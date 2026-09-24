@@ -5,21 +5,11 @@ debug_log:
 cli:
   default_preference:
     - codex
-    - claude
-    - gemini
-
-  # Recommended settings (see docs/eval-results.md)
   adapters:
     codex:
-      model: gpt-5.5
+      model: gpt-6-sol
       allow_tool_use: false
-      thinking_budget: low
-    claude:
-      allow_tool_use: false
-      thinking_budget: high
-    gemini:
-      allow_tool_use: false
-      thinking_budget: low
+      thinking_budget: medium
 
 entry_points:
   - path: "."

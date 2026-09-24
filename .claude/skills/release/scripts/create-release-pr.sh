@@ -64,13 +64,19 @@ else
 fi
 
 if [ "$CURRENT_BRANCH" != "main" ]; then
-  # --- Non-main branch: commit and push to existing branch/PR ---
+  # --- Non-main branch: commit and push to the branch (PR may not exist yet) ---
   git add "$PLUGIN_JSON" "$CODEX_PLUGIN_JSON" "$CURSOR_PLUGIN_JSON" "$MARKETPLACE_JSON" "$CHANGELOG"
   git commit -m "chore: release v${NEW_VERSION}"
-  git push
+  git push -u origin HEAD
 
-  # Print the existing PR URL
-  gh pr view "$CURRENT_BRANCH" --repo "$REPO" --json url --jq .url
+  # Print the open PR URL, if one exists
+  PR_URL=$(gh pr view "$CURRENT_BRANCH" --repo "$REPO" --json url,state \
+    --jq 'select(.state == "OPEN") | .url' 2>/dev/null) || PR_URL=""
+  if [ -n "$PR_URL" ]; then
+    echo "$PR_URL"
+  else
+    echo "No open PR for branch ${CURRENT_BRANCH} yet; create one to ship this release."
+  fi
 else
   # --- Main branch: create release branch and PR ---
   git checkout -B "release/v${NEW_VERSION}"

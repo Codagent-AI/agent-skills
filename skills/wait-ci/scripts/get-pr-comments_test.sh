@@ -41,6 +41,7 @@ unresolved_bot_thread='{"data":{"repository":{"pullRequest":{"author":{"login":"
 result=$(run_script "$unresolved_bot_thread")
 jq -e '.has_comments == true' <<<"$result" >/dev/null
 jq -e '.unresolved_threads == [{"file":"script.sh","line":12,"author":"qodo-merge-pro[bot]","body":"Potential bug"}]' <<<"$result" >/dev/null
+jq -e '.deferred_threads == []' <<<"$result" >/dev/null
 
 pr_author_comment='{"data":{"repository":{"pullRequest":{"author":{"login":"pr-author","__typename":"User"},"reviewThreads":{"nodes":[]},"comments":{"nodes":[{"author":{"login":"pr-author","__typename":"User"},"body":"Context from the author"}]}}}}}'
 result=$(run_script "$pr_author_comment")
@@ -52,5 +53,23 @@ missing_author='{"data":{"repository":{"pullRequest":{"author":{"login":"pr-auth
 result=$(run_script "$missing_author")
 jq -e '.has_comments == true' <<<"$result" >/dev/null
 jq -e '.issue_comments == [{"author":"unknown","body":"Comment from a deleted account"}]' <<<"$result" >/dev/null
+
+author_deferral_with_bot_ack='{"data":{"repository":{"pullRequest":{"author":{"login":"pr-author","__typename":"User"},"reviewThreads":{"nodes":[{"isResolved":false,"comments":{"nodes":[{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Unused export","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"pr-author","__typename":"User"},"body":"Out of scope — leaving unresolved.","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Acknowledged.","path":"openspec/foo.md","line":3,"originalLine":null}]}}]},"comments":{"nodes":[]}}}}}'
+result=$(run_script "$author_deferral_with_bot_ack")
+jq -e '.has_comments == false' <<<"$result" >/dev/null
+jq -e '.unresolved_threads == []' <<<"$result" >/dev/null
+jq -e '.deferred_threads == [{"file":"openspec/foo.md","line":3,"author":"coderabbitai[bot]","body":"Unused export"}]' <<<"$result" >/dev/null
+
+later_human_reviewer_reply='{"data":{"repository":{"pullRequest":{"author":{"login":"pr-author","__typename":"User"},"reviewThreads":{"nodes":[{"isResolved":false,"comments":{"nodes":[{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Unused export","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"pr-author","__typename":"User"},"body":"Out of scope — leaving unresolved.","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Acknowledged.","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"reviewer","__typename":"User"},"body":"Please still fix this.","path":"openspec/foo.md","line":3,"originalLine":null}]}}]},"comments":{"nodes":[]}}}}}'
+result=$(run_script "$later_human_reviewer_reply")
+jq -e '.has_comments == true' <<<"$result" >/dev/null
+jq -e '.unresolved_threads == [{"file":"openspec/foo.md","line":3,"author":"coderabbitai[bot]","body":"Unused export"}]' <<<"$result" >/dev/null
+jq -e '.deferred_threads == []' <<<"$result" >/dev/null
+
+bot_session_deferral_with_bot_ack='{"data":{"repository":{"pullRequest":{"author":{"login":"pr-author","__typename":"User"},"reviewThreads":{"nodes":[{"isResolved":false,"comments":{"nodes":[{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Unused export","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"codagent-ai[bot]","__typename":"Bot"},"body":"Out of scope — leaving unresolved.","path":"openspec/foo.md","line":3,"originalLine":null},{"author":{"login":"coderabbitai[bot]","__typename":"Bot"},"body":"Acknowledged.","path":"openspec/foo.md","line":3,"originalLine":null}]}}]},"comments":{"nodes":[]}}}}}'
+result=$(run_script "$bot_session_deferral_with_bot_ack")
+jq -e '.has_comments == false' <<<"$result" >/dev/null
+jq -e '.unresolved_threads == []' <<<"$result" >/dev/null
+jq -e '.deferred_threads == [{"file":"openspec/foo.md","line":3,"author":"coderabbitai[bot]","body":"Unused export"}]' <<<"$result" >/dev/null
 
 echo "get-pr-comments tests passed"
