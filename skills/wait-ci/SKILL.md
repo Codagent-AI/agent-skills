@@ -66,6 +66,11 @@ The script outputs a JSON object with these fields:
 | `pending_checks` | array | Checks still running |
 | `blocking_reviews` | array | Reviews with `CHANGES_REQUESTED` (latest per reviewer) |
 | `failed_run_ids` | array | GitHub Actions run IDs extracted from failed check links |
+| `mergeable` | string | GraphQL mergeable: `MERGEABLE`, `CONFLICTING`, or `UNKNOWN` |
+| `mergeStateStatus` | string | GraphQL merge state (`DIRTY` when conflicting) |
+| `conflicting_files` | array | Paths that conflict with the PR base when `git merge-tree` can see both commits |
+
+`CONFLICTING` is terminal `failed` even when checks are green. Keep polling while `mergeable` is `UNKNOWN`; do not emit `passed`. Include `conflicting_files` in the JSON when the PR base is available locally.
 
 ### 2. Fetch failure logs (if `status == "failed"`)
 
@@ -91,12 +96,13 @@ Output fields:
 
 | Field | Type | Description |
 |---|---|---|
-| `has_comments` | bool | True if any unaddressed comments exist |
-| `unresolved_threads` | array | `{file, line, author, body}` per unresolved review thread |
+| `has_comments` | bool | True if any actionable comments exist |
+| `unresolved_threads` | array | `{file, line, author, body}` per actionable unresolved review thread |
+| `deferred_threads` | array | `{file, line, author, body}` per unresolved thread deferred by the PR author or fix-pr session |
 | `issue_comments` | array | `{author, body}` blocking top-level human comments (excluding PR creator) |
 | `informational_bot_comments` | array | `{author, body}` non-blocking top-level bot comments retained as evidence |
 
-Unresolved review threads are blocking regardless of author. Top-level bot comments do not set `has_comments`; only unresolved threads and human top-level comments do.
+`has_comments` is true only for actionable unresolved threads plus blocking issue comments. A thread is deferred (non-actionable) when fix-pr replied without resolving: the latest significant comment after stripping trailing reviewer-bot acks is from the PR author or from a different bot than the original finding bot (factory session identity). Later bot acknowledgments do not re-block; a later human reviewer reply is actionable again. Green CI with only deferred threads is `passed`. Keep deferred threads visible under their own heading. Do not add a fourth CI status marker.
 
 When checks are terminal, time out as pending, or do not exist, inspect
 `informational_bot_comments`. If a bot explicitly reports that its review is pending or in progress,
@@ -108,7 +114,7 @@ informational and do not delay completion.
 
 At the overall deadline, use this precedence:
 
-1. `failed` for failed checks or blocking reviews.
+1. `failed` for failed checks, `CONFLICTING` merge state, or blocking reviews.
 2. `comments` when actionable unresolved feedback exists, even if a review bot is still unfinished.
 3. `pending` when checks or a review bot remain unfinished and no actionable feedback exists.
 4. `passed` when CI is green or explicitly absent, no actionable feedback exists, and no review bot remains unfinished.
@@ -122,7 +128,7 @@ when upgrading the status.
 
 **No-checks handling:** If polling timed out with no checks ever observed, run `get-pr-comments.sh`
 before reporting success. Report `comments` when `has_comments` is true, `pending` when a review bot
-remains explicitly unfinished at the deadline, and otherwise `passed`.
+remains explicitly unfinished at the deadline or `mergeable` is `UNKNOWN`, and otherwise `passed`.
 
 ## Output Format
 
@@ -140,12 +146,18 @@ remains explicitly unfinished at the deadline, and otherwise `passed`.
   <log output>
   ```
 
+### Merge Conflicts
+- `<conflicting-path>`
+
 ### Blocking Reviews
 - **<reviewer>**: <review body>
 
 ### PR Comments
 - **<author>** on `<file>` line <N>: <comment body>
 - **<author>** (issue comment): <comment body>
+
+### Deferred Threads
+- **<author>** on `<file>` line <N>: <comment body>
 
 ### Informational Bot Comments
 - **<author>**: <comment body>
@@ -158,11 +170,11 @@ remains explicitly unfinished at the deadline, and otherwise `passed`.
 ```
 
 Status meanings:
-- `passed` — CI green, no blocking reviews or comments, and no bot review still in progress
-- `failed` — CI failures or `CHANGES_REQUESTED` reviews (with logs)
-- `comments` — unresolved PR comments need addressing; known actionable feedback takes precedence
+- `passed` — CI green, mergeable, no blocking reviews or actionable comments, and no bot review still in progress. Deferred threads may still be listed.
+- `failed` — CI failures, `CONFLICTING` merge state, or `CHANGES_REQUESTED` reviews (with logs and conflicting paths when available)
+- `comments` — actionable PR comments need addressing; known actionable feedback takes precedence
   over unfinished checks or review automation, whose pending evidence remains in the report
-- `pending` — checks or an explicitly unfinished bot review remain after max wait, with no actionable feedback available
+- `pending` — checks, unknown mergeability, or an explicitly unfinished bot review remain after max wait, with no actionable feedback available
 
 ## Notes
 
@@ -170,6 +182,7 @@ Status meanings:
 - Default: 10 runs × 90 seconds = ~15 minutes max wait; pass `--max-minutes N` to override
 - **Never ask the user for permission mid-execution** — always run the full duration
 - `CHANGES_REQUESTED` is a hard block; `APPROVED` and `COMMENTED` alone do not block
+- `CONFLICTING` is a hard block; `UNKNOWN` mergeability is not `passed`
 - Comment gathering runs after polling ends, including pending-check timeouts and the no-checks path
 - Log enrichment only works for GitHub Actions checks (not external status checks)
 
@@ -178,4 +191,4 @@ Status meanings:
 | Script | Purpose |
 |---|---|
 | `scripts/check-ci.sh` | Single-invocation poller (90s, 10s interval) — call in a loop from the skill |
-| `scripts/get-pr-comments.sh` | GraphQL comment fetcher — returns blocking review feedback and informational bot comments |
+| `scripts/get-pr-comments.sh` | GraphQL comment fetcher — returns actionable review feedback, deferred threads, and informational bot comments |

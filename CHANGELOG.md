@@ -1,5 +1,20 @@
 # agent-skills
 
+## 0.11.0
+
+### Minor Changes
+
+- [#52](https://github.com/Codagent-AI/agent-skills/pull/52) `call-agent` now polls `get_agent_call` until an asynchronous agent call reaches a terminal state, including after cancellation, with bounded polling.
+
+### Patch Changes
+
+- [#47](https://github.com/Codagent-AI/agent-skills/pull/47) Connect repository issues to the factory routing workflow.
+- [#48](https://github.com/Codagent-AI/agent-skills/pull/48) Fix parsing of GitHub issue events in the deployed factory workflow.
+- [#54](https://github.com/Codagent-AI/agent-skills/pull/54) Route issues that are typed as Bug after creation to the factory, not only issues created as bugs.
+- [#55](https://github.com/Codagent-AI/agent-skills/pull/55) `wait-ci` now handles merge conflicts and deferred review threads correctly.
+- Every PR now includes a release: the `release` skill runs non-interactively before PR creation and works on branches that have no PR yet, and AGENTS.md and CLAUDE.md now require it.
+
+
 ## 0.10.1
 
 ### Patch Changes

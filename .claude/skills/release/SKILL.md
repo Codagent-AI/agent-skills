@@ -1,14 +1,18 @@
 ---
 description: >-
-  Creates a release PR from merged PRs — gathers merged PRs since last tag
-  (plus any unmerged current-branch PR), calculates semver bump from
-  conventional commit titles, generates changelog entries, and opens a release
-  PR. Works from any branch: includes both main and current branch changes.
-  Use when the user says "release", "cut a release", "create a release PR",
-  "prepare a release", or "bump version".
+  Adds the release that every PR must carry, and runs before creating or
+  pushing any PR. Bumps the plugin version and writes changelog entries:
+  gathers merged PRs since the last tag plus unmerged current-branch changes,
+  decides the semver bump, and commits the release onto the current branch (or
+  opens a release PR from main). Runs non-interactively. Triggers when
+  preparing, pushing, or finalizing a PR, or when the user says "release",
+  "cut a release", "create a release PR", "prepare a release", or "bump
+  version".
 ---
 
-Create a release PR by gathering merged PRs, calculating the version bump, writing changelog entries, and opening the PR.
+Add a release (version bump + changelog) to the current branch before its PR is created or updated. Every PR must include a release.
+
+This skill is **non-interactive**. Decide the version and changelog yourself; do not ask the user to confirm the classification, version, or wording. Only stop and report if a script returns an error.
 
 ## Steps
 
@@ -17,19 +21,19 @@ Create a release PR by gathering merged PRs, calculating the version bump, writi
 Run the info script to collect merged PRs and calculate the version:
 
 ```bash
-bash .claude/skills/release/scripts/release-info.sh
+bash .claude/skills/release/scripts/release-info.sh 2>&1
 ```
 
-Capture the JSON output. If the output contains `"error"`, stop and report the message to the user.
+Capture the JSON output (errors may arrive on stderr, hence `2>&1`). If the error is `already_released`, the branch already carries its release commit (each branch gets exactly one; later commits such as review fixes ship under it). There is nothing to do, so skip the remaining steps and report that. This is not a failure. For any other `"error"`, stop and report the message to the user.
 
-### 2. Show the release summary and confirm classification
+### 2. Decide the classification and version
 
-Display to the user:
-- Version bump: `current_version` → `new_version`
-- Number of PRs by category
-- List each PR number and title, grouped by Major / Minor / Patch
+The script's classification comes from conventional commit prefixes, which is only a heuristic. Review it and adjust on your own judgment:
+- Internal changes (tooling, CI, repo automation, skills used only by maintainers such as this one) are patch-level even if prefixed with `feat:`.
+- User-facing new capabilities in shipped skills are minor.
+- Breaking changes to shipped skills' behavior or interfaces are major.
 
-Ask the user to confirm the classification is correct. The conventional commit prefix is a heuristic — internal changes (tooling, CI, skills used only by maintainers) should be patch-level even if prefixed with `feat:`. Adjust categories based on user feedback before proceeding.
+Recompute `new_version` from `current_version` if you change any category (major → `X+1.0.0`, minor → `X.Y+1.0`, otherwise `X.Y.Z+1`). Briefly state the chosen version and classification in your output, then continue without waiting.
 
 ### 3. Write changelog descriptions
 
@@ -72,7 +76,7 @@ CHANGELOG_EOF
 echo "$TMPFILE"
 ```
 
-### 6. Create the release PR
+### 6. Commit the release
 
 Run the release script with the new version and temp file path:
 
@@ -80,9 +84,11 @@ Run the release script with the new version and temp file path:
 bash .claude/skills/release/scripts/create-release-pr.sh <new_version> <tmpfile_path>
 ```
 
+On a feature branch, this commits the release onto the branch and pushes it; if the branch has no PR yet, the calling workflow (e.g. `codagent:push-pr` or `codagent:finalize-pr`) creates it next. On `main`, it creates a `release/v<new_version>` branch and opens a release PR.
+
 ### 7. Report
 
-Print the PR URL returned by the script.
+Print the version and the PR URL returned by the script (or note that no PR exists yet).
 
 Clean up the temp file:
 

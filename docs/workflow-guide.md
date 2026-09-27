@@ -54,7 +54,7 @@ alternatives.
 `plan-tasks` creates self-contained task files. Each task includes the relevant why, how, exact spec
 scenarios, assigned `INT-*` and `E2E-*` obligations, and done criteria needed by a separate implementer
 that has no shared session context. Automated tests stay with the task that delivers their behavior;
-unit details are chosen through TDD, and acceptance execution is not assigned to implementers.
+unit details are left to the implementer, and acceptance execution is not assigned to implementers.
 
 Tasks are ordered so dependent work stays sequential.
 
@@ -69,9 +69,7 @@ without changing an approved definition artifact or asking the user for a new de
 
 `implement-change` acts as the coordinating skill for a full change. It reads the tasks and context, dispatches one `implement-and-validate` subagent per task sequentially, runs Agent Validator, archives OpenSpec changes when applicable, and moves into PR finalization.
 
-`implement-and-validate` executes one task end to end. It invokes `implement-with-tdd`, performs a self-review, runs Agent Validator when gates apply, and commits after successful validation.
-
-`implement-with-tdd` enforces the red-green-refactor loop for new features, bug fixes, refactors, and behavior changes. It skips TDD only for the exceptions documented in the skill, such as generated code and configuration-only changes.
+`implement-and-validate` executes one task end to end. It implements the task, performs a self-review, runs Agent Validator when gates apply, and commits after successful validation.
 
 ### 9. Test And Accept
 
@@ -93,7 +91,7 @@ automated validation remain the caller's responsibility.
 head branch after running validation when applicable. Merged or closed predecessors do not substitute
 for the active PR.
 
-`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews, and surfaces unresolved PR comments. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
+`wait-ci` polls the current branch PR, reports CI status, gathers failed GitHub Actions logs, checks blocking reviews and merge conflicts, and surfaces actionable PR comments. Unresolved threads deferred by the PR author or fix-pr session remain visible but do not keep the status on `comments`. When review automation is still running but actionable feedback already exists, it reports the feedback as actionable rather than hiding it behind a pending status.
 
 `fix-pr` addresses CI failures and review comments by dispatching a fixer subagent, verifying the fix, and pushing.
 
@@ -139,4 +137,4 @@ mechanism when the tool is unavailable.
 
 ## Choosing A Path
 
-Use the full flow when the requirements are unsettled, the work touches multiple systems, or another agent will need exact context. Use `simple-plan` when the change is small but still benefits from written artifacts. Use `implement-with-tdd` directly only when the task is already clear enough that no planning artifact is needed.
+Use the full flow when the requirements are unsettled, the work touches multiple systems, or another agent will need exact context. Use `simple-plan` when the change is small but still benefits from written artifacts. Use `implement-and-validate` directly only when the task is already clear enough that no planning artifact is needed.
