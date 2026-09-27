@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CodeRabbit](https://img.shields.io/coderabbit/prs/github/Codagent-AI/agent-skills)](https://coderabbit.ai)
 
-Codagent Agent Skills is a portable skill bundle for Claude Code, Codex, and Cursor. It gives agents a structured software-development workflow: evaluate ideas, write requirements, design changes, plan tasks, implement with TDD, validate changes, and shepherd pull requests through CI.
+Codagent Agent Skills is a portable skill bundle for Claude Code, Codex, and Cursor. It gives agents a structured software-development workflow: evaluate ideas, write requirements, design changes, plan tasks, implement, validate changes, and shepherd pull requests through CI.
 
 The repository ships the same core skills through host-specific plugin manifests:
 
