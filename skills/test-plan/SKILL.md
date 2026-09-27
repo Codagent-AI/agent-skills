@@ -7,7 +7,7 @@ description: Collaboratively creates a risk-based test plan for a defined softwa
 Create `<change-dir>/test-plan.md` after the proposal, specifications, and design are complete. The
 plan records important automated integration and end-to-end obligations, the envelope the later
 exploratory acceptance pass runs under, and exceptional human-only checks. Specifications and
-implementation-time TDD remain the source of unit-test requirements.
+implementation-time decisions remain the source of unit-test requirements.
 
 Do not write the plan until the user approves the proposed coverage. Use `codagent:ask-questions` for
 consequential choices involving environments, external effects, cost, credentials, fidelity,
