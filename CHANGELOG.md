@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.12.0
+
+### Minor Changes
+
+- [#50](https://github.com/Codagent-AI/agent-skills/pull/50) Replace the pre-written acceptance flow inventory with an exploratory acceptance pass that reads the diff to decide where to look, requires a coverage floor of every user-visible spec requirement the change adds or modifies, and re-tests only the diff after a fix.
+- [#51](https://github.com/Codagent-AI/agent-skills/pull/51) Remove the implement-with-tdd skill and stop mandating test-driven development in the implementation and planning skills.
+
 ## 0.11.0
 
 ### Minor Changes
