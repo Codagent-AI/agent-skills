@@ -80,7 +80,9 @@ fix defects, require a PR, wait for CI, or prepare a formal acceptance handoff.
 ### `prepare-acceptance`
 
 Prepares the currently checked-out implementation for formal human acceptance by exploring it for
-defects the green suite missed. It sizes the pass from the seams the change moved, reads existing tests
+defects the green suite missed. On the first pass it exercises every user-visible requirement or
+scenario the approved specs add or modify at least once, then sizes further exploration from the seams
+the change moved. It reads existing tests
 to find what they only appear to assert, predicts each result before running it, and names what it
 deliberately did not exercise. The approved test plan supplies its envelope of environments,
 credentials, authorized effects, and permitted substitutes. After a fix it explores the diff since its

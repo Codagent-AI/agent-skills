@@ -78,8 +78,9 @@ meaningful UI screenshots or client-visible evidence, and reports findings witho
 alignment, CI, formal acceptance artifacts, or caller-managed status protocols.
 
 `prepare-acceptance` supports workflows that separate autonomous implementation from formal human
-acceptance. It explores the change rather than replaying a pre-written case list, sizing the pass from
-the seams the change moved and always covering the primary public surface end to end. After a fix it
+acceptance. It explores the change rather than replaying a pre-written case list. On the first pass it
+exercises every user-visible requirement or scenario the approved specs add or modify at least once,
+then sizes further exploration from the seams the change moved. After a fix it
 reads the diff since its last pass and sizes new exploration from that, treating earlier work as
 history rather than as coverage. The approved `test-plan.md` supplies the envelope it runs under:
 environments, credentials, authorized effects, cleanup, and permitted substitutes. Publication, fixes,

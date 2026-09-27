@@ -36,8 +36,10 @@ stable assertions, constraints, and where it runs.
 
 ## Define the testing envelope
 
-Do not enumerate acceptance test cases. Acceptance is an exploratory pass sized to what actually
-changed, and a pre-written flow list only tells it to re-walk the happy path. The plan's job is to say
+Do not enumerate acceptance test cases. Acceptance is an exploratory pass: it exercises each
+user-visible requirement or scenario the approved specs add or modify at least once, derived from the
+specs themselves, and sizes further exploration to what actually changed. A pre-written flow list only
+tells it to re-walk the happy path. The plan's job is to say
 what that pass is allowed to do, not what it must check.
 
 Record the envelope:

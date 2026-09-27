@@ -1,5 +1,5 @@
 ---
-description: Explores an implemented change to find defects its green test suite missed, sizes the pass to what actually changed, reports findings without fixing them, waits for current-head CI, and prepares evidence for human review when preparing a change for acceptance, gathering review evidence, performing exploratory or human-style testing, or invoking codagent:prepare-acceptance.
+description: Explores an implemented change to find defects its green test suite missed, exercises every user-visible requirement the change adds or modifies at least once, sizes further exploration to what actually changed, reports findings without fixing them, waits for current-head CI, and prepares evidence for human review when preparing a change for acceptance, gathering review evidence, performing exploratory or human-style testing, or invoking codagent:prepare-acceptance.
 ---
 
 # Prepare Acceptance
@@ -12,6 +12,11 @@ Target what is true of the running system but asserted nowhere. The suite alread
 thought to assert, so re-running its scenarios by hand proves nothing. The failure mode to avoid is not
 missing a bug; it is producing a long plan that re-walks the happy path and finds nothing, because
 thoroughness is the easy thing to simulate.
+
+A first pass has two parts. The coverage floor makes sure every user-visible behavior the change
+promises was seen working in the running product at least once; it is the one place walking specified
+behavior is required, and it is kept brief. Exploration beyond the floor hunts for what nobody
+asserted, and most of this skill is about that part.
 
 ## Targeting versus oracle
 
@@ -30,7 +35,22 @@ missing, report that and stop.
 Carry `HT-*` obligations forward as human-review instructions. Never execute them or claim evidence for
 them.
 
-## Size the pass
+## Coverage floor
+
+On the first acceptance pass for a change, exercise every user-visible requirement or scenario that
+the approved specs add or modify at least once, through the product as a user or client would reach
+it. Derive the floor from the approved specs when the pass starts; do not expect or accept a
+pre-written case list. The floor is not subject to the budget, the ceiling, or "What earns a run"
+below: exercise a floor item even when an automated test appears to own it, because the floor checks
+the running product against the spec, not the suite.
+
+Group floor items that one realistic journey exercises together, and keep each one brief: predict,
+act, record the observed values. Anything in the floor you could not exercise is a limitation; name it
+with its reason. "Out of budget" is not a reason.
+
+Passes after a fix do not repeat the floor. They are sized from the diff; see "After a fix."
+
+## Size exploration beyond the floor
 
 Size from seams moved, not lines changed. A change that only rearranges code inside one function
 rarely earns a hand-run. A change that moves a seam almost always does, because seams are where
@@ -44,12 +64,10 @@ automated tests stop being able to see.
 | Data source | Shapes the fixture never contained |
 | Identity or ownership | Two writers, or none |
 
-Budget roughly one step per distinct seam, with a floor of one and a ceiling of eight. Write the
-budget and its rationale to `<evidence-directory>/exploration-plan.md` before testing. Do not expand it
-silently later.
-
-Regardless of budget, always run one end-to-end pass through the change's primary public surface.
-Whether the headline behavior works at all is the one thing never skipped.
+Budget roughly one exploration step per distinct seam, with a minimum of one and a maximum of eight.
+The budget covers exploration beyond the coverage floor, never the floor itself. Write the floor items
+and the exploration budget with its rationale to `<evidence-directory>/exploration-plan.md` before
+testing. Do not expand the budget silently later.
 
 ## Step 0: establish what the suite already owns
 
@@ -121,13 +139,14 @@ wrote nothing.
 
 ## When to stop
 
-Stop when the remaining untested paths are enumerable and named, not when they are empty. End with a
-sentence like: "Not exercised: the conflict path against live data, and behavior above the deletion
-cap." That is a complete result. "Everything tested" is never true.
+Do not stop until every floor item is exercised or named as a limitation with its reason. Beyond the
+floor, stop when the remaining untested paths are enumerable and named, not when they are empty. End
+with a sentence like: "Not exercised: the conflict path against live data, and behavior above the
+deletion cap." That is a complete result. "Everything tested" is never true.
 
-Signs the pass has drifted into theatre: steps that mirror requirement names, re-running a journey the
-end-to-end suite already walks, hand-testing pure logic with no I/O, more than one step per seam, or a
-step with no recorded prediction.
+Signs the exploration beyond the floor has drifted into theatre: steps that re-walk floor journeys,
+re-running a journey the end-to-end suite already walks, hand-testing pure logic with no I/O, more than
+one step per seam, or a step with no recorded prediction.
 
 If every step passed and nothing surprised, re-read Step 0; the pass probably covered ground the suite
 already owned. Never manufacture or escalate a finding to compensate. An honest empty pass is a better
@@ -144,9 +163,9 @@ Append product, scope, or design ambiguity to the assumptions ledger, defaulting
 `<evidence-directory>/acceptance-assumptions.md`. Never report ambiguity as a defect or silently choose
 an interpretation. Keep this pass autonomous and leave those decisions to the human acceptance session.
 
-Write `<evidence-directory>/exploration-log.md`: the budget and rationale, each step with its
-prediction, its observation, and the resulting finding or nothing, plus the named list of what was
-deliberately not exercised and why.
+Write `<evidence-directory>/exploration-log.md`: each floor item with where it was exercised or why
+it was not, the exploration budget and rationale, each step with its prediction, its observation, and
+the resulting finding or nothing, plus the named list of what was deliberately not exercised and why.
 
 After every pass, overwrite `<evidence-directory>/acceptance-tested-revision.txt` with the exact SHA
 just tested. That file is the diff base for the next pass.
@@ -158,8 +177,9 @@ Screenshots support an observation; they are not proof on their own.
 ## After a fix
 
 A fix is a change. Apply this same method to it: read `<evidence-directory>/acceptance-tested-revision.txt`,
-diff the current worktree against that SHA, size the result by seams moved, and explore that. Do not
-re-run the previous pass, and do not derive the new scope from what was tested before.
+diff the current worktree against that SHA, size the result by seams moved, and explore that. The
+coverage floor does not apply again. Do not re-run the previous pass, and do not derive the new scope
+from what was tested before.
 
 If that file is missing, or names a SHA that does not resolve in this repository, report it as an
 impediment and explore the change as a whole rather than guessing a base.
@@ -181,14 +201,14 @@ cancelled, and timed-out checks as evidence states, never as passes.
 
 Then write `<evidence-directory>/acceptance-handoff.md`:
 
-1. **Decision brief** — delivered behavior, unresolved decisions, overall status, suggested review path.
-2. **Revision identity** — repository, PR URL, current head SHA, tracked worktree status.
-3. **Exploration** — the budget and rationale, what was exercised, what was found, and the named list of
-   what was not exercised.
-4. **CI** — status and durable links. Say plainly when no automated-validation evidence was supplied.
-5. **Visual and client evidence** — screenshot metadata, text equivalents, and practical review steps.
-6. **Human-only obligations** — applicable `HT-*` items as instructions, with no execution outcome.
-7. **Assumptions** — ledger path and a concise summary of each unresolved item.
+1. **Decision brief**: delivered behavior, unresolved decisions, overall status, suggested review path.
+2. **Revision identity**: repository, PR URL, current head SHA, tracked worktree status.
+3. **Exploration**: coverage-floor results, the budget and rationale, what was exercised, what was
+   found, and the named list of what was not exercised.
+4. **CI**: status and durable links. Say plainly when no automated-validation evidence was supplied.
+5. **Visual and client evidence**: screenshot metadata, text equivalents, and practical review steps.
+6. **Human-only obligations**: applicable `HT-*` items as instructions, with no execution outcome.
+7. **Assumptions**: ledger path and a concise summary of each unresolved item.
 
 Before reporting ready, confirm every referenced path exists and that no persisted evidence exposes
 secrets, credentials, or private data. Report the ready SHA, PR URL, handoff path, unresolved-decision
