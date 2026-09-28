@@ -13,6 +13,8 @@ cli:
 
 entry_points:
   - path: "."
-    checks: []
+    checks:
+      - scratch-space-guidance:
+          command: bash skills/test-flows/scripts/scratch-space_test.sh
     reviews:
       - skill-quality

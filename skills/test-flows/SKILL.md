@@ -14,7 +14,8 @@ Read the caller-supplied:
 - approved behavior or planning artifacts;
 - concise implementation summary;
 - verification scope: representative full pass or named targeted flows;
-- evidence directory when the selected scope includes UI flows or durable evidence is requested.
+- evidence directory when the selected scope includes UI flows or durable evidence is requested;
+- optional `scratch_dir`, the caller-provided scratch folder (for example, a per-step Agent Runner folder).
 
 If expected behavior is unavailable, report what is missing instead of inferring the contract from
 implementation alone.
@@ -41,6 +42,18 @@ the system disagree, and one of them is a defect. Emit actual values rather than
 boolean can only answer the question already thought of.
 
 For a deeper pass on a substantial change, use codagent:prepare-acceptance instead.
+
+## Scratch space
+
+When the caller provides `scratch_dir`, put every temporary file, clone, fixture project, seeded data,
+and server working folder inside it. Never use the system temp folder or a hard-coded temp path for
+these. Leave cleanup of a caller-provided scratch folder to the caller.
+
+Otherwise, create a dedicated `scratch/` folder under the caller's evidence directory, or next to the
+caller-specified report path if there is no evidence directory. Do not create it under the system temp
+folder. Copy any evidence to be retained out of this folder, then remove the folder at the end of the
+skill. If neither an evidence directory nor a report path supplies a session or artifact location,
+report the missing scratch location as a limitation; do not fall back to a temp folder.
 
 ## Exercise the public surface
 
@@ -70,7 +83,8 @@ Return a concise report containing:
 - clear defects with reproduction steps and affected flows;
 - product, scope, or design ambiguity separated from defects;
 - what was deliberately not exercised, and why;
-- untested or blocked flows and practical limitations.
+- untested or blocked flows and practical limitations;
+- the scratch folder used and, when this skill created it, confirmation that it was removed.
 
 Write the same report to a caller-specified path when requested. Do not create status markers or
 machine-control files.
