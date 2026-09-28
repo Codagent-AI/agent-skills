@@ -45,17 +45,20 @@ For a deeper pass on a substantial change, use codagent:prepare-acceptance inste
 
 ## Scratch space
 
-When the caller provides `scratch_dir`, put every temporary file, clone, fixture project, seeded data,
-and server working folder inside it. Never use the system temp folder or a hard-coded temp path for
-these. Leave cleanup of a caller-provided scratch folder to the caller.
+Check each candidate location: `scratch_dir`, the evidence directory, and the report path folder.
+Consider only locations the caller supplied. Resolve relative paths and symlinks for each candidate
+and both comparison roots. Get the worktree root with `git rev-parse --show-toplevel`.
+Reject any candidate inside the git worktree or the system temp folder. Use the first allowed location
+in that order. Never use a hard-coded temp path.
 
-Otherwise, create a new, unique scratch subfolder under the caller's evidence directory. If there is
-no evidence directory, use the folder of the caller-specified report path only when that folder is
-outside the git worktree; compare it against `git rev-parse --show-toplevel`. Do not reuse an existing
-folder or create one in the checked-out project worktree or the system temp folder. Copy any evidence
-to be retained out of this folder, then remove only the folder this skill created
-before the skill ends on any path, including early stops when a defect makes remaining flows
-unreachable, unsafe, or untrustworthy, and failures. If no allowed scratch location exists,
+When `scratch_dir` is allowed, put every temporary file, clone, fixture project, seeded data, and
+server working folder inside it. Leave cleanup of a caller-provided scratch folder to the caller.
+Otherwise, create a new, unique scratch subfolder under the allowed evidence directory or report path
+folder. Do not reuse an existing folder. Copy any evidence to be retained out of this folder, then
+remove only the folder this skill created before the skill ends on any path, including early stops when
+a defect makes remaining flows unreachable, unsafe, or untrustworthy, and failures.
+
+If no allowed scratch location exists,
 exercise only flows that need no scratch files, list each skipped flow under untested or blocked flows
 with the reason, and never create scratch files in the worktree or the system temp folder.
 

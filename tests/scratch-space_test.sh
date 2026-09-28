@@ -43,6 +43,16 @@ if ! grep -q 'git rev-parse --show-toplevel' "$REPO_ROOT/skills/test-flows/SKILL
   exit 1
 fi
 
+if ! grep -Fq 'Check each candidate location: `scratch_dir`, the evidence directory, and the report path folder.' "$REPO_ROOT/skills/test-flows/SKILL.md"; then
+  echo "FAIL: test-flows does not validate every scratch location" >&2
+  exit 1
+fi
+
+if ! grep -Fq 'Reject any candidate inside the git worktree or the system temp folder.' "$REPO_ROOT/skills/test-flows/SKILL.md"; then
+  echo "FAIL: test-flows does not reject unsafe scratch locations" >&2
+  exit 1
+fi
+
 if ! grep -q 'exercise only flows that need no scratch files' "$REPO_ROOT/skills/test-flows/SKILL.md"; then
   echo "FAIL: test-flows does not restrict flows when scratch space is unavailable" >&2
   exit 1
