@@ -16,5 +16,7 @@ entry_points:
     checks:
       - scratch-space-guidance:
           command: bash tests/scratch-space_test.sh
+      - release-version:
+          command: python3 tests/release_version_test.py
     reviews:
       - skill-quality
