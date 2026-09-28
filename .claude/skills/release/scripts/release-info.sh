@@ -71,7 +71,7 @@ if [ "$CURRENT_BRANCH" != "main" ] && [ "$AHEAD" -gt 0 ]; then
     if ! semver_greater "$BRANCH_VERSION" "$MAIN_VERSION" ||
        git rev-parse -q --verify "refs/tags/v$BRANCH_VERSION" >/dev/null; then
       jq -n --arg branch "$BRANCH_VERSION" --arg main "$MAIN_VERSION" \
-        '{"error": "stale_release", "message": "Branch release v\($branch) is stale: origin/main is at \($main) (or tag v\($branch) already exists). Bump the version manually before releasing."}' >&2
+        '{"error": "stale_release", "message": "Branch release v\($branch) is stale: origin/main is at \($main) (or tag v\($branch) already exists). Bump the version manually in .claude-plugin/plugin.json, .claude-plugin/marketplace.json, .codex-plugin/plugin.json, .cursor-plugin/plugin.json, and the CHANGELOG.md heading before releasing."}' >&2
       exit 1
     fi
     jq -n --arg c "$RELEASE_COMMIT" '{"error": "already_released", "message": "Branch already carries its release commit (\($c))."}'
