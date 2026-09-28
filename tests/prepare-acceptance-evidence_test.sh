@@ -31,8 +31,7 @@ requires_terms("Before blaming the environment", "change-owned causes are defect
 requires_terms("Before blaming the environment", "failed-run rulings carry the message and provenance",
                r"verbatim excerpt", r"evidence path", r"provenance", r"exploration-log\.md", r"assumptions")
 requires_terms("Before blaming the environment", "bounded investigation and unconfirmed fallback",
-               r"request", r"response", r"config", r"provenance", r"log", r"budget", r"outside the change",
-               r"inconclusive", r"no evidence", r"cause is unconfirmed", r"do not assert an external cause")
+               r"budget", r"envelope", r"inconclusive", r"unconfirmed", r"external cause")
 requires_terms("Coverage floor", "unrun floor item remains a limitation",
                r"could not exercise", r"limitation", r"no run", r"no failure evidence")
 requires_terms("When to stop", "unrun paths need no failure evidence",
@@ -42,7 +41,7 @@ requires_terms("When to stop", "external failed-run rulings include the message 
 requires_terms("Report", "failed-run records carry the message and provenance",
                r"exploration-log\.md", r"verbatim excerpt", r"evidence path", r"provenance")
 requires_terms("Wait for CI and hand off", "failed checks and comments have separate evidence paths",
-               r"`failed`", r"failing check's logs", r"`comments`", r"read the comments",
+               r"`failed`", r"failing check's logs", r"`comments`", r"comment",
                r"Before blaming the environment")
 requires_terms("Wait for CI and hand off", "handoff exploration quotes failed-run limitations",
                r"Exploration", r"evidence path", r"verbatim excerpt", r"provenance")

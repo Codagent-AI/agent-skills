@@ -167,10 +167,11 @@ defect in the change.
 ## When to stop
 
 Do not stop until every floor item is exercised or named as a limitation with its reason. For a failed
-run ruled external, include the evidence path, a short verbatim excerpt of the failing message or
-warning, and the provenance line supporting that ruling. Beyond the floor, stop when the remaining untested
-paths are enumerable and named, not when they are empty. "Not exercised" paths deliberately not run
-have no failure evidence; name why they were excluded without assigning an external cause. End
+run ruled external, out of scope, or pre-existing, include the evidence path, a short verbatim
+excerpt of the failing message or warning, and the provenance line supporting that ruling. Beyond
+the floor, stop when the remaining untested paths are enumerable and named, not when they are empty.
+"Not exercised" paths deliberately not run have no failure evidence; name why they were excluded
+without assigning an external cause. End
 with a sentence like: "Not exercised: the conflict path against live data, and behavior above the
 deletion cap." That is a complete result. "Everything tested" is never true.
 
