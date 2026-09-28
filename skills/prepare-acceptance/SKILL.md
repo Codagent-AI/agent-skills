@@ -46,7 +46,7 @@ the running product against the spec, not the suite.
 
 Group floor items that one realistic journey exercises together, and keep each one brief: predict,
 act, record the observed values. Anything in the floor you could not exercise is a limitation; name it
-with its reason. "Out of budget" is not a reason.
+with its reason, backed by the failure evidence you read. "Out of budget" is not a reason.
 
 Passes after a fix do not repeat the floor. They are sized from the diff; see "After a fix."
 
@@ -137,10 +137,26 @@ pass or fail. A boolean can only answer the question already thought of. For a U
 exact values and look at the interface for the mental model; some views are the only proof that a run
 wrote nothing.
 
+## Before blaming the environment
+
+When a coverage-floor item, required acceptance test, or exploration step fails, read that run's
+retained failure evidence before ruling it out of scope or recording a host, platform, engine, or
+external limitation or assumption. Inspect request/response files, logs, the resolved config, and
+which CLI, agent, credentials, or endpoint the run actually used. Confirm that evidence supports the
+recorded cause. If it points to anything the change owns, including its fixtures, smoke configs,
+pins, or defaults, record a defect in `<evidence-directory>/acceptance-findings.md` instead of a
+limitation or assumption. Cite the evidence path you read for every limitation or out-of-scope ruling.
+If no evidence was retained, say so and do not assert an external cause.
+
+For example, an unpinned agent can fall back to the real CLI and print `Not logged in`; if the retained
+`request.json` shows `auditor.cli = claude`, the smoke fixture's missing pin is a defect in the change.
+
 ## When to stop
 
-Do not stop until every floor item is exercised or named as a limitation with its reason. Beyond the
-floor, stop when the remaining untested paths are enumerable and named, not when they are empty. End
+Do not stop until every floor item is exercised or named as a limitation with its reason and the path
+to the evidence you read. Beyond the floor, stop when the remaining untested paths are enumerable and
+named, not when they are empty. Cite the evidence behind each "Not exercised" and limitation entry;
+when no run or retained evidence exists, state that instead of assigning an external cause. End
 with a sentence like: "Not exercised: the conflict path against live data, and behavior above the
 deletion cap." That is a complete result. "Everything tested" is never true.
 
@@ -194,8 +210,10 @@ head before invoking `codagent:wait-ci`. If any of those is missing, tell the ca
 align the PR; do not do it here. After CI returns, re-read local `HEAD` and the PR head and require both
 to match the returned SHA.
 
-On `failed` or `comments`, add anything clearly attributable to the implementation to the findings file
-and report it; report anything external as a blocker rather than a defect. On `pending`, report and stop.
+On `failed` or `comments`, read the failing check's logs before reporting it as external; confirm the
+failure is not attributable to the change. Add anything attributable to the implementation to the
+findings file and report it; report a confirmed external failure as a blocker with its log path rather
+than a defect. On `pending`, report and stop.
 With no configured checks, continue after recording that CI coverage is absent. Treat skipped, neutral,
 cancelled, and timed-out checks as evidence states, never as passes.
 
@@ -204,7 +222,7 @@ Then write `<evidence-directory>/acceptance-handoff.md`:
 1. **Decision brief**: delivered behavior, unresolved decisions, overall status, suggested review path.
 2. **Revision identity**: repository, PR URL, current head SHA, tracked worktree status.
 3. **Exploration**: coverage-floor results, the budget and rationale, what was exercised, what was
-   found, and the named list of what was not exercised.
+   found, and the named list of what was not exercised, with the evidence path behind each limitation.
 4. **CI**: status and durable links. Say plainly when no automated-validation evidence was supplied.
 5. **Visual and client evidence**: screenshot metadata, text equivalents, and practical review steps.
 6. **Human-only obligations**: applicable `HT-*` items as instructions, with no execution outcome.
