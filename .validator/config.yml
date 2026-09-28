@@ -13,6 +13,8 @@ cli:
 
 entry_points:
   - path: "."
-    checks: []
+    checks:
+      - prepare-acceptance-evidence:
+          command: bash tests/prepare-acceptance-evidence_test.sh
     reviews:
       - skill-quality

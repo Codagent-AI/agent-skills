@@ -46,7 +46,9 @@ the running product against the spec, not the suite.
 
 Group floor items that one realistic journey exercises together, and keep each one brief: predict,
 act, record the observed values. Anything in the floor you could not exercise is a limitation; name it
-with its reason, backed by the failure evidence you read. "Out of budget" is not a reason.
+with its reason. If a floor run failed, back an external limitation reason with the failure evidence
+you read. If no run was permitted by the approved envelope, such as missing authorized credentials,
+name that constraint; there is no failure evidence to cite. "Out of budget" is not a reason.
 
 Passes after a fix do not repeat the floor. They are sized from the diff; see "After a fix."
 
@@ -139,13 +141,15 @@ wrote nothing.
 
 ## Before blaming the environment
 
-When a coverage-floor item, required acceptance test, or exploration step fails, read that run's
-retained failure evidence before ruling it out of scope or recording a host, platform, engine, or
-external limitation or assumption. Inspect request/response files, logs, the resolved config, and
-which CLI, agent, credentials, or endpoint the run actually used. Confirm that evidence supports the
-recorded cause. If it points to anything the change owns, including its fixtures, smoke configs,
-pins, or defaults, record a defect in `<evidence-directory>/acceptance-findings.md` instead of a
-limitation or assumption. Cite the evidence path you read for every limitation or out-of-scope ruling.
+When a coverage-floor item, required acceptance test named by the approved test plan, or exploration
+step fails, read that run's retained failure evidence before ruling it out of scope or recording a
+host, platform, engine, or external limitation or assumption. Inspect request/response files, logs,
+the resolved config, and which CLI, agent, credentials, or endpoint the run actually used. Confirm
+that evidence supports the recorded cause. Check the run's output directory and the evidence directory
+before concluding that no artifacts were retained. If the evidence points to anything the change owns,
+including its fixtures, smoke configs, pins, or defaults, record a defect in
+`<evidence-directory>/acceptance-findings.md` instead of a limitation or assumption. Cite the evidence
+path you read for every limitation or out-of-scope ruling after a failed run.
 If no evidence was retained, say so and do not assert an external cause.
 
 For example, an unpinned agent can fall back to the real CLI and print `Not logged in`; if the retained
@@ -153,10 +157,10 @@ For example, an unpinned agent can fall back to the real CLI and print `Not logg
 
 ## When to stop
 
-Do not stop until every floor item is exercised or named as a limitation with its reason and the path
-to the evidence you read. Beyond the floor, stop when the remaining untested paths are enumerable and
-named, not when they are empty. Cite the evidence behind each "Not exercised" and limitation entry;
-when no run or retained evidence exists, state that instead of assigning an external cause. End
+Do not stop until every floor item is exercised or named as a limitation with its reason. For a failed
+run ruled external, cite the evidence path you read. Beyond the floor, stop when the remaining untested
+paths are enumerable and named, not when they are empty. "Not exercised" paths deliberately not run
+have no failure evidence; name why they were excluded without assigning an external cause. End
 with a sentence like: "Not exercised: the conflict path against live data, and behavior above the
 deletion cap." That is a complete result. "Everything tested" is never true.
 
@@ -222,7 +226,8 @@ Then write `<evidence-directory>/acceptance-handoff.md`:
 1. **Decision brief**: delivered behavior, unresolved decisions, overall status, suggested review path.
 2. **Revision identity**: repository, PR URL, current head SHA, tracked worktree status.
 3. **Exploration**: coverage-floor results, the budget and rationale, what was exercised, what was
-   found, and the named list of what was not exercised, with the evidence path behind each limitation.
+   found, and the named list of what was not exercised. Include the evidence path behind each
+   limitation attributed to a failed run; give the reason for each item that could not be run.
 4. **CI**: status and durable links. Say plainly when no automated-validation evidence was supplied.
 5. **Visual and client evidence**: screenshot metadata, text equivalents, and practical review steps.
 6. **Human-only obligations**: applicable `HT-*` items as instructions, with no execution outcome.
