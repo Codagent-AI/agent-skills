@@ -33,6 +33,23 @@ if ! grep -q 'before the skill ends on any path' "$REPO_ROOT/skills/prepare-acce
   exit 1
 fi
 
+if ! grep -q 'git rev-parse --show-toplevel' "$REPO_ROOT/skills/prepare-acceptance/SKILL.md" ||
+   ! grep -q 'Resolve relative paths and symlinks' "$REPO_ROOT/skills/prepare-acceptance/SKILL.md"; then
+  echo "FAIL: prepare-acceptance does not resolve scratch and evidence paths" >&2
+  exit 1
+fi
+
+if ! grep -q 'Reject any candidate inside the git worktree or the system temp folder' "$REPO_ROOT/skills/prepare-acceptance/SKILL.md"; then
+  echo "FAIL: prepare-acceptance does not reject unsafe scratch and evidence paths" >&2
+  exit 1
+fi
+
+if ! grep -q 'If the evidence directory is rejected' "$REPO_ROOT/skills/prepare-acceptance/SKILL.md" ||
+   ! grep -q 'If `scratch_dir` is rejected' "$REPO_ROOT/skills/prepare-acceptance/SKILL.md"; then
+  echo "FAIL: prepare-acceptance does not handle rejected scratch and evidence paths" >&2
+  exit 1
+fi
+
 if ! grep -q 'before the skill ends on any path' "$REPO_ROOT/skills/test-flows/SKILL.md"; then
   echo "FAIL: test-flows does not clean up on every exit path" >&2
   exit 1

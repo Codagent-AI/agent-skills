@@ -37,13 +37,21 @@ them.
 
 ## Scratch space
 
-When the caller provides `scratch_dir`, put every temporary file, clone, fixture project, seeded data,
-and server working folder inside it. Never use the system temp folder or a hard-coded temp path for
-these. Leave cleanup of a caller-provided scratch folder to the caller.
+Before creating files, check the evidence directory and any caller-provided `scratch_dir`.
+Resolve relative paths and symlinks for both locations and both comparison roots. Get the worktree root with
+`git rev-parse --show-toplevel`.
+Reject any candidate inside the git worktree or the system temp folder, including a path that resolves
+there through a symlink. If the evidence directory is rejected, report the unsafe input and stop
+without writing evidence or scratch files. If `scratch_dir` is rejected, use the allowed evidence
+directory as the scratch fallback.
 
-Otherwise, create a new, unique scratch subfolder under the evidence directory for those disposable
-files and folders. Do not reuse an existing folder or create one under the system temp folder. Keep
-durable evidence separate from scratch space:
+When the caller provides an allowed `scratch_dir`, put every temporary file, clone, fixture project,
+seeded data, and server working folder inside it. Never use the system temp folder or a hard-coded temp
+path for these. Leave cleanup of a caller-provided scratch folder to the caller.
+
+Otherwise, create a new, unique scratch subfolder under the allowed evidence directory for those
+disposable files and folders. Do not reuse an existing folder or create one under the system temp
+folder. Keep durable evidence separate from scratch space:
 `exploration-log.md`, `acceptance-findings.md`, screenshots, and `acceptance-tested-revision.txt` live
 under the evidence directory, outside the scratch subfolder. Copy any retained evidence out of scratch
 space, then remove only the folder this skill created before the skill ends on any path, including early
