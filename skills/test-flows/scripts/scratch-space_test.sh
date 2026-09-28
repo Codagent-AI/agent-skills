@@ -33,4 +33,9 @@ if ! grep -q 'before the skill ends on any path' "$REPO_ROOT/skills/prepare-acce
   exit 1
 fi
 
+if ! grep -q 'before the skill ends on any path' "$REPO_ROOT/skills/test-flows/SKILL.md"; then
+  echo "FAIL: test-flows does not clean up on every exit path" >&2
+  exit 1
+fi
+
 echo "PASS: scratch-space guidance is present in both skills"

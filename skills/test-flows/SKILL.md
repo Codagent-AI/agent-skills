@@ -52,9 +52,10 @@ these. Leave cleanup of a caller-provided scratch folder to the caller.
 Otherwise, create a new, unique scratch subfolder under the caller's evidence directory, or next to
 the caller-specified report path if there is no evidence directory. Do not reuse an existing folder or
 create one under the system temp folder. Copy any evidence to be retained out of this folder, then
-remove only the folder this skill created at the end of the skill. If neither an evidence directory nor
-a report path supplies a session or artifact location, report the missing scratch location as a
-limitation; do not fall back to a temp folder.
+remove only the folder this skill created before the skill ends on any path, including early stops when
+a defect makes remaining flows unreachable, unsafe, or untrustworthy, and failures. If neither an
+evidence directory nor a report path supplies a session or artifact location, report the missing scratch
+location as a limitation; do not fall back to a temp folder.
 
 ## Exercise the public surface
 
