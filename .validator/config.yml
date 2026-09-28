@@ -15,6 +15,6 @@ entry_points:
   - path: "."
     checks:
       - scratch-space-guidance:
-          command: bash skills/test-flows/scripts/scratch-space_test.sh
+          command: bash tests/scratch-space_test.sh
     reviews:
       - skill-quality
