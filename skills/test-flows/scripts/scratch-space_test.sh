@@ -21,6 +21,11 @@ for skill in test-flows prepare-acceptance; do
     echo "FAIL: $skill has no scratch-space guidance" >&2
     exit 1
   fi
+
+  if ! grep -q 'unique scratch' "$file" || ! grep -q 'remove only' "$file"; then
+    echo "FAIL: $skill does not require unique, owned scratch cleanup" >&2
+    exit 1
+  fi
 done
 
 echo "PASS: scratch-space guidance is present in both skills"

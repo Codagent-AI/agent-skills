@@ -41,11 +41,12 @@ When the caller provides `scratch_dir`, put every temporary file, clone, fixture
 and server working folder inside it. Never use the system temp folder or a hard-coded temp path for
 these. Leave cleanup of a caller-provided scratch folder to the caller.
 
-Otherwise, create `<evidence-directory>/scratch/` for those disposable files and folders. Do not
-create it under the system temp folder. Keep durable evidence separate from scratch space:
+Otherwise, create a new, unique scratch subfolder under the evidence directory for those disposable
+files and folders. Do not reuse an existing folder or create one under the system temp folder. Keep
+durable evidence separate from scratch space:
 `exploration-log.md`, `acceptance-findings.md`, screenshots, and `acceptance-tested-revision.txt` live
-under the evidence directory, outside `scratch/`. Copy any retained evidence out of scratch space,
-then remove the scratch folder created by this skill before writing the handoff.
+under the evidence directory, outside the scratch subfolder. Copy any retained evidence out of scratch
+space, then remove only the folder this skill created before writing the handoff.
 
 ## Coverage floor
 
