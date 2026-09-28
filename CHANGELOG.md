@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.12.1
+
+### Patch Changes
+
+- Fix `prepare-acceptance` to read retained failure evidence before attributing failed acceptance runs to the environment, and record change-owned fixture causes as defects (Codagent-AI/agent-skills#59).
+
 ## 0.12.0
 
 ### Minor Changes
