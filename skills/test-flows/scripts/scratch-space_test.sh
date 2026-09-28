@@ -28,4 +28,9 @@ for skill in test-flows prepare-acceptance; do
   fi
 done
 
+if ! grep -q 'before the skill ends on any path' "$REPO_ROOT/skills/prepare-acceptance/SKILL.md"; then
+  echo "FAIL: prepare-acceptance does not clean up on every exit path" >&2
+  exit 1
+fi
+
 echo "PASS: scratch-space guidance is present in both skills"

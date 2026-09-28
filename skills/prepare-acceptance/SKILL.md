@@ -46,7 +46,9 @@ files and folders. Do not reuse an existing folder or create one under the syste
 durable evidence separate from scratch space:
 `exploration-log.md`, `acceptance-findings.md`, screenshots, and `acceptance-tested-revision.txt` live
 under the evidence directory, outside the scratch subfolder. Copy any retained evidence out of scratch
-space, then remove only the folder this skill created before writing the handoff.
+space, then remove only the folder this skill created before the skill ends on any path, including early
+stops for defects, revision misalignment, or pending CI. On successful passes, do this before writing
+the handoff.
 
 ## Coverage floor
 
