@@ -18,35 +18,34 @@ def section(title):
     return match.group(1)
 
 
-def requires(title, label, pattern):
-    assert re.search(pattern, section(title), re.I | re.S), f"{title}: {label}"
+def requires_terms(title, label, *terms):
+    body = re.sub(r"\s+", " ", section(title))
+    missing = [term for term in terms if not re.search(term, body, re.I)]
+    assert not missing, f"{title}: {label}; missing {missing}"
 
 
-requires("Before blaming the environment", "failed runs require evidence review before external attribution",
-         r"fails.*read.*retained failure evidence.*before.*(?:external|limitation)")
-requires("Before blaming the environment", "inspect artifacts and actual runtime choices",
-         r"request/response.*logs.*resolved config.*CLI.*agent.*credentials.*endpoint")
-requires("Before blaming the environment", "change-owned fixtures are defects",
-         r"change owns.*fixtures.*pins.*record a defect.*acceptance-findings\.md")
-requires("Before blaming the environment", "external rulings cite reviewed evidence",
-         r"Cite.*evidence\s+path.*limitation.*out-of-scope")
-requires("Before blaming the environment", "absence of evidence is not an external cause",
-         r"no evidence.*do not assert an external cause")
-requires("Before blaming the environment", "reported fallback is classified as a fixture defect",
-         r"unpinned agent.*Not logged in.*request\.json.*auditor\.cli = claude.*fixture.*defect")
-requires("Before blaming the environment", "required tests come from approved plans",
-         r"required acceptance test.*approved test plan")
-requires("Before blaming the environment", "search the run output before declaring evidence absent",
-         r"(?:working|output) directory.*evidence directory")
+requires_terms("Before blaming the environment", "failed runs require retained evidence before attribution",
+               r"any run", r"fails", r"retained", r"before", r"external")
+requires_terms("Before blaming the environment", "change-owned causes are defects",
+               r"change owns", r"defect", r"acceptance-findings\.md")
+requires_terms("Before blaming the environment", "failed-run rulings carry the message and provenance",
+               r"verbatim excerpt", r"evidence path", r"provenance", r"exploration-log\.md", r"assumptions")
+requires_terms("Before blaming the environment", "bounded investigation and unconfirmed fallback",
+               r"request", r"response", r"config", r"provenance", r"log", r"budget", r"outside the change",
+               r"inconclusive", r"no evidence", r"cause is unconfirmed", r"do not assert an external cause")
+requires_terms("Coverage floor", "unrun floor item remains a limitation",
+               r"could not exercise", r"limitation", r"no run", r"no failure evidence")
+requires_terms("When to stop", "unrun paths need no failure evidence",
+               r"[Nn]ot exercised", r"not run", r"no failure evidence")
+requires_terms("When to stop", "external failed-run rulings include the message and provenance",
+               r"failed run", r"evidence path", r"verbatim excerpt", r"provenance")
+requires_terms("Report", "failed-run records carry the message and provenance",
+               r"exploration-log\.md", r"verbatim excerpt", r"evidence path", r"provenance")
+requires_terms("Wait for CI and hand off", "failed checks and comments have separate evidence paths",
+               r"`failed`", r"failing check's logs", r"`comments`", r"read the comments",
+               r"Before blaming the environment")
+requires_terms("Wait for CI and hand off", "handoff exploration quotes failed-run limitations",
+               r"Exploration", r"evidence path", r"verbatim excerpt", r"provenance")
 
-requires("Coverage floor", "unrun floor items do not require failure evidence",
-         r"could not exercise.*limitation.*no run.*(?:envelope|credential)")
-requires("When to stop", "unrun exclusions do not require failure evidence",
-         r"Not exercised.*(?:unrun|not run).*no failure evidence")
-requires("Wait for CI and hand off", "read failing CI logs before external attribution",
-         r"read the failing check's logs.*external")
-requires("Wait for CI and hand off", "handoff cites evidence for failed-run limitations",
-         r"Exploration.*evidence\s+path.*limitation.*failed run")
-
-print("PASS: acceptance failures require retained evidence before external attribution")
+print("PASS: acceptance failures require bounded, quoted evidence before external attribution")
 PY

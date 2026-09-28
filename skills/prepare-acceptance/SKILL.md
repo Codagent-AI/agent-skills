@@ -141,24 +141,34 @@ wrote nothing.
 
 ## Before blaming the environment
 
-When a coverage-floor item, required acceptance test named by the approved test plan, or exploration
-step fails, read that run's retained failure evidence before ruling it out of scope or recording a
-host, platform, engine, or external limitation or assumption. Inspect request/response files, logs,
-the resolved config, and which CLI, agent, credentials, or endpoint the run actually used. Confirm
-that evidence supports the recorded cause. Check the run's output directory and the evidence directory
-before concluding that no artifacts were retained. If the evidence points to anything the change owns,
-including its fixtures, smoke configs, pins, or defaults, record a defect in
-`<evidence-directory>/acceptance-findings.md` instead of a limitation or assumption. Cite the evidence
-path you read for every limitation or out-of-scope ruling after a failed run.
-If no evidence was retained, say so and do not assert an external cause.
+When any run you make or observe during this pass fails, whether a coverage-floor item, an exploration
+step, or an acceptance case an older plan still lists, read that run's retained failure evidence before
+ruling it out of scope or recording a host, platform, engine, or external limitation or assumption.
+Limit this reading to the failed run's retained artifacts: the failing message or warning, its request,
+response, config, and provenance files, and its log. Check the run's output directory and the evidence
+directory before concluding that no artifacts were retained. Inspect which CLI, agent, credentials, or endpoint
+the run actually used. This reading does not count against the exploration budget. Do not debug engines
+or code outside the change, or re-run with a changed config outside the envelope, to prove a cause.
 
-For example, an unpinned agent can fall back to the real CLI and print `Not logged in`; if the retained
-`request.json` shows `auditor.cli = claude`, the smoke fixture's missing pin is a defect in the change.
+If the evidence points to anything the change owns, including its fixtures, smoke configs, pins, or
+defaults, record a defect in `<evidence-directory>/acceptance-findings.md` instead of a limitation or
+assumption. For every failed run ruled external, out of scope, pre-existing, or unconfirmed, record in
+`exploration-log.md` and any assumptions-ledger entry the evidence path, a short verbatim excerpt of the
+failing message or warning (with secrets redacted), and the provenance line supporting the attribution:
+the CLI, agent, credentials, or endpoint the run actually used. If reading the retained artifacts is
+inconclusive, or no evidence was retained, record the failure as an unresolved assumption with the
+excerpt (if any) and the available paths. State that the cause is unconfirmed; do not assert an external
+cause.
+
+For example, a smoke run fails with `Not logged in`; the run's recorded request shows it used the real
+CLI rather than the fixture's stub, because the fixture never pinned the agent. That missing pin is a
+defect in the change.
 
 ## When to stop
 
 Do not stop until every floor item is exercised or named as a limitation with its reason. For a failed
-run ruled external, cite the evidence path you read. Beyond the floor, stop when the remaining untested
+run ruled external, include the evidence path, a short verbatim excerpt of the failing message or
+warning, and the provenance line supporting that ruling. Beyond the floor, stop when the remaining untested
 paths are enumerable and named, not when they are empty. "Not exercised" paths deliberately not run
 have no failure evidence; name why they were excluded without assigning an external cause. End
 with a sentence like: "Not exercised: the conflict path against live data, and behavior above the
@@ -186,6 +196,8 @@ an interpretation. Keep this pass autonomous and leave those decisions to the hu
 Write `<evidence-directory>/exploration-log.md`: each floor item with where it was exercised or why
 it was not, the exploration budget and rationale, each step with its prediction, its observation, and
 the resulting finding or nothing, plus the named list of what was deliberately not exercised and why.
+For failed-run rulings, include the evidence path, short verbatim excerpt, and provenance line as
+described in "Before blaming the environment."
 
 After every pass, overwrite `<evidence-directory>/acceptance-tested-revision.txt` with the exact SHA
 just tested. That file is the diff base for the next pass.
@@ -214,10 +226,10 @@ head before invoking `codagent:wait-ci`. If any of those is missing, tell the ca
 align the PR; do not do it here. After CI returns, re-read local `HEAD` and the PR head and require both
 to match the returned SHA.
 
-On `failed` or `comments`, read the failing check's logs before reporting it as external; confirm the
-failure is not attributable to the change. Add anything attributable to the implementation to the
-findings file and report it; report a confirmed external failure as a blocker with its log path rather
-than a defect. On `pending`, report and stop.
+On `failed`, read the failing check's logs; on `comments`, read the comments. Then apply "Before blaming
+the environment" before reporting either as external. Add anything attributable to the implementation
+to the findings file and report it; report a confirmed external failure as a blocker with its log path
+and a short verbatim excerpt rather than a defect. On `pending`, report and stop.
 With no configured checks, continue after recording that CI coverage is absent. Treat skipped, neutral,
 cancelled, and timed-out checks as evidence states, never as passes.
 
@@ -226,8 +238,9 @@ Then write `<evidence-directory>/acceptance-handoff.md`:
 1. **Decision brief**: delivered behavior, unresolved decisions, overall status, suggested review path.
 2. **Revision identity**: repository, PR URL, current head SHA, tracked worktree status.
 3. **Exploration**: coverage-floor results, the budget and rationale, what was exercised, what was
-   found, and the named list of what was not exercised. Include the evidence path behind each
-   limitation attributed to a failed run; give the reason for each item that could not be run.
+   found, and the named list of what was not exercised. For each limitation attributed to a failed run,
+   include the evidence path, a short verbatim excerpt of the failing message or warning, and the
+   provenance line; give the reason for each item that could not be run.
 4. **CI**: status and durable links. Say plainly when no automated-validation evidence was supplied.
 5. **Visual and client evidence**: screenshot metadata, text equivalents, and practical review steps.
 6. **Human-only obligations**: applicable `HT-*` items as instructions, with no execution outcome.
