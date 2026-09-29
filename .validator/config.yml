@@ -18,5 +18,7 @@ entry_points:
           command: bash tests/scratch-space_test.sh
       - release-version:
           command: python3 tests/release_version_test.py
+      - prepare-acceptance-evidence:
+          command: bash tests/prepare-acceptance-evidence_test.sh
     reviews:
       - skill-quality

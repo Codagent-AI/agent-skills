@@ -89,7 +89,8 @@ to find what they only appear to assert, predicts each result before running it,
 deliberately did not exercise. The approved test plan supplies its envelope of environments,
 credentials, authorized effects, and permitted substitutes. After a fix it explores the diff since its
 last pass. It captures visual or client evidence, waits for aligned current-head CI, and produces the
-acceptance handoff. Fixes and automated validation are handled by the caller.
+acceptance handoff. Before attributing a failed run to the environment, it reads retained failure
+evidence and records change-owned causes as defects. Fixes and automated validation are handled by the caller.
 It uses the caller's `scratch_dir` or creates and removes a scratch folder under the evidence folder,
 never the system temp folder.
 
