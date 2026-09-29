@@ -14,7 +14,8 @@ Read the caller-supplied:
 - approved behavior or planning artifacts;
 - concise implementation summary;
 - verification scope: representative full pass or named targeted flows;
-- evidence directory when the selected scope includes UI flows or durable evidence is requested.
+- evidence directory when the selected scope includes UI flows or durable evidence is requested;
+- optional `scratch_dir`, the caller-provided scratch folder (for example, a per-step Agent Runner folder).
 
 If expected behavior is unavailable, report what is missing instead of inferring the contract from
 implementation alone.
@@ -41,6 +42,25 @@ the system disagree, and one of them is a defect. Emit actual values rather than
 boolean can only answer the question already thought of.
 
 For a deeper pass on a substantial change, use codagent:prepare-acceptance instead.
+
+## Scratch space
+
+Check each candidate location: `scratch_dir`, the evidence directory, and the report path folder.
+Consider only locations the caller supplied. Resolve relative paths and symlinks for each candidate
+and both comparison roots. Get the worktree root with `git rev-parse --show-toplevel`.
+Reject any candidate inside the git worktree or the system temp folder. Use the first allowed location
+in that order. Never use a hard-coded temp path.
+
+When `scratch_dir` is allowed, put every temporary file, clone, fixture project, seeded data, and
+server working folder inside it. Leave cleanup of a caller-provided scratch folder to the caller.
+Otherwise, create a new, unique scratch subfolder under the allowed evidence directory or report path
+folder. Do not reuse an existing folder. Copy any evidence to be retained out of this folder, then
+remove only the folder this skill created before the skill ends on any path, including early stops when
+a defect makes remaining flows unreachable, unsafe, or untrustworthy, and failures.
+
+If no allowed scratch location exists,
+exercise only flows that need no scratch files, list each skipped flow under untested or blocked flows
+with the reason, and never create scratch files in the worktree or the system temp folder.
 
 ## Exercise the public surface
 
@@ -70,7 +90,8 @@ Return a concise report containing:
 - clear defects with reproduction steps and affected flows;
 - product, scope, or design ambiguity separated from defects;
 - what was deliberately not exercised, and why;
-- untested or blocked flows and practical limitations.
+- untested or blocked flows and practical limitations;
+- the scratch folder used and, when this skill created it, confirmation that it was removed.
 
 Write the same report to a caller-specified path when requested. Do not create status markers or
 machine-control files.
