@@ -58,6 +58,22 @@ if [ "$CURRENT_BRANCH" != "main" ] && [ "$AHEAD" -gt 0 ]; then
   # (e.g. review fixes) ship under that release instead of triggering another bump.
   RELEASE_COMMIT=$(git log --format='%h %s' --no-merges origin/main..HEAD | grep -m1 '^[0-9a-f]* chore: release v' || true)
   if [ -n "$RELEASE_COMMIT" ]; then
+    BRANCH_VERSION="$CURRENT_VERSION"
+    MAIN_VERSION=$(git show origin/main:"$PLUGIN_JSON" | jq -r '.version')
+    semver_greater() {
+      local branch_major branch_minor branch_patch main_major main_minor main_patch
+      IFS=. read -r branch_major branch_minor branch_patch <<< "$1"
+      IFS=. read -r main_major main_minor main_patch <<< "$2"
+      (( 10#$branch_major > 10#$main_major ||
+         (10#$branch_major == 10#$main_major && 10#$branch_minor > 10#$main_minor) ||
+         (10#$branch_major == 10#$main_major && 10#$branch_minor == 10#$main_minor && 10#$branch_patch > 10#$main_patch) ))
+    }
+    if ! semver_greater "$BRANCH_VERSION" "$MAIN_VERSION" ||
+       git rev-parse -q --verify "refs/tags/v$BRANCH_VERSION" >/dev/null; then
+      jq -n --arg branch "$BRANCH_VERSION" --arg main "$MAIN_VERSION" \
+        '{"error": "stale_release", "message": "Branch release v\($branch) is stale: origin/main is at \($main) (or tag v\($branch) already exists). Bump the version manually in .claude-plugin/plugin.json, .claude-plugin/marketplace.json, .codex-plugin/plugin.json, .cursor-plugin/plugin.json, and the CHANGELOG.md heading before releasing."}' >&2
+      exit 1
+    fi
     jq -n --arg c "$RELEASE_COMMIT" '{"error": "already_released", "message": "Branch already carries its release commit (\($c))."}'
     exit 0
   fi

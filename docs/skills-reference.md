@@ -76,6 +76,8 @@ Exercises a small or branch-local change through representative public user or c
 typical data, captures meaningful screenshots for tested UI flows or client-visible evidence for
 non-UI surfaces, and reports defects, ambiguities, and limitations. It does not run automated suites,
 fix defects, require a PR, wait for CI, or prepare a formal acceptance handoff.
+It uses the caller's `scratch_dir` or creates and removes a scratch folder under the session or evidence
+folder, never the system temp folder.
 
 ### `prepare-acceptance`
 
@@ -89,6 +91,8 @@ credentials, authorized effects, and permitted substitutes. After a fix it explo
 last pass. It captures visual or client evidence, waits for aligned current-head CI, and produces the
 acceptance handoff. Before attributing a failed run to the environment, it reads retained failure
 evidence and records change-owned causes as defects. Fixes and automated validation are handled by the caller.
+It uses the caller's `scratch_dir` or creates and removes a scratch folder under the evidence folder,
+never the system temp folder.
 
 ## Pull Requests
 

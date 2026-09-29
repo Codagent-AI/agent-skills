@@ -9,11 +9,15 @@ cli:
     codex:
       model: gpt-6-sol
       allow_tool_use: false
-      thinking_budget: medium
+      thinking_budget: low
 
 entry_points:
   - path: "."
     checks:
+      - scratch-space-guidance:
+          command: bash tests/scratch-space_test.sh
+      - release-version:
+          command: python3 tests/release_version_test.py
       - prepare-acceptance-evidence:
           command: bash tests/prepare-acceptance-evidence_test.sh
     reviews:
