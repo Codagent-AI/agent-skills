@@ -29,11 +29,34 @@ expect.
 
 Resolve from the caller: approved artifacts, the testing envelope naming authorized effects,
 credentials, sandboxes, cost, cleanup, and any `HT-*` obligations reserved for humans; an
-implementation summary; and an evidence directory. If approved artifacts or the evidence directory are
-missing, report that and stop.
+implementation summary; an evidence directory; and optional `scratch_dir`, the caller-provided scratch
+folder. If approved artifacts or the evidence directory are missing, report that and stop.
 
 Carry `HT-*` obligations forward as human-review instructions. Never execute them or claim evidence for
 them.
+
+## Scratch space
+
+Before creating files, check the evidence directory and any caller-provided `scratch_dir`.
+Resolve relative paths and symlinks for both locations and both comparison roots. Get the worktree root with
+`git rev-parse --show-toplevel`.
+Reject any candidate inside the git worktree or the system temp folder, including a path that resolves
+there through a symlink. If the evidence directory is rejected, report the unsafe input and stop
+without writing evidence or scratch files. If `scratch_dir` is rejected, use the allowed evidence
+directory as the scratch fallback.
+
+When the caller provides an allowed `scratch_dir`, put every temporary file, clone, fixture project,
+seeded data, and server working folder inside it. Never use the system temp folder or a hard-coded temp
+path for these. Leave cleanup of a caller-provided scratch folder to the caller.
+
+Otherwise, create a new, unique scratch subfolder under the allowed evidence directory for those
+disposable files and folders. Do not reuse an existing folder or create one under the system temp
+folder. Keep durable evidence separate from scratch space:
+`exploration-log.md`, `acceptance-findings.md`, screenshots, and `acceptance-tested-revision.txt` live
+under the evidence directory, outside the scratch subfolder. Copy any retained evidence out of scratch
+space, then remove only the folder this skill created before the skill ends on any path, including early
+stops for defects, revision misalignment, or pending CI. On successful passes, do this before writing
+the handoff.
 
 ## Coverage floor
 
@@ -210,14 +233,14 @@ Then write `<evidence-directory>/acceptance-handoff.md`:
 6. **Human-only obligations**: applicable `HT-*` items as instructions, with no execution outcome.
 7. **Assumptions**: ledger path and a concise summary of each unresolved item.
 
-Before reporting ready, confirm every referenced path exists and that no persisted evidence exposes
-secrets, credentials, or private data. Report the ready SHA, PR URL, handoff path, unresolved-decision
-count, CI status, and known limitations.
+Before reporting ready, confirm every referenced path exists, that any scratch folder created by this
+skill was removed, and that no persisted evidence exposes secrets, credentials, or private data. Report
+the ready SHA, PR URL, handoff path, unresolved-decision count, CI status, and known limitations.
 
 ## Out of scope
 
 - Do not fix defects, modify tracked source or approved artifacts, commit, push, or alter PR metadata.
-  Disposable setup and build outputs are fine.
+  Disposable setup and build outputs are fine; outside the worktree, put them under the scratch folder.
 - Do not run automated suites, linters, or the Validator. Setup and builds needed to use the product are fine.
 - Do not change approved requirements, scope, or design to make something pass.
 - Do not obtain human acceptance, mark the PR ready, merge, archive, or release.

@@ -1,5 +1,17 @@
 # agent-skills
 
+## 0.12.2
+
+### Patch Changes
+
+- Keep exploratory testing scratch files in caller-provided or artifact-local folders, and clean up skill-created folders on every exit path.
+
+## 0.12.1
+
+### Patch Changes
+
+- Reject a branch's release commit when its version has already reached main or its tag exists, and cover the stale release cases with a regression test.
+
 ## 0.12.0
 
 ### Minor Changes
