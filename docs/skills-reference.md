@@ -70,7 +70,7 @@ Coordinates a full change. It dispatches one `implement-and-validate` subagent p
 
 ### `orchestrate-change`
 
-Implements a well-specified change directly from its proposal, specifications, design, and test plan, without a task breakdown. The agent acts as an orchestrator: sub-agents write all of the code, and the orchestrator plans slices, verifies each one, and confirms every spec scenario and test-plan item is covered.
+Implements a well-specified change directly from its proposal, specifications, design, and test plan, without a task breakdown. The agent acts as an orchestrator: sub-agents write all of the code, and the orchestrator plans slices and checks that each slice's automated tests exist and pass. Exploratory and manual acceptance testing happen downstream.
 
 ## Testing
 

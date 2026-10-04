@@ -33,11 +33,14 @@ the artifacts and record it.
 2. **Delegate.** Sub-agents do not see your conversation, so give each a self-contained brief:
    the goal, the artifact paths and the exact scenarios it covers, relevant design decisions and
    earlier rulings, its boundaries, and how to report back. Each sub-agent commits its own work.
-3. **Verify.** Do not accept "done" without evidence. Check each slice's tests and commits, and
-   have a fresh sub-agent review non-trivial slices against the spec. Send fixes back to a
-   sub-agent.
-4. **Integrate.** When all slices are done, have the full checks run and a fresh reviewer confirm
-   every spec scenario and test-plan item is implemented and tested. Turn gaps into new slices.
+3. **Verify.** Do not accept "done" without evidence: each slice's automated tests from the test
+   plan exist and pass, and its work is committed. Send fixes back to a sub-agent.
+4. **Integrate.** When all slices are done, have the full automated test suite and checks run,
+   and confirm every spec scenario and automated test-plan item is covered. Turn gaps into new
+   slices.
+
+Verification here is automated. Exploratory and manual acceptance testing happen after
+implementation, not in this skill.
 
 Change the approved artifacts only if implementation proves one wrong, and record why.
 
