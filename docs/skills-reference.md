@@ -58,16 +58,6 @@ Provides a generic artifact-quality review for any available proposal, spec, des
 
 Compresses planning for small changes into one lightweight flow. It writes a proposal, one or more spec files, an optional design, and a `tasks.md` placeholder so the change remains implementation-ready.
 
-## Implementation
-
-### `implement-and-validate`
-
-Implements one task end to end. It performs self-review, runs Agent Validator when gates apply, commits on success, and returns a structured report.
-
-### `implement-change`
-
-Coordinates a full change. It dispatches one `implement-and-validate` subagent per task sequentially, handles task failures, runs Agent Validator, archives OpenSpec changes when applicable, and invokes PR finalization.
-
 ## Testing
 
 ### `test-flows`
