@@ -68,6 +68,10 @@ Implements one task end to end. It performs self-review, runs Agent Validator wh
 
 Coordinates a full change. It dispatches one `implement-and-validate` subagent per task sequentially, handles task failures, runs Agent Validator, archives OpenSpec changes when applicable, and invokes PR finalization.
 
+### `orchestrate-change`
+
+Implements a well-specified change, such as an OpenSpec change, directly from its proposal, specifications, design, and test plan, without needing a task breakdown. The agent acts as an orchestrator that never writes code itself: it splits the change into slices recorded in a ledger outside the repository, briefs a sub-agent for each slice, checks the evidence, sends independent review sub-agents, and finishes with a final review that verifies every spec scenario and test-plan item. Requires an agent with a sub-agent or task-delegation tool.
+
 ## Testing
 
 ### `test-flows`
