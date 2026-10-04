@@ -67,7 +67,7 @@ without changing an approved definition artifact or asking the user for a new de
 
 ### 8. Implement
 
-`orchestrate-change` implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code and checking the automated tests from the test plan. It does not need `plan-tasks` or `review-tasks`. Agent Validator and acceptance testing run after it.
+`orchestrate-change` implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code and checking the automated tests from the test plan. It does not need `plan-tasks` or `review-tasks`. Acceptance testing runs after it.
 
 ### 9. Test And Accept
 
