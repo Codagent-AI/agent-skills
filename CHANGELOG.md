@@ -1,5 +1,16 @@
 # agent-skills
 
+## 0.13.0
+
+### Minor Changes
+
+- Removed: the `implement-and-validate` and `implement-change` skills (breaking). Agent Runner workflows replace them; the docs and the `init` skill list no longer mention them.
+
+### Patch Changes
+
+- [#58](https://github.com/Codagent-AI/agent-skills/pull/58) Untrack the local `worktrees/` gitlinks so per-checkout worktrees no longer show up as repository content.
+
+
 ## 0.12.3
 
 ### Patch Changes
