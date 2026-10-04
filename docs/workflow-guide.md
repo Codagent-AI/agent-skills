@@ -71,7 +71,7 @@ without changing an approved definition artifact or asking the user for a new de
 
 `implement-and-validate` executes one task end to end. It implements the task, performs a self-review, runs Agent Validator when gates apply, and commits after successful validation.
 
-`orchestrate-change` is an alternative that skips `plan-tasks` and `review-tasks`. It implements the change directly from the proposal, specifications, design, and test plan, acting as an orchestrator that delegates every code change to sub-agents, reviews their work independently, and verifies every spec scenario and test-plan item.
+`orchestrate-change` is an alternative that skips `plan-tasks` and `review-tasks`. It implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code.
 
 ### 9. Test And Accept
 
