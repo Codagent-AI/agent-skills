@@ -39,8 +39,8 @@ the artifacts and record it.
    and confirm every spec scenario and automated test-plan item is covered. Turn gaps into new
    slices.
 
-Verification here is automated. Exploratory and manual acceptance testing happen after
-implementation, not in this skill.
+Verification here is automated tests only. Do not run Agent Validator: validation, exploratory
+testing, and manual acceptance testing happen after implementation, not in this skill.
 
 Change the approved artifacts only if implementation proves one wrong, and record why.
 

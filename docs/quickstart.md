@@ -11,7 +11,7 @@ Install the plugin for your host, initialize the target project, then invoke the
 
 ## Prerequisites
 
-Agent Validator is required for the implementation and PR workflows:
+Agent Validator is required for the PR workflows:
 
 ```bash
 npm install -g agent-validator
@@ -41,7 +41,6 @@ Claude Code invokes skills with slash commands, such as:
 
 ```text
 /codagent:propose
-/codagent:implement-change
 /codagent:finalize-pr
 ```
 
@@ -65,7 +64,6 @@ Codex invokes skills by name in chat, for example:
 
 ```text
 use the codagent:propose skill
-use the codagent:implement-change skill
 use the codagent:finalize-pr skill
 ```
 
@@ -89,16 +87,13 @@ For a larger change:
 6. Run `codagent:review-approach` for the final consistency, gap, and decision review of the proposal, specs, design, and test plan.
 7. Use `codagent:plan-tasks` to create task files for implementation.
 8. Run `codagent:review-tasks` to verify the task plan against the approved definition and automated-test obligations.
-9. Ask `codagent:implement-change` to run the implementation loop.
-10. Use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
+9. After implementing the tasks, use `codagent:finalize-pr` if the PR still needs CI polling or review-comment cleanup.
 
 For a small change:
 
 ```text
 use the codagent:simple-plan skill for this change
 ```
-
-Then use `codagent:implement-change` when the plan is ready.
 
 ## Updating
 

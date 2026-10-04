@@ -7,14 +7,14 @@ description: The standard and lightweight skill flows, support skills, and how t
 
 # Workflow Guide
 
-Codagent skills are designed to preserve intent across phases. Each planning skill writes or checks an artifact that the next skill can consume, and each implementation skill verifies its work before handing off.
+Codagent skills are designed to preserve intent across phases. Each planning skill writes or checks an artifact that the next skill can consume.
 
 ## Standard Flow
 
 Use the standard flow for feature work, behavior changes, risky refactors, or anything that needs requirements before implementation.
 
 ```text
-propose -> proposal-review -> spec -> design -> test-plan -> review-approach -> plan-tasks -> review-tasks -> implement-change -> finalize-pr
+propose -> proposal-review -> spec -> design -> test-plan -> review-approach -> plan-tasks -> review-tasks -> (implement) -> finalize-pr
 ```
 
 ### 1. Propose
@@ -67,11 +67,7 @@ without changing an approved definition artifact or asking the user for a new de
 
 ### 8. Implement
 
-`implement-change` acts as the coordinating skill for a full change. It reads the tasks and context, dispatches one `implement-and-validate` subagent per task sequentially, runs Agent Validator, archives OpenSpec changes when applicable, and moves into PR finalization.
-
-`implement-and-validate` executes one task end to end. It implements the task, performs a self-review, runs Agent Validator when gates apply, and commits after successful validation.
-
-`orchestrate-change` is an alternative that skips `plan-tasks` and `review-tasks`. It implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code.
+`orchestrate-change` implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code and checking the automated tests from the test plan. It does not need `plan-tasks` or `review-tasks`. Agent Validator and acceptance testing run after it.
 
 ### 9. Test And Accept
 
@@ -109,7 +105,7 @@ Use `simple-plan` for small, bounded changes that do not need the full proposal,
 Typical lightweight flow:
 
 ```text
-simple-plan -> implement-and-validate -> test-flows
+simple-plan -> (implement) -> test-flows
 ```
 
 A lead can present the tester's exact findings to the user, apply approved fixes, and request one
@@ -140,4 +136,4 @@ mechanism when the tool is unavailable.
 
 ## Choosing A Path
 
-Use the full flow when the requirements are unsettled, the work touches multiple systems, or another agent will need exact context. Use `simple-plan` when the change is small but still benefits from written artifacts. Use `implement-and-validate` directly only when the task is already clear enough that no planning artifact is needed.
+Use the full flow when the requirements are unsettled, the work touches multiple systems, or another agent will need exact context. Use `simple-plan` when the change is small but still benefits from written artifacts.
