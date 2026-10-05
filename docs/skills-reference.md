@@ -62,7 +62,7 @@ Compresses planning for small changes into one lightweight flow. It writes a pro
 
 ### `orchestrate-change`
 
-Implements a well-specified change directly from its proposal, specifications, design, and test plan, without a task breakdown. The agent acts as an orchestrator: sub-agents write all of the code, and the orchestrator plans slices and checks that each slice's automated tests exist and pass. Exploratory and manual acceptance testing happen downstream.
+Implements any well-specified change directly from its approved change artifacts, specs, or similar, without needing a task breakdown. The agent acts as an orchestrator: sub-agents write all of the code, and the orchestrator plans slices and checks each sub-agent's evidence that its automated tests exist and pass. Exploratory and manual acceptance testing happen downstream.
 
 ## Testing
 

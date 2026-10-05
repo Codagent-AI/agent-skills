@@ -17,6 +17,8 @@ Use the standard flow for feature work, behavior changes, risky refactors, or an
 propose -> proposal-review -> spec -> design -> test-plan -> review-approach -> plan-tasks -> review-tasks -> (implement) -> finalize-pr
 ```
 
+`plan-tasks` and `review-tasks` are optional when implementing with `orchestrate-change`, which works directly from the approved artifacts.
+
 ### 1. Propose
 
 `propose` evaluates whether an idea is worth building. It researches the codebase and relevant outside context when needed, gives a GO / GO WITH CAVEATS / NO-GO verdict, and writes a proposal with motivation, high-level scope, capabilities, technical approach, exclusions, and impact.

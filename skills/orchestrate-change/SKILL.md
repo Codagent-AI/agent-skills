@@ -1,9 +1,8 @@
 ---
 description: >-
-  Implements a well-specified change (an OpenSpec change, or any change with a proposal,
-  specifications, design, and test plan) as an orchestrator that delegates all code changes to
-  sub-agents. Use by default when implementing an OpenSpec change or other well-specified change,
-  especially one without a task breakdown, unless instructed otherwise.
+  Implements a well-specified change (approved change artifacts, specs, or similar) as an
+  orchestrator that delegates all code changes to sub-agents. Use by default when implementing any
+  well-specified change, unless instructed otherwise.
 ---
 
 # Orchestrate Change
@@ -18,8 +17,7 @@ If you have no way to spawn sub-agents, say so and stop.
 
 ## Inputs
 
-The approved artifacts are the source of truth: the proposal, specifications, design, and test
-plan. For an OpenSpec change they live under `openspec/changes/<change-name>/`. Any task files are
+The approved change artifacts, specs, or similar are the source of truth. Any task files are
 hints, not the plan.
 
 If running autonomously, do not ask the user anything: resolve gaps with a ruling consistent with
@@ -27,17 +25,18 @@ the artifacts and record it.
 
 ## Process
 
-1. **Plan.** Read the artifacts and split the change into slices. Every spec scenario and
-   test-plan item must belong to a slice. Keep the plan, your rulings, and progress in a file
+1. **Plan.** Read the artifacts and split the change into slices. Every requirement and planned
+   test must belong to a slice. Keep the plan, your rulings, and progress in a file
    outside the repository so they survive context compaction.
 2. **Delegate.** Sub-agents do not see your conversation, so give each a self-contained brief:
-   the goal, the artifact paths and the exact scenarios it covers, relevant design decisions and
+   the goal, the artifact paths and the exact requirements it covers, relevant design decisions and
    earlier rulings, its boundaries, and how to report back. Each sub-agent commits its own work.
-3. **Verify.** Do not accept "done" without evidence: each slice's automated tests from the test
-   plan exist and pass, and its work is committed. Send fixes back to a sub-agent.
-4. **Integrate.** When all slices are done, have the full automated test suite and checks run,
-   and confirm every spec scenario and automated test-plan item is covered. Turn gaps into new
-   slices.
+3. **Verify.** Do not accept "done" without evidence: the sub-agent reports the automated tests
+   it added and the test commands it ran with their results, and its work is committed. Rely on
+   that evidence instead of rerunning the tests yourself. Send fixes back to a sub-agent.
+4. **Integrate.** When all slices are done, have one sub-agent run the full automated test suite
+   and checks once, and confirm every requirement and planned automated test is covered. Turn gaps
+   into new slices.
 
 Verification here is automated. Exploratory and manual acceptance testing happen after
 implementation, not in this skill.

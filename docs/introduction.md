@@ -13,7 +13,7 @@ The bundle is distributed for Claude Code, Codex, and Cursor from the same repos
 
 ## What It Includes
 
-The core skills cover four parts of the development lifecycle:
+The core skills cover five parts of the development lifecycle:
 
 - Planning: `propose`, `proposal-review`, `spec`, `design`, `test-plan`, `review-approach`, `plan-tasks`, `review-tasks`, `review-spec`, and `simple-plan`
 - Implementation: `orchestrate-change`
