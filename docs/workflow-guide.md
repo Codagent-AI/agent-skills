@@ -17,6 +17,8 @@ Use the standard flow for feature work, behavior changes, risky refactors, or an
 propose -> proposal-review -> spec -> design -> test-plan -> review-approach -> plan-tasks -> review-tasks -> (implement) -> finalize-pr
 ```
 
+`plan-tasks` and `review-tasks` are optional when implementing with `orchestrate-change`, which works directly from the approved artifacts.
+
 ### 1. Propose
 
 `propose` evaluates whether an idea is worth building. It researches the codebase and relevant outside context when needed, gives a GO / GO WITH CAVEATS / NO-GO verdict, and writes a proposal with motivation, high-level scope, capabilities, technical approach, exclusions, and impact.
@@ -65,7 +67,11 @@ the task plan. It checks requirement and automated-test coverage, fidelity, deco
 ordering, self-contained context, and done criteria. Every finding must be correctable in the task files
 without changing an approved definition artifact or asking the user for a new decision.
 
-### 8. Test And Accept
+### 8. Implement
+
+`orchestrate-change` implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code and checking the automated tests from the test plan. It does not need `plan-tasks` or `review-tasks`. Acceptance testing runs after it.
+
+### 9. Test And Accept
 
 `test-flows` exercises representative public flows for small or branch-local changes, captures
 meaningful UI screenshots or client-visible evidence, and reports findings without requiring PR
@@ -80,7 +86,7 @@ history rather than as coverage. The approved `test-plan.md` supplies the envelo
 environments, credentials, authorized effects, cleanup, and permitted substitutes. Publication, fixes,
 and automated validation remain the caller's responsibility.
 
-### 9. Finalize The PR
+### 10. Finalize The PR
 
 `push-pr` commits changes, pushes the branch, and creates or updates the open PR for the exact current
 head branch after running validation when applicable. Merged or closed predecessors do not substitute

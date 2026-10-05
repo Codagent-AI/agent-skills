@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.14.0
+
+### Minor Changes
+
+- Added the `orchestrate-change` skill, which implements any well-specified change straight from its approved artifacts, specs, or similar by orchestrating sub-agents that write all of the code and checking their automated-test evidence.
+
 ## 0.13.0
 
 ### Minor Changes

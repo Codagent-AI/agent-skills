@@ -58,6 +58,12 @@ Provides a generic artifact-quality review for any available proposal, spec, des
 
 Compresses planning for small changes into one lightweight flow. It writes a proposal, one or more spec files, an optional design, and a `tasks.md` placeholder so the change remains implementation-ready.
 
+## Implementation
+
+### `orchestrate-change`
+
+Implements any well-specified change directly from its approved change artifacts, specs, or similar, without needing a task breakdown. The agent acts as an orchestrator: sub-agents write all of the code, and the orchestrator plans slices and checks each sub-agent's evidence that its automated tests exist and pass. Exploratory and manual acceptance testing happen downstream.
+
 ## Testing
 
 ### `test-flows`
