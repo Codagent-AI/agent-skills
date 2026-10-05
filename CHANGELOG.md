@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.14.0
+
+### Minor Changes
+
+- Added the `orchestrate-change` skill, which implements a well-specified change straight from its proposal, specifications, design, and test plan by orchestrating sub-agents that write all of the code and verifying each slice with automated tests.
+
 ## 0.13.0
 
 ### Minor Changes
