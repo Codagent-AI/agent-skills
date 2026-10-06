@@ -13,7 +13,7 @@ These instructions apply to Markdown files in this `docs/` directory. The docs s
 
 - Use one public topic per Markdown file.
 - Use lowercase kebab-case filenames, such as `quickstart.md` or `cli-reference.md`.
-- Keep repo-facing indexes in `README.md`; the docs site skips `README.md` and uses `introduction.md` as the product landing page.
+- Keep repo-facing indexes and the product introduction in `README.md`; the docs site skips `README.md`.
 - Put images under `docs/images/` and reference them with relative paths like `images/workflow.png`.
 - Keep `CLAUDE.md` as a symlink to `AGENTS.md`; edit `AGENTS.md` directly.
 
