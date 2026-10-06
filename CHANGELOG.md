@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.14.1
+
+### Patch Changes
+
+- Restructured the README to lead with the value of the skills, put requirements before install, add a get-started example, show quick and full workflow paths with diagrams, and replace bare skill lists with a task-oriented table; the introduction doc is now inlined into the README.
+
 ## 0.14.0
 
 ### Minor Changes
