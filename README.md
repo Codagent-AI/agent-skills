@@ -11,6 +11,7 @@ Left alone, AI coding agents jump straight into code: requirements stay in their
 - **Gaps get caught early.** Adversarial reviews challenge the idea, the approach, and the task plan before any code is written.
 - **Work reaches a green PR with less hand-holding.** The agent implements, tests the change like a user would, pushes, waits for CI, and fixes failures and review comments until the PR is clean.
 - **One workflow works across agents.** The same skills run in Claude Code, Codex, and Cursor.
+- **Bring your own spec toolkit, or none.** The skills work well with [OpenSpec](https://github.com/Fission-AI/OpenSpec) and just as well without any spec toolkit.
 
 ## Requirements
 
@@ -25,43 +26,17 @@ The `init` skill verifies that `agent-validator` is version `0.15` or newer and 
 
 ## Install
 
-### Claude Code
-
 ```bash
 claude plugin marketplace add Codagent-AI/agent-skills
 claude plugin install codagent
 ```
-
-### Codex
-
-```bash
-codex plugin marketplace add Codagent-AI/agent-skills
-```
-
-Restart Codex, open `/plugins`, select the Codagent marketplace, and enable the `codagent` plugin.
-
-### Cursor
-
-```bash
-cursor plugins install Codagent-AI/agent-skills
-```
-
-Each host loads the same `skills/` directory through its own manifest (`.claude-plugin/`, `.codex-plugin/`, or `.cursor-plugin/`).
 
 ## Get Started
 
 Initialize Codagent in your project, then try the quick planning path on a small change. In Claude Code, invoke skills as slash commands:
 
 ```text
-/codagent:init
-/codagent:simple-plan add a --verbose flag to the CLI
-```
-
-In Codex and Cursor, ask for the skill by name:
-
-```text
-use the codagent:init skill
-use the codagent:simple-plan skill to add a --verbose flag to the CLI
+Use simple-plan skill. I want to add a --verbose flag to the CLI.
 ```
 
 `simple-plan` asks a few questions, then writes a short proposal, specs, and (if needed) a design for you to review. Once you approve them, ask the agent to implement the change and run `finalize-pr` to push it and see it through CI.
