@@ -3,48 +3,25 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CodeRabbit](https://img.shields.io/coderabbit/prs/github/Codagent-AI/agent-skills)](https://coderabbit.ai)
 
-Codagent Agent Skills is a portable skill bundle for guiding AI agents through software-development work. The skills turn open-ended requests into a repeatable flow: evaluate the idea, write requirements, design the approach, break work into tasks, test the result, and finalize the pull request.
+**Make your coding agent plan, review, and ship like a careful engineer, not a fast typist.**
 
-The repository ships the same core skills through host-specific plugin manifests:
+Left alone, AI coding agents jump straight into code: requirements stay in their head, design decisions go unexamined, and you find the gaps at review time. Codagent Agent Skills gives Claude Code, Codex, and Cursor a structured development workflow so that:
 
-- `.claude-plugin/plugin.json` for Claude Code
-- `.codex-plugin/plugin.json` for Codex
-- `.cursor-plugin/plugin.json` for Cursor
+- **Plans are written down before code is.** Proposals, specs, designs, test plans, and tasks are files you can read, edit, and approve.
+- **Gaps get caught early.** Adversarial reviews challenge the idea, the approach, and the task plan before any code is written.
+- **Work reaches a green PR with less hand-holding.** The agent implements, tests the change like a user would, pushes, waits for CI, and fixes failures and review comments until the PR is clean.
+- **One workflow works across agents.** The same skills run in Claude Code, Codex, and Cursor.
 
-## What It Includes
+## Requirements
 
-The core skills cover five parts of the development lifecycle:
+The PR skills verify changes with [Agent Validator](https://www.npmjs.com/package/agent-validator), which runs your project's checks and AI code reviews before anything is pushed. Install and initialize it in each project where you'll use Codagent:
 
-- Planning: `propose`, `proposal-review`, `spec`, `design`, `test-plan`, `review-approach`, `plan-tasks`, `review-tasks`, `review-spec`, and `simple-plan`
-- Implementation: `orchestrate-change`
-- Testing: `test-flows` and `prepare-acceptance`
-- Pull requests: `push-pr`, `wait-ci`, `fix-pr`, and `finalize-pr`
-- Support and review: `init`, `ask-questions`, `handoff`, `session-report`, `review-assumptions`, and `task-compliance`
-
-The repository also includes a separate release skill under `.agents/skills/release` and `.claude/skills/release`. That release skill is for maintainers of this repository, not part of the installed user-facing Codagent workflow.
-
-## Intended Workflow
-
-Codagent works best when the agent has explicit artifacts to hand off between phases. A typical larger change moves through:
-
-```text
-propose -> proposal-review -> spec -> design -> test-plan -> review-approach -> plan-tasks -> review-tasks -> (implement) -> finalize-pr
+```bash
+npm install -g agent-validator
+agent-validator init
 ```
 
-For smaller changes, `simple-plan` compresses planning into one lightweight pass and `test-flows`
-provides a proportional branch-local user-flow check without requiring PR finalization.
-
-## When To Use It
-
-Use Codagent skills when the work benefits from written intent, reviewable requirements, or an agent-to-agent handoff. The full planning flow is useful for feature work, cross-cutting changes, or changes with unclear requirements. The smaller `simple-plan` path is better for quick, bounded changes that still need a written trail.
-
-For one-off questions, debugging conversations, or manual editing where no lifecycle is needed, invoking a skill is optional.
-
-## Documentation
-
-- [Quickstart](docs/quickstart.md) - install, initialize, and run the first workflow
-- [Workflow Guide](docs/workflow-guide.md) - how the planning, testing, and PR skills fit together
-- [Skills Reference](docs/skills-reference.md) - concise reference for every bundled skill
+The `init` skill verifies that `agent-validator` is version `0.15` or newer and that `.validator/config.yml` exists in the project.
 
 ## Install
 
@@ -55,12 +32,6 @@ claude plugin marketplace add Codagent-AI/agent-skills
 claude plugin install codagent
 ```
 
-Then initialize a project:
-
-```text
-/codagent:init
-```
-
 ### Codex
 
 ```bash
@@ -69,34 +40,105 @@ codex plugin marketplace add Codagent-AI/agent-skills
 
 Restart Codex, open `/plugins`, select the Codagent marketplace, and enable the `codagent` plugin.
 
-Then initialize a project:
-
-```text
-use the codagent:init skill
-```
-
 ### Cursor
 
 ```bash
 cursor plugins install Codagent-AI/agent-skills
 ```
 
-Then initialize a project from the Cursor plugin environment:
+Each host loads the same `skills/` directory through its own manifest (`.claude-plugin/`, `.codex-plugin/`, or `.cursor-plugin/`).
+
+## Get Started
+
+Initialize Codagent in your project, then try the quick planning path on a small change. In Claude Code, invoke skills as slash commands:
+
+```text
+/codagent:init
+/codagent:simple-plan add a --verbose flag to the CLI
+```
+
+In Codex and Cursor, ask for the skill by name:
 
 ```text
 use the codagent:init skill
+use the codagent:simple-plan skill to add a --verbose flag to the CLI
 ```
 
-## Requirements
+`simple-plan` asks a few questions, then writes a short proposal, specs, and (if needed) a design for you to review. Once you approve them, ask the agent to implement the change and run `finalize-pr` to push it and see it through CI.
 
-Codagent skills expect Agent Validator to be installed and initialized in projects where validation should run:
+## How It Works
 
-```bash
-npm install -g agent-validator
-agent-validator init
+Codagent works best when each phase hands a written artifact to the next. Pick the path that fits the size of the change.
+
+### Quick path: small, bounded changes
+
+```mermaid
+flowchart LR
+  A[simple-plan] --> B[implement] --> C[test-flows] --> D[finalize-pr]
 ```
 
-The `init` skill verifies that `agent-validator` is available, that it is version `0.15` or newer, and that `.validator/config.yml` exists in the target project.
+`simple-plan` compresses proposal, specs, and an optional design into one conversational pass. `test-flows` exercises the change through real user flows on your branch.
+
+### Full path: features, cross-cutting work, unclear requirements
+
+```mermaid
+flowchart LR
+  P[propose] --> PR[proposal-review] --> S[spec] --> D[design] --> T[test-plan]
+  T --> RA[review-approach] --> PT[plan-tasks] --> RT[review-tasks]
+  RT --> I[orchestrate-change] --> F[finalize-pr]
+```
+
+| Step | Produces |
+| --- | --- |
+| `propose` | A GO / NO-GO verdict and a proposal: why, scope, approach, exclusions |
+| `proposal-review` | Challenges to the proposal's motivation, scope, and alternatives |
+| `spec` | Requirement files with WHEN/THEN scenarios |
+| `design` | `design.md` with the chosen architecture and trade-offs |
+| `test-plan` | `test-plan.md` with the integration, end-to-end, and acceptance obligations |
+| `review-approach` | A final cross-check of proposal, specs, design, and test plan |
+| `plan-tasks` | Self-contained task files an implementer can pick up |
+| `review-tasks` | Fixes to the task plan before implementation starts |
+| `orchestrate-change` | The implementation, written by sub-agents with tested evidence |
+| `finalize-pr` | A pushed PR with passing CI and addressed review comments |
+
+### When to skip it
+
+For one-off questions, debugging conversations, or quick manual edits, you don't need a skill at all.
+
+## Skills
+
+| When you want to… | Use |
+| --- | --- |
+| Set up Codagent in a project | `init` |
+| Decide whether an idea is worth building | `propose` |
+| Stress-test a proposal | `proposal-review` |
+| Turn a proposal into requirements | `spec` |
+| Choose an architecture | `design` |
+| Plan what to test and how | `test-plan` |
+| Review the full approach before planning tasks | `review-approach` |
+| Break work into implementer-ready tasks | `plan-tasks` |
+| Check the task plan against the approach | `review-tasks` |
+| Check any planning artifacts for consistency | `review-spec` |
+| Plan a small change in one pass | `simple-plan` |
+| Implement a well-specified change with sub-agents | `orchestrate-change` |
+| Smoke-test a change through real user flows | `test-flows` |
+| Hunt for defects and prepare a change for human acceptance | `prepare-acceptance` |
+| Commit, push, and open or update a PR | `push-pr` |
+| Check CI status and review comments | `wait-ci` |
+| Fix failing CI or address review comments | `fix-pr` |
+| Push, wait, and fix until the PR is green | `finalize-pr` |
+| Verify an implementation meets its task's requirements | `task-compliance` |
+| Hand the current work to another agent session | `handoff` |
+| Audit a session for risky assumptions | `session-report` |
+| Review and resolve assumptions from implementer reports | `review-assumptions` |
+
+`ask-questions` and `call-agent` are support skills that other skills invoke. The release skill under `.agents/skills/release` and `.claude/skills/release` is for maintainers of this repository and isn't part of the installed plugin.
+
+## Documentation
+
+- [Quickstart](docs/quickstart.md) - install, initialize, and run the first workflow
+- [Workflow Guide](docs/workflow-guide.md) - how the planning, testing, and PR skills fit together
+- [Skills Reference](docs/skills-reference.md) - detailed reference for every bundled skill
 
 ## Updating
 
