@@ -57,10 +57,28 @@ flowchart LR
 ### Full path: features, cross-cutting work, unclear requirements
 
 ```mermaid
-flowchart LR
-  P[propose] --> PR[proposal-review] --> S[spec] --> D[design] --> T[test-plan]
-  T --> RA[review-approach] --> PT[plan-tasks] --> RT[review-tasks]
-  RT --> I[orchestrate-change] --> F[finalize-pr]
+flowchart TB
+  subgraph Propose
+    direction LR
+    P[propose] --> PR[proposal-review]
+  end
+  subgraph Define
+    direction LR
+    S[spec] --> D[design] --> T[test-plan] --> RA[review-approach]
+  end
+  subgraph Plan
+    direction LR
+    PT[plan-tasks] --> RT[review-tasks]
+  end
+  subgraph Implement
+    direction LR
+    I[orchestrate-change]
+  end
+  subgraph Ship
+    direction LR
+    F[finalize-pr]
+  end
+  Propose --> Define --> Plan --> Implement --> Ship
 ```
 
 | Step | Produces |
