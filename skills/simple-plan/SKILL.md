@@ -43,6 +43,7 @@ the implementer will act on unseen, and the user usually finds out only after th
    correct them. The gate confirms; it never decides. A bundled "approve this plan?" is not consent to
    each item inside it, so a consequential assumption listed there is still a decision the user never
    made. If one surfaces, pull it out and ask it as its own question first.
+   The capability set and design-doc decision are proposals the user may reject.
 6. Write all artifacts in one pass, then run the self-check below.
 
 Follow a project-defined location. Otherwise propose
@@ -73,6 +74,10 @@ exclusion under Out of Scope, a cleanup step, a failure path, or an extension of
 for. Ask each one as a question under the rules above, update the artifacts with the answers, and repeat
 the check. Do not declare the plan done while any remain, and do not list them as "assumptions" for the
 user to notice; a reported decision is still one the user did not get to make.
+
+Summarize any artifact changes the self-check made when handing off. When no user can answer (a
+headless session), stop before writing artifacts and return the open decisions instead of a plan that
+carries guessed answers.
 
 ## Artifact requirements
 
