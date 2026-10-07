@@ -56,7 +56,7 @@ Provides a generic artifact-quality review for any available proposal, spec, des
 
 ### `simple-plan`
 
-Compresses planning for small changes into one lightweight flow. It writes a proposal, one or more spec files, an optional design, and a `tasks.md` placeholder so the change remains implementation-ready.
+Compresses planning for small changes into one lightweight flow. It writes a proposal, one or more spec files, an optional design, and a `tasks.md` placeholder so the change remains implementation-ready. Planning is compressed, but decisions are not: it asks every consequential decision one question at a time and leaves routine details to the agent.
 
 ## Implementation
 
