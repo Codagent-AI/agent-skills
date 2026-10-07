@@ -39,7 +39,7 @@ Initialize Codagent in your project, then try the quick planning path on a small
 Use simple-plan skill. I want to add a --verbose flag to the CLI.
 ```
 
-`simple-plan` asks about each decision that matters, one question at a time, then writes a short proposal, specs, and (if needed) a design for you to review. Once you approve them, ask the agent to implement the change and run `finalize-pr` to push it and see it through CI.
+`simple-plan` asks the questions the full planning skills would, in one pass, then writes a short proposal, specs, and (if needed) a design for you to review. Once you approve them, ask the agent to implement the change and run `finalize-pr` to push it and see it through CI.
 
 ## How It Works
 

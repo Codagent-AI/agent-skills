@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- `simple-plan` now inventories every decision a change requires and asks each material one as its own question, one at a time, instead of assuming answers and bundling them into the approval step; it also checks the drafted artifacts for unanswered material decisions before writing them, and in a headless session returns those open decisions instead of a plan.
+- `simple-plan` now asks the same proposal, spec, and design questions as the full lifecycle skills (problem, scope, behavior, edge cases, and consequential architecture), in one pass without their separate phases and approvals, and returns to the user for any new behavioral or scope decision found while writing.
 
 ## 0.14.1
 
