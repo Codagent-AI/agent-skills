@@ -17,8 +17,7 @@ an implementing agent with no conversation history.
 
 1. Understand the problem, desired behavior, success criteria, and scope. Lightly inspect related
    specifications and relevant code so questions and artifacts reflect the existing system.
-2. Use `codagent:ask-questions` to resolve the decisions the full propose, spec, and design skills
-   would raise, without their separate phases and approvals:
+2. Use `codagent:ask-questions` to resolve the decisions behind the proposal, specs, and any design:
    - **Proposal:** the problem, desired outcome, success criteria, scope boundaries, and any choice
      between real alternatives that changes product scope or direction.
    - **Specs:** observable behavior, boundaries, errors, and edge cases that affect behavior or scope.
@@ -36,8 +35,8 @@ an implementing agent with no conversation history.
    Return to the user for any new behavioral or scope decision instead of inventing one.
 
 Follow a project-defined location. Otherwise propose `~/.agent-skills/changes/<kebab-slug>/` at the
-approval step. Do not turn this into the full
-propose/spec/design ceremony or write a detailed task breakdown.
+approval step. Do not run separate proposal, spec, and design phases, and do not write a detailed task
+breakdown.
 
 ## Artifact requirements
 
