@@ -15,26 +15,28 @@ an implementing agent with no conversation history.
 
 ## Process
 
-This skill is lightweight in ceremony, not in questions. It saves effort by producing every artifact
-in one pass, never by deciding on the user's behalf. A decision the user did not make is a decision
-the implementer will act on unseen, and the user usually finds out only after the damage.
+Be lightweight in ceremony, not in questions: produce every artifact in one pass, but never decide on
+the user's behalf.
 
 1. Understand the problem, desired behavior, success criteria, and scope. Lightly inspect related
    specifications and relevant code so the decisions and artifacts reflect the existing system.
 2. Build a decision inventory before asking anything: list every decision the change requires and
    classify each as material or routine.
-   - **Material (ask):** anything that changes user-visible or system behavior; error, edge, and
-     failure handling; permissions or security boundaries; anything that deletes, pushes, publishes, or
-     creates external state; anything that narrows or widens what an automated agent may do; lifecycle
-     and cleanup; scope boundaries; and any extension of the user's stated direction beyond what they
-     literally said.
-   - **Routine (decide):** naming, file layout, internal helper structure, and choices fully dictated by
-     existing code or specs.
+   - **Always material (ask):** anything that deletes, pushes, publishes, or creates external state;
+     permissions or security boundaries; anything that narrows or widens what an automated agent may
+     do; lifecycle and cleanup; scope boundaries; and any extension of the user's stated direction
+     beyond what they literally said.
+   - **Material when open (ask):** other user-visible or system behavior, and error, edge, and failure
+     handling, whenever a reasonable user could want a different answer than the one the request,
+     existing code, or established conventions imply.
+   - **Routine (decide):** naming, file layout, internal helper structure, and choices settled by the
+     request, existing code, specs, or established conventions.
    - When in doubt, treat it as material. Asking a question the user finds trivial costs seconds;
      silently deciding one they care about costs a rework.
 3. Ask every material decision with `codagent:ask-questions`. There is no question budget: a small change
    can carry many material decisions. Keep routine details out of the questions so the real decisions
-   stay visible. Follow the questioning rules below.
+   stay visible. Follow the questioning rules below. When no user can answer (a headless session), stop
+   here and return the open material decisions instead of writing artifacts that carry guessed answers.
 4. Decide whether `design.md` is necessary. Default to no; write one only for a consequential
    architectural choice, non-obvious rationale, migration, integration strategy, or implementation
    constraint that the implementer otherwise would not know.
@@ -44,7 +46,8 @@ the implementer will act on unseen, and the user usually finds out only after th
    each item inside it, so a consequential assumption listed there is still a decision the user never
    made. If one surfaces, pull it out and ask it as its own question first.
    The capability set and design-doc decision are proposals the user may reject.
-6. Write all artifacts in one pass, then run the self-check below.
+6. Draft all artifacts in one pass and run the self-check below on the drafts. Write them to the
+   output location only once the self-check finds no unanswered material decisions.
 
 Follow a project-defined location. Otherwise propose
 `~/.agent-skills/changes/<kebab-slug>/` and confirm it before writing. Do not turn this into the full
@@ -52,9 +55,9 @@ propose/spec/design ceremony or write a detailed task breakdown.
 
 ## Questioning rules
 
-Require one-at-a-time discovery from `codagent:ask-questions` here, overriding its default of batching
-independent questions. Later questions often depend on earlier answers, and a batch hides which choice
-the user is actually weighing.
+These rules override `codagent:ask-questions`: ask serially, never in batches, and never list
+consequential assumptions at the approval gate. Later questions often depend on earlier answers, and a
+batch hides which choice the user is actually weighing.
 
 - Ask one decision per question, wait for the answer, then ask the next. Re-derive the remaining
   inventory after each answer, since it can add, remove, or reshape decisions.
@@ -66,18 +69,17 @@ the user is actually weighing.
   decision or raises new material ones; follow what the user said, not the closest option, and ask
   follow-ups for what it opens up.
 
-## Self-check before handoff
+## Self-check before writing
 
-After writing the artifacts, re-read them against the decision inventory. Look for any material
-decision the artifacts make that the user did not explicitly answer: a behavior in a scenario, an
+Before writing the drafts to disk, re-read them against the decision inventory. Look for any material
+decision the drafts make that the user did not explicitly answer: a behavior in a scenario, an
 exclusion under Out of Scope, a cleanup step, a failure path, or an extension of what the user asked
-for. Ask each one as a question under the rules above, update the artifacts with the answers, and repeat
-the check. Do not declare the plan done while any remain, and do not list them as "assumptions" for the
-user to notice; a reported decision is still one the user did not get to make.
+for. Ask each one as a question under the rules above, update the drafts with the answers, and repeat
+the check. Do not write the artifacts or declare the plan done while any remain, and do not list them
+as "assumptions" for the user to notice; a reported decision is still one the user did not get to make.
 
-Summarize any artifact changes the self-check made when handing off. When no user can answer (a
-headless session), stop before writing artifacts and return the open decisions instead of a plan that
-carries guessed answers.
+When handing off, tell the user which answers the self-check added to the artifacts. In a headless
+session, handle any decision it finds as step 3 does.
 
 ## Artifact requirements
 

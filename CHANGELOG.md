@@ -4,8 +4,7 @@
 
 ### Patch Changes
 
-- `simple-plan` now inventories every decision a change requires and asks each material one as its own question, one at a time, instead of assuming answers and bundling them into the approval step; it also re-checks the written artifacts for unanswered material decisions before handoff.
-
+- `simple-plan` now inventories every decision a change requires and asks each material one as its own question, one at a time, instead of assuming answers and bundling them into the approval step; it also checks the drafted artifacts for unanswered material decisions before writing them, and in a headless session returns those open decisions instead of a plan.
 
 ## 0.14.1
 
