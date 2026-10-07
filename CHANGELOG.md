@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.14.2
+
+### Patch Changes
+
+- `simple-plan` now inventories every decision a change requires and asks each material one as its own question, one at a time, instead of assuming answers and bundling them into the approval step; it also re-checks the written artifacts for unanswered material decisions before handoff.
+
+
 ## 0.14.1
 
 ### Patch Changes
