@@ -17,18 +17,26 @@ an implementing agent with no conversation history.
 
 1. Understand the problem, desired behavior, success criteria, and scope. Lightly inspect related
    specifications and relevant code so questions and artifacts reflect the existing system.
-2. Use `codagent:ask-questions` to resolve only material behavior, boundaries, errors, edge cases, and
-   scope. Recommend defaults and decide ordinary implementation details from context.
+2. Use `codagent:ask-questions` to resolve the decisions behind the proposal, specs, and any design:
+   - **Proposal:** the problem, desired outcome, success criteria, scope boundaries, and any choice
+     between real alternatives that changes product scope or direction.
+   - **Specs:** observable behavior, boundaries, errors, and edge cases that affect behavior or scope.
+   - **Design:** consequential architectural choices that repository context cannot safely resolve.
+
+   Recommend a default when useful, decide low-risk implementation details from repository context,
+   and do not use a generic approval question as discovery.
 3. Decide whether `design.md` is necessary. Default to no; write one only for a consequential
    architectural choice, non-obvious rationale, migration, integration strategy, or implementation
    constraint that the implementer otherwise would not know.
-4. Present the proposed capability set, design-doc decision, output location, and consequential
-   assumptions for user approval.
+4. Present the proposed capability set, key requirements, design-doc decision, output location, and
+   the consequential assumptions or defaults you selected, so the user can correct them. Wait for
+   approval before writing.
 5. Write all artifacts in one pass, then check them together for missing decisions or contradictions.
+   Return to the user for any new behavioral or scope decision instead of inventing one.
 
-Follow a project-defined location. Otherwise propose
-`~/.agent-skills/changes/<kebab-slug>/` and confirm it before writing. Do not turn this into the full
-propose/spec/design ceremony or write a detailed task breakdown.
+Follow a project-defined location. Otherwise propose `~/.agent-skills/changes/<kebab-slug>/` at the
+approval step. Do not run separate proposal, spec, and design phases, and do not write a detailed task
+breakdown.
 
 ## Artifact requirements
 

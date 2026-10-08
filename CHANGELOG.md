@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.14.2
+
+### Patch Changes
+
+- `simple-plan` now asks the same proposal, spec, and design questions as the full lifecycle skills (problem, scope, behavior, edge cases, and consequential architecture), in one pass without their separate phases and approvals, and returns to the user for any new behavioral or scope decision found while writing.
+
 ## 0.14.1
 
 ### Patch Changes
