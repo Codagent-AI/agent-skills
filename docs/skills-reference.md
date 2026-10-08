@@ -56,7 +56,7 @@ Provides a generic artifact-quality review for any available proposal, spec, des
 
 ### `simple-plan`
 
-Compresses planning for small changes into one lightweight flow. It writes a proposal, one or more spec files, an optional design, and a `tasks.md` placeholder so the change remains implementation-ready.
+Compresses planning for small changes into one lightweight flow. It writes a proposal, one or more spec files, an optional design, and a `tasks.md` placeholder so the change remains implementation-ready. It asks the same proposal, spec, and design questions as the full lifecycle skills, without their separate phases and approvals.
 
 ## Implementation
 

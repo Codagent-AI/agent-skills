@@ -1,10 +1,16 @@
 # agent-skills
 
-## 0.14.2
+## 0.14.3
 
 ### Patch Changes
 
 - Tighten `orchestrate-change`: identify every test suite and its baseline failures before slicing, keep concurrent slices off shared working trees and mutable resources, run the project's own checks and reviews at integration, and state that further review, acceptance testing, and archiving happen after the skill.
+
+## 0.14.2
+
+### Patch Changes
+
+- `simple-plan` now asks the same proposal, spec, and design questions as the full lifecycle skills (problem, scope, behavior, edge cases, and consequential architecture), in one pass without their separate phases and approvals, and returns to the user for any new behavioral or scope decision found while writing.
 
 ## 0.14.1
 
