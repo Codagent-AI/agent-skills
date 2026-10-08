@@ -26,20 +26,23 @@ the artifacts and record it.
 ## Process
 
 1. **Plan.** Read the artifacts and split the change into slices. Every requirement and planned
-   test must belong to a slice. Keep the plan, your rulings, and progress in a file
-   outside the repository so they survive context compaction.
+   test must belong to a slice. Identify every automated suite, including ones outside the
+   default command, and which already fail on the base commit. Keep the plan, your rulings, and
+   progress in a file outside the repository so they survive context compaction.
 2. **Delegate.** Sub-agents do not see your conversation, so give each a self-contained brief:
    the goal, the artifact paths and the exact requirements it covers, relevant design decisions and
    earlier rulings, its boundaries, and how to report back. Each sub-agent commits its own work.
+   Slices that run concurrently must not share a working tree or other mutable resource (files,
+   ports, databases, browsers); otherwise run them one at a time.
 3. **Verify.** Do not accept "done" without evidence: the sub-agent reports the automated tests
    it added and the test commands it ran with their results, and its work is committed. Rely on
    that evidence instead of rerunning the tests yourself. Send fixes back to a sub-agent.
-4. **Integrate.** When all slices are done, have one sub-agent run the full automated test suite
-   and checks once, and confirm every requirement and planned automated test is covered. Turn gaps
-   into new slices.
+4. **Integrate.** When all slices are done, have one sub-agent run every suite identified in
+   planning and the checks and reviews the project defines, once, and confirm every requirement
+   and planned automated test is covered. Turn gaps into new slices.
 
-Verification here is automated. Exploratory and manual acceptance testing happen after
-implementation, not in this skill.
+Verification here is automated. Code review beyond the project's own checks, exploratory and
+acceptance testing, and archiving happen after this skill.
 
 Change the approved artifacts only if implementation proves one wrong, and record why.
 
