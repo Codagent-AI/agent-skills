@@ -17,8 +17,8 @@ If you have no way to spawn sub-agents, say so and stop.
 
 ## Inputs
 
-The approved change artifacts, specs, or similar are the source of truth. Any task files are
-hints, not the plan.
+Treat the approved change artifacts, specs, or similar as the source of truth. Treat any task
+files as hints, not the plan.
 
 If running autonomously, do not ask the user anything: resolve gaps with a ruling consistent with
 the artifacts and record it.
@@ -31,18 +31,21 @@ the artifacts and record it.
    progress in a file outside the repository so they survive context compaction.
 2. **Delegate.** Sub-agents do not see your conversation, so give each a self-contained brief:
    the goal, the artifact paths and the exact requirements it covers, relevant design decisions and
-   earlier rulings, its boundaries, and how to report back. Each sub-agent commits its own work.
-   Slices that run concurrently must not share a working tree or other mutable resource (files,
-   ports, databases, browsers); otherwise run them one at a time.
-3. **Verify.** Do not accept "done" without evidence: the sub-agent reports the automated tests
-   it added and the test commands it ran with their results, and its work is committed. Rely on
-   that evidence instead of rerunning the tests yourself. Send fixes back to a sub-agent.
+   earlier rulings, its boundaries, and how to report back. Tell each sub-agent to commit its own
+   work. Slices that run concurrently must not share a working tree or other mutable resource
+   (files, ports, databases, browsers); otherwise run them one at a time. If a slice runs in its
+   own worktree or branch, name the commit it must start from in its brief, and tell the sub-agent
+   to confirm its HEAD matches that commit before starting.
+3. **Verify.** Do not accept "done" without evidence: require the sub-agent to report the
+   automated tests it added and the test commands it ran with their results, and confirm its work
+   is committed. Rely on that evidence instead of rerunning the tests yourself. Send fixes back to
+   a sub-agent.
 4. **Integrate.** When all slices are done, have one sub-agent run every suite identified in
    planning and the checks and reviews the project defines, once, and confirm every requirement
    and planned automated test is covered. Turn gaps into new slices.
 
-Verification here is automated. Code review beyond the project's own checks, exploratory and
-acceptance testing, and archiving happen after this skill.
+Limit verification here to automated checks. Leave code review beyond the project's own checks,
+exploratory and acceptance testing, and archiving for after this skill.
 
 Change the approved artifacts only if implementation proves one wrong, and record why.
 

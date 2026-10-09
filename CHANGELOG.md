@@ -1,5 +1,13 @@
 # agent-skills
 
+## 0.14.4
+
+### Patch Changes
+
+- [#70](https://github.com/Codagent-AI/agent-skills/pull/70) Tighten the orchestrate-change skill's guidance on recording baseline failures, keeping concurrent slices apart, and what the skill leaves to later steps.
+- [#71](https://github.com/Codagent-AI/agent-skills/pull/71) Pin the factory routing workflow to agent-factory commit 2445e6d.
+- Have orchestrate-change name the starting commit for slices that run in their own worktree or branch, with sub-agents confirming HEAD before starting, and phrase the skill's descriptive sentences as instructions.
+
 ## 0.14.3
 
 ### Patch Changes
