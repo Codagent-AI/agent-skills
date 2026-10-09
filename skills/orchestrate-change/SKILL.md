@@ -32,6 +32,13 @@ the artifacts and record it.
 2. **Delegate.** Sub-agents do not see your conversation, so give each a self-contained brief:
    the goal, the artifact paths and the exact requirements it covers, relevant design decisions and
    earlier rulings, its boundaries, and how to report back. Each sub-agent commits its own work.
+   Run sub-agents on an inexpensive model, such as Luna or Haiku.
+   Every brief asks the sub-agent to report its assumptions: each decision it made where the
+   artifacts and your brief were silent, as what was unspecified, what it chose and why, the
+   specific risk if that choice is wrong, whether it is `risky` or `notable`, and what a reviewer
+   should do. It omits trivial defaults. It also reports any context gap: missing or wrong
+   information that sent it down a wrong path or wasted significant effort. Record each sub-agent's
+   assumptions and gaps, with its slice, in your progress file as they arrive.
    Slices that run concurrently must not share a working tree or other mutable resource (files,
    ports, databases, browsers); otherwise run them one at a time.
 3. **Verify.** Do not accept "done" without evidence: the sub-agent reports the automated tests
@@ -49,4 +56,5 @@ Change the approved artifacts only if implementation proves one wrong, and recor
 ## Report
 
 Summarize the slices and their commits, how the change was verified, and every ruling,
-assumption, and unresolved gap from you and your sub-agents. Leave the worktree clean.
+assumption, and unresolved gap from you and your sub-agents. Keep each sub-agent assumption's
+details and the slice it came from; a later review audits them. Leave the worktree clean.
