@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.14.5
+
+### Patch Changes
+
+- `plan-tasks` now copies names the design or specs fix (test hooks, selectors, routes, paths, commands, config keys, public identifiers) into tasks verbatim, without renamed alternatives or a choice of scheme, and records any concern about a fixed name as an open assumption instead of changing it.
+
 ## 0.14.4
 
 ### Patch Changes
