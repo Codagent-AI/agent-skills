@@ -56,6 +56,11 @@ planned. Do not ask the user to approve the task count or grouping.
 Write tasks under `<change-dir>/tasks/`. Use an unnumbered `<slug>.md` for one task or ordered
 `<NN>-<slug>.md` files for multiple tasks. Use real repository paths and no placeholders.
 
+Copy every name the design or specs fix verbatim: test hooks and attributes, selectors, routes, file
+paths, commands, config and schema keys, and public identifiers. Other tooling may depend on the exact
+spelling, so do not rename, namespace, or offer alternatives or a choice of scheme. If a fixed name looks
+wrong, keep it and record the concern as an open assumption in the task's Background and in your report.
+
 For one task, exact references to the design and specs may replace copied artifact text. When a test
 plan is supplied, also cite it for the assigned `INT-*` and `E2E-*` obligations:
 
