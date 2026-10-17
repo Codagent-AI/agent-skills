@@ -28,6 +28,8 @@ Read what the caller supplied. When an input is absent, apply the default.
 
 The user, the caller, or the project's instructions may override any default here. Precedence:
 the user, then the caller, then the project's instructions, then these defaults.
+Exception: never run tier 3, even when project instructions ask for the full suite; only the
+user or the caller can lift that.
 
 ## Process
 
@@ -56,7 +58,7 @@ Use sub-agents when they help; never require them.
 | 2 | The whole suite, or a subset you choose that includes the integration and end-to-end tests relevant to the change | 15 minutes | When the caller says to; with no instruction, once when the work is ready, and again only after a later change that could affect what it covers |
 | 3 | Anything beyond the tier 2 limit | Not run | Left to CI |
 
-- The limits are tunable defaults, sized to keep feedback fast and a run within one tool-call window.
+- The limits are tunable defaults, sized to keep feedback fast.
 - The caller decides when to run tier 2, never which tests. You choose the tests.
 - If a run times out, run a smaller set.
 - Do not run tier 3, even when project instructions ask for the full suite. Report which tests
