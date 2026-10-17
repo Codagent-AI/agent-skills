@@ -64,6 +64,14 @@ Compresses planning for small changes into one lightweight flow. It writes a pro
 
 Implements any well-specified change directly from its approved change artifacts, specs, or similar, without needing a task breakdown. The agent acts as an orchestrator: sub-agents write all of the code, and the orchestrator plans slices and checks each sub-agent's evidence that its automated tests exist and pass. Exploratory and manual acceptance testing happen downstream.
 
+### `implement-change`
+
+Implements an approved change in one continuous session, for a workflow step or a direct request. It reads the whole definition, gets an integrated path working early, and adds tests after the behavior rather than first. Tests run in three tiers with default limits: affected unit tests within 3 minutes, a broader run including integration and end-to-end tests within 15 minutes, and anything longer left to CI and reported as unrun. It escalates decisions that would materially change behavior, scope, or integration, ends with a behavior-preserving maintainability pass, and reports what was built, which tests ran at each tier, and which were left unrun.
+
+### `outcome-evidence`
+
+Writes and maintains an outcome record: the observable outcomes and integrations a definition requires, a plan for showing each, and the evidence that each was shown. It can list outcomes from the definition alone (for an independent reviewer), merge two lists without dropping any obligation, record evidence and status per row, and refresh rows after a fix. The record is a Markdown table whose format a deterministic script can check.
+
 ## Testing
 
 ### `test-flows`
