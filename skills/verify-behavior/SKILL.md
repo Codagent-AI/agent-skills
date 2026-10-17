@@ -11,7 +11,8 @@ description: >-
 
 Read the change's proposal, specs, design, and test plan, but not the code. For each behavior the
 spec describes, including its error, failure, and cleanup cases, say how you will verify it: an
-automated test (unit, integration, or end-to-end), a command, or inspection of the code or files.
+automated test (unit, integration, or end-to-end), a scripted command whose exit code or output
+decides the result (such as a build, lint, or verify script), or inspection of the code or files.
 Never plan a check in which an agent operates the product as a user would; that testing happens
 once, in acceptance testing after implementation. Do not cite the test plan's acceptance (`AT-`) or
 human-only (`HT-`) tests as a check, and add no rows for them. Several behaviors may share one

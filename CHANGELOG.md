@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- `verify-behavior` plans only automated tests, commands, and inspection as checks, never an agent operating the product as a user would or the test plan's acceptance and human-only tests. Status holds only `verified`, `failed`, or `not verified`, with file names in the Evidence column, and a row whose code changed needs its check rerun or its status set to `not verified`.
+- `verify-behavior` plans only automated tests, scripted commands, and inspection as checks, never an agent operating the product as a user would or the test plan's acceptance and human-only tests. Status holds only `verified`, `failed`, or `not verified`, with file names in the Evidence column, and a row whose code changed needs its check rerun or its status set to `not verified`.
 
 ## 0.15.0
 
