@@ -66,7 +66,7 @@ Implements any well-specified change directly from its approved change artifacts
 
 ### `implement-change`
 
-Implements an approved change in one continuous session: an integrated path early, code and tests written together in increments, tests run in three tiers with default limits (affected unit tests within 3 minutes, a broader run within 15 minutes, anything longer left to CI), escalation of material questions, and a maintainability pass before finishing.
+Implements an approved change in one continuous session: an integrated path early, code and tests written together in increments, tests run in three tiers with default limits (affected unit tests within 3 minutes, a broader run within 15 minutes, anything longer left to CI), and a maintainability pass before finishing.
 
 ### `outcome-evidence`
 
