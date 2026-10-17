@@ -10,11 +10,15 @@ description: >-
 ## Writing the checklist
 
 Read the change's proposal, specs, design, and test plan, but not the code. For each behavior the
-spec describes, including its error, failure, and cleanup cases, say how you will verify it: a
-test, a command, or a manual check. Several behaviors may share one check. When the test plan
-names a test that covers a behavior, cite its ID as the check, and add a row for any test-plan
-obligation that no behavior covers. Write the checklist where you were asked to, or else as
-`checklist.md` beside the change's spec, in one table:
+spec describes, including its error, failure, and cleanup cases, say how you will verify it: an
+automated test (unit, integration, or end-to-end), a command, or inspection of the code or files.
+Never plan a check in which an agent operates the product as a user would; that testing happens
+once, in acceptance testing after implementation. Do not cite the test plan's acceptance (`AT-`) or
+human-only (`HT-`) tests as a check, and add no rows for them. Several
+behaviors may share one check. When the test plan names an integration or end-to-end test that
+covers a behavior, cite its ID as the check, and add a row for any such test that no behavior
+covers. Write the checklist where you were asked to, or else as `checklist.md` beside the change's
+spec, in one table:
 
 | ID | Behavior | Spec reference | How to verify |
 |---|---|---|---|
@@ -25,9 +29,11 @@ obligation that no behavior covers. Write the checklist where you were asked to,
 After building, add the columns Code, Evidence, and Status.
 
 - Run each check and save its output to a file in the evidence directory you were given, or else
-  in `evidence/` beside the checklist: a test log, command output, a screenshot, or, for something
-  that can only be inspected, a note of what you looked at.
-- Set Status to `verified` with the evidence file name in backticks, `failed` with what fails, or
-  `not verified` with why you could not run the check. Never mark a behavior verified unless you
-  ran its check.
-- After a fix, rerun the affected checks. Evidence from before the fix no longer counts.
+  in `evidence/` beside the checklist: a test log, command output, or, for something that can only
+  be inspected, a note of what you looked at.
+- Put the evidence file names, in backticks, in the Evidence column. Status holds exactly one of
+  `verified`, `failed`, or `not verified`, and nothing else. For `failed`, Evidence says what
+  fails; for `not verified`, it says why you could not run the check.
+- Never mark a behavior verified unless you ran its check.
+- After any change to code or files a row depends on, rerun its check and update its Evidence, or
+  set it to `not verified`. Evidence from before the change no longer counts.

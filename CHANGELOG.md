@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.15.1
+
+### Patch Changes
+
+- `verify-behavior` plans only automated tests, commands, and inspection as checks, never an agent operating the product as a user would or the test plan's acceptance and human-only tests. Status holds only `verified`, `failed`, or `not verified`, with file names in the Evidence column, and a row whose code changed needs its check rerun or its status set to `not verified`.
+- `implement-change` says to test only with automated tests, including end-to-end tests that drive the product as a user would, and never to operate the product as a user with browser or other tools or run the acceptance tests, which an independent tester does after implementation.
+
 ## 0.15.0
 
 ### Minor Changes

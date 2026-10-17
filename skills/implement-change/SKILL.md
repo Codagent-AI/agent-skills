@@ -18,6 +18,13 @@ may use sub-agents if they would help, but you are not required to.
 - Work in increments you choose, writing each increment's code and tests together in whatever order
   suits it. Do not follow test-driven development as a method unless the project's instructions
   require it.
+- Test only with automated tests: unit, integration, and end-to-end. An end-to-end test that drives
+  the product as a user would, such as a scripted browser test, is expected where the test plan
+  calls for one.
+- Never test the product yourself as a user would. Do not use browser or other tools to click
+  through it, type into it, or inspect screenshots to check that it works, and do not run the test
+  plan's acceptance tests. An independent tester does that after implementation. Running the
+  product to debug a failing automated test is fine, but it is never evidence.
 - Write automated tests for code only, never for prompts. Do not write a test that checks whether a
   prompt, such as a `SKILL.md`, contains certain text.
 
