@@ -61,8 +61,7 @@ Use sub-agents when they help; never require them.
 - The limits are tunable defaults, sized to keep feedback fast.
 - The caller decides when to run tier 2, never which tests. You choose the tests.
 - If a run times out, run a smaller set.
-- Do not run tier 3, even when project instructions ask for the full suite. Report which tests
-  were left unrun.
+- Do not run tier 3 (see the precedence exception above). Report which tests were left unrun.
 - Enforce each limit with a timeout, for example `timeout 180 <command>`.
 - A tool call can itself be cut off (in Claude Code headless runs, after 10 minutes, with
   background tasks disabled). Start any run that may take longer detached, with output going to
