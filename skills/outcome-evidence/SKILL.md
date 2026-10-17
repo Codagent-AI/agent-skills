@@ -36,12 +36,20 @@ implementation or another list.
 
 Use when two lists exist (for example a reviewer's and an implementor's).
 
-1. Take the union. Combine equivalent rows: keep one ID and cite the other in the row.
+1. Take the union. Combine equivalent rows: keep one ID and cite the other in the row. Rows are
+   equivalent when they require the same observable behavior from the same part of the definition;
+   when unsure, keep both rows and send the question to the escalation route.
 2. Mark each row's provenance with the caller's source names (for example `reviewer`,
-   `implementor`, `both`).
+   `implementor`, `both`) in a Provenance column.
 3. Never drop or weaken an obligation from either list. Send disagreements to the escalation
    route.
-4. Add the columns Implemented in, Evidence, and Status (`open`).
+4. Add the columns Implemented in, Evidence, and Status (`open`). The merged table, with one
+   example row:
+
+   | ID | Outcome | Definition reference | Provenance | Verification | Implemented in | Evidence | Status |
+   | --- | --- | --- | --- | --- | --- | --- | --- |
+   | R-2 | Cancelling an import leaves no partial files | specs/import.md, "Cancel" | both | Integration test `cancel import` | | | open |
+
 5. Make Verification the plan for showing the outcome: which of the definition's scenarios it
    covers, including failure, error, and cleanup ones, and the check that will exercise them (a
    test, a command, or an interaction). Several rows may share one check.
@@ -84,12 +92,16 @@ A deterministic script checks the record. Follow this exactly.
 - A `failed` or `not verified` row's Evidence cell says why.
 - Escape a literal `|` inside a cell as `\|`.
 
+After writing or updating the record, check it against these rules yourself and fix any
+violation: every row has a valid Status, every `verified` row cites an existing non-empty file,
+and every `failed` or `not verified` row says why.
+
 Example row after recording:
 
 ```markdown
-| ID | Outcome | Definition reference | Verification | Implemented in | Evidence | Status |
-| --- | --- | --- | --- | --- | --- | --- |
-| R-3 | Invalid input is rejected and nothing is written | specs/import.md, "Rejects bad file" | Integration test `import rejects bad file` | `src/import.ts` | `tests/import.log` (commit a1b2c3d) | verified |
+| ID | Outcome | Definition reference | Provenance | Verification | Implemented in | Evidence | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| R-3 | Invalid input is rejected and nothing is written | specs/import.md, "Rejects bad file" | both | Integration test `import rejects bad file` | `src/import.ts` | `tests/import.log` (commit a1b2c3d) | verified |
 ```
 
 ## Out of Scope
