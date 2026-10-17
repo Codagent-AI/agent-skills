@@ -68,9 +68,9 @@ Implements any well-specified change directly from its approved change artifacts
 
 Implements an approved change in one continuous session: an integrated path early, code and tests written together in increments, tests run in three tiers with default limits (affected unit tests within 3 minutes, a broader run within 15 minutes, anything longer left to CI), and a maintainability pass before finishing.
 
-### `outcome-evidence`
+### `verify-behavior`
 
-Writes and maintains a change's outcome record: lists the outcomes its definition requires, merges two lists without dropping an obligation, plans how each outcome will be shown, and records the evidence and status of each.
+Writes a checklist of how each behavior in a change's spec will be verified, including error, failure, and cleanup cases, then records each check's evidence and status: verified, failed, or not verified.
 
 ## Testing
 

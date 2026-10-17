@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- Add `implement-change`, which implements an approved change in one session with tiered test runs, and `outcome-evidence`, which lists the outcomes a change must show and records the evidence for each.
+- Add `implement-change`, which implements an approved change in one session with tiered test runs, and `verify-behavior`, which plans how to verify each behavior in a change's spec and records the evidence for each check.
 
 ## 0.14.5
 

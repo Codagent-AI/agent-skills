@@ -115,7 +115,7 @@ For one-off questions, debugging conversations, or quick manual edits, you don't
 | Plan a small change in one pass | `simple-plan` |
 | Implement a well-specified change with sub-agents | `orchestrate-change` |
 | Implement a well-specified change in one session | `implement-change` |
-| List, plan, and record the outcomes a change must show | `outcome-evidence` |
+| Plan and record verification of each spec behavior | `verify-behavior` |
 | Smoke-test a change through real user flows | `test-flows` |
 | Hunt for defects and prepare a change for human acceptance | `prepare-acceptance` |
 | Commit, push, and open or update a PR | `push-pr` |

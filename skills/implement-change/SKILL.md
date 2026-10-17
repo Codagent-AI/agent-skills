@@ -6,33 +6,33 @@ description: >-
 
 # Implement Change
 
-Implement the approved change (its proposal, specs, design, and test plan) in this session. Even
-if it is a very large task, finish all of it yourself. You may use sub-agents if they would help,
-but you are not required to.
+Implement the approved change (its proposal, specs, design, and test plan) in this session. Even if
+it is a very large task, finish all of it yourself. You may use sub-agents if they would help, but
+you are not required to.
 
 ## Building
 
-- Get a working, integrated path through the main interacting deliverables early, before
-  polishing any one of them.
-- Work in increments you choose, writing each increment's code and tests together in whatever
-  order suits it. Do not follow test-driven development as a method unless the project's
-  instructions require it.
+- Get a working, integrated path through the main interacting deliverables early, before polishing
+  any one of them.
+- Work in increments you choose, writing each increment's code and tests together in whatever order
+  suits it. Do not follow test-driven development as a method unless the project's instructions
+  require it.
 
 ## Running tests
 
 Use three tiers, each kept inside its time limit with a timeout (for example
-`timeout 180 <command>`). The limits are defaults the user may change. A tool
-call may stop after 10 minutes, so start any run that may take longer detached, with its output
-going to a log file, then wait for it and read the log. Never restart a run only because a call
-timed out, and reuse a result when nothing relevant has changed since it ran.
+`timeout 180 <command>`). The limits are defaults the user may change. A tool call may stop after
+10 minutes, so start any run that may take longer detached, with its output going to a log file,
+then wait for it and read the log. Never restart a run only because a call timed out, and reuse a result when
+nothing relevant has changed since it ran.
 
 1. Unit tests your change affects: run these while you work, as often as you need, within 3
    minutes. If a run times out, run a smaller set.
 2. A broader run: the whole suite, or a subset you choose that includes the integration and
-   end-to-end tests relevant to the change. Run it once, when the work is ready, within 15
-   minutes. If it times out, run a smaller set.
-3. Anything beyond that is left to CI. Do not run it, even if project instructions ask for the
-   full suite, and name the tests you left unrun.
+   end-to-end tests relevant to the change. Run it once, when the work is ready, within 15 minutes.
+   If it times out, run a smaller set.
+3. Anything beyond that is left to CI. Do not run it, even if project instructions ask for the full
+   suite, and name the tests you left unrun.
 
 ## Before finishing
 
