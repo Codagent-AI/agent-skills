@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- Add `implement-change`, which implements an approved change in one session with tiered test runs, escalation rules, and a maintainability pass, and `outcome-evidence`, which lists, merges, records, and refreshes the outcomes a change must show with a checkable record format.
+- Add `implement-change`, which implements an approved change in one session with tiered test runs, and `outcome-evidence`, which lists the outcomes a change must show and records the evidence for each.
 
 ## 0.14.5
 

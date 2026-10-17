@@ -66,11 +66,11 @@ Implements any well-specified change directly from its approved change artifacts
 
 ### `implement-change`
 
-Implements an approved change in one continuous session, for a workflow step or a direct request. It reads the whole definition, gets an integrated path working early, and adds tests after the behavior rather than first. Tests run in three tiers with default limits: affected unit tests within 3 minutes, a broader run including integration and end-to-end tests within 15 minutes, and anything longer left to CI and reported as unrun. It escalates decisions that would materially change behavior, scope, or integration, ends with a behavior-preserving maintainability pass, and reports what was built, which tests ran at each tier, and which were left unrun.
+Implements an approved change in one continuous session: an integrated path early, code and tests written together in increments, tests run in three tiers with default limits (affected unit tests within 3 minutes, a broader run within 15 minutes, anything longer left to CI), escalation of material questions, and a maintainability pass before finishing.
 
 ### `outcome-evidence`
 
-Writes and maintains an outcome record: the observable outcomes and integrations a definition requires, a plan for showing each, and the evidence that each was shown. It can list outcomes from the definition alone (for an independent reviewer), merge two lists without dropping any obligation, record evidence and status per row, and refresh rows after a fix. The record is a Markdown table whose format a deterministic script can check.
+Writes and maintains a change's outcome record: lists the outcomes its definition requires, merges two lists without dropping an obligation, plans how each outcome will be shown, and records the evidence and status of each.
 
 ## Testing
 

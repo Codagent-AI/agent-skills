@@ -71,7 +71,7 @@ without changing an approved definition artifact or asking the user for a new de
 
 `orchestrate-change` implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code and checking the automated tests from the test plan. It does not need `plan-tasks` or `review-tasks`. Acceptance testing runs after it.
 
-`implement-change` is the single-session alternative: one agent implements the change from the approved artifacts, runs tests in tiers, and finishes with a maintainability pass. When a workflow wants an independent check that every required outcome was shown, `outcome-evidence` keeps the outcome list, the verification plan, and the evidence per outcome.
+`implement-change` implements the change in one session instead, running tests in tiers. `outcome-evidence` keeps the list of outcomes a change must show and the evidence for each.
 
 ### 9. Test And Accept
 
