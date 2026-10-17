@@ -7,8 +7,9 @@ description: >-
 # Implement Change
 
 Implement the approved change (its proposal, specs, design, and test plan) in this session. Even if
-it is a very large task, finish all of it yourself. You may use sub-agents if they would help, but
-you are not required to.
+it is a very large task, you must finish all of it yourself. Keep working until it is finished. Do
+not use the codagent:orchestrate-change, codagent:plan-tasks, or codagent:simple-plan skills. You
+may use sub-agents if they would help, but you are not required to.
 
 ## Building
 
