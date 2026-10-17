@@ -36,17 +36,20 @@ user or the caller can lift that.
 1. **Read first.** Read the whole definition, the outcome record if any, and the project's
    instructions. Find the project's test commands, commit conventions, lint and build checks, and
    existing test style.
-2. **Integrate early.** Get a working path through the main interacting deliverables before
-   polishing any one of them. Integration gaps found late are the costliest.
-3. **Implement the behavior.** Do not use test-driven development (writing tests first) unless
-   the project's instructions require it.
-4. **Add tests.** Cover the behavior and every scenario in the definition, including failure,
-   error, and cleanup scenarios, at the tier that fits (unit, integration, or end-to-end). Add
-   them to the project's existing suites and match their style.
-5. **Run tests** by tier (below) as the work proceeds.
+2. **Work in increments** you choose. Start with a thin, working path through the main
+   interacting deliverables, then extend it until the definition is covered. Integration gaps
+   found late are the costliest.
+3. **Write each increment's code and tests together**, in whatever order suits it, and run the
+   affected unit tests (tier 1) before moving on. Do not follow test-driven development as a
+   method (a failing test before each piece of code) unless the project's instructions require it.
+4. **Cover the definition.** By the end, tests cover the behavior and every scenario in the
+   definition, including failure, error, and cleanup scenarios, at the tier that fits (unit,
+   integration, or end-to-end), in the project's existing suites and style. Keep the outcome
+   record current as you go, if one is in use.
+5. **Commit** at coherent points, following the project's commit conventions plus any caller
+   prefix.
 6. **Escalate** when needed (below).
-7. **Finish** with the maintainability pass, the tier 2 run, the project's other required checks,
-   and the commit (below).
+7. **Finish** as described in Before finishing (below).
 
 Use sub-agents when they help; never require them.
 
@@ -89,7 +92,7 @@ and report. Never work around the block or claim completion.
 3. **Other required checks**, such as lint, type checks, and build.
 4. **Outcome record**, if one is in use: bring it current per `codagent:outcome-evidence`
    (record, refresh after fixes, keep Implemented in accurate).
-5. **Commit** following the project's commit conventions, plus any caller prefix.
+5. **Commit** any remaining work.
 
 ## Report
 
