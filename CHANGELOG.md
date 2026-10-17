@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.15.0
+
+### Minor Changes
+
+- Add `implement-change`, which implements an approved change in one session with tiered test runs, and `verify-behavior`, which plans how to verify each behavior in a change's spec and records the evidence for each check.
+- `test-plan` and `implement-change` say to write automated tests for code only, never tests that check a prompt's text.
+
 ## 0.14.5
 
 ### Patch Changes

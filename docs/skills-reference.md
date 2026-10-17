@@ -64,6 +64,14 @@ Compresses planning for small changes into one lightweight flow. It writes a pro
 
 Implements any well-specified change directly from its approved change artifacts, specs, or similar, without needing a task breakdown. The agent acts as an orchestrator: sub-agents write all of the code, and the orchestrator plans slices and checks each sub-agent's evidence that its automated tests exist and pass. Exploratory and manual acceptance testing happen downstream.
 
+### `implement-change`
+
+Implements an approved change in one continuous session: an integrated path early, code and tests written together in increments, tests run in three tiers with default limits (affected unit tests within 3 minutes, a broader run within 15 minutes, anything longer left to CI), and a maintainability pass before finishing.
+
+### `verify-behavior`
+
+Writes a checklist of how each behavior in a change's spec will be verified, including error, failure, and cleanup cases, then records each check's evidence and status: verified, failed, or not verified.
+
 ## Testing
 
 ### `test-flows`
