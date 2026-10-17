@@ -11,8 +11,10 @@ description: >-
 
 Read the change's proposal, specs, design, and test plan, but not the code. For each behavior the
 spec describes, including its error, failure, and cleanup cases, say how you will verify it: a
-test, a command, or a manual check. Several behaviors may share one check. Write the checklist
-where you were asked to, or else as `checklist.md` beside the change's spec, in one table:
+test, a command, or a manual check. Several behaviors may share one check. When the test plan
+names a test that covers a behavior, cite its ID as the check, and add a row for any test-plan
+obligation that no behavior covers. Write the checklist where you were asked to, or else as
+`checklist.md` beside the change's spec, in one table:
 
 | ID | Behavior | Spec reference | How to verify |
 |---|---|---|---|
