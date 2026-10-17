@@ -18,6 +18,8 @@ may use sub-agents if they would help, but you are not required to.
 - Work in increments you choose, writing each increment's code and tests together in whatever order
   suits it. Do not follow test-driven development as a method unless the project's instructions
   require it.
+- Write automated tests for code only, never for prompts. Do not write a test that checks whether a
+  prompt, such as a `SKILL.md`, contains certain text.
 
 ## Running tests
 

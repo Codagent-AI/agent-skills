@@ -31,6 +31,9 @@ Avoid fixed ratios, test-count quotas, duplicate assertions across layers, and E
 behavior a cheaper layer proves adequately. It is valid to record that no new integration or E2E
 obligation is warranted and explain why.
 
+Plan automated tests for code only, never for prompts. Do not plan a test that checks whether a
+prompt, such as a `SKILL.md`, contains certain text.
+
 For each automated obligation, capture what it covers, the boundary or journey exercised, setup,
 stable assertions, constraints, and where it runs.
 
