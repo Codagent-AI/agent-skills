@@ -42,6 +42,7 @@ After building, add the columns Code, Evidence, and Status.
   say a behavior is left to acceptance testing.
 - Evidence can come from the one broader test run and from targeted runs of single tests; never
   rerun a whole suite only to refresh evidence.
-- After any change to code or files a row depends on, rerun that row's check alone and update its
-  Evidence, or set it to `not verified`. Evidence from before the change no longer counts for that
-  row; other rows keep theirs, and a test you added or changed needs only its own run.
+- After any change to code or files, rerun the check of every row that depends on them, each alone,
+  and update its Evidence, or set it to `not verified`. Evidence from before the change no longer
+  counts for those rows; rows that do not depend on the change keep theirs, and a test you added or
+  changed needs only its own run.

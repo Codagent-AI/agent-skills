@@ -1,10 +1,16 @@
 # agent-skills
 
+## 0.15.4
+
+### Patch Changes
+
+- `implement-change` has the implementor act as orchestrator, building the scaffolding itself and delegating well-specified, independent pieces to sub-agents on the cheapest capable model, each owning its own files and checklist rows.
+
 ## 0.15.3
 
 ### Patch Changes
 
-- Experiment branch, to be renumbered if kept: `implement-change` has the implementor act as orchestrator, building the scaffolding itself and delegating well-specified, independent pieces to sub-agents on the cheapest capable model, each owning its own files and checklist rows.
+- prepare-acceptance triggers each failure or error scenario as a coverage-floor item, names the evidence file for each reproduction its ledger entries report, and writes a handoff that names every unresolved decision, material limitation, and risky or notable assumption instead of giving a count or a pointer alone.
 
 ## 0.15.2
 
