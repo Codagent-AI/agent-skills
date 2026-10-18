@@ -1,5 +1,12 @@
 # agent-skills
 
+## 0.15.2
+
+### Patch Changes
+
+- prepare-acceptance triggers each failure or error scenario as a coverage-floor item, names the evidence file for each reproduction its ledger entries report, and writes a handoff that names every unresolved decision, material limitation, and risky or notable assumption instead of giving a count or a pointer alone.
+
+
 ## 0.15.1
 
 ### Patch Changes
