@@ -6,6 +6,12 @@
 
 - Experiment branch, to be renumbered if kept: `implement-change` has the implementor act as orchestrator, building the scaffolding itself and delegating well-specified, independent pieces to sub-agents on the cheapest capable model, each owning its own files and checklist rows.
 
+## 0.15.2
+
+### Patch Changes
+
+- verify-behavior plans the fastest check that would catch each break, adds no integration or end-to-end tests beyond the test plan's, reruns only the checks a change affects, and mentions no acceptance or human-only test IDs; implement-change keeps tests fast and never repeats the broader run after a failure.
+
 ## 0.15.1
 
 ### Patch Changes
