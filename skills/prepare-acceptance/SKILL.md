@@ -67,6 +67,9 @@ pre-written case list. The floor is not subject to the budget, the ceiling, or "
 below: exercise a floor item even when an automated test appears to own it, because the floor checks
 the running product against the spec, not the suite.
 
+A scenario that describes a failure or error is a floor item too: trigger it, with an injected fault or
+a scratch fixture if needed, instead of leaving it to the suite.
+
 Group floor items that one realistic journey exercises together, and keep each one brief: predict,
 act, record the observed values. Anything in the floor you could not exercise is a limitation; name it
 with its reason. If a floor run failed, back an external limitation reason with the failure evidence
@@ -215,7 +218,8 @@ unreachable or untrustworthy.
 
 Append product, scope, or design ambiguity to the assumptions ledger, defaulting to
 `<evidence-directory>/acceptance-assumptions.md`. Never report ambiguity as a defect or silently choose
-an interpretation. Keep this pass autonomous and leave those decisions to the human acceptance session.
+an interpretation. Name the evidence file for each reproduction an entry reports. Keep this pass
+autonomous and leave those decisions to the human acceptance session.
 
 Write `<evidence-directory>/exploration-log.md`: each floor item with where it was exercised or why
 it was not, the exploration budget and rationale, each step with its prediction, its observation, and
@@ -259,7 +263,8 @@ cancelled, and timed-out checks as evidence states, never as passes.
 
 Then write `<evidence-directory>/acceptance-handoff.md`:
 
-1. **Decision brief**: delivered behavior, unresolved decisions, overall status, suggested review path.
+1. **Decision brief**: delivered behavior, unresolved decisions (read the ledger again now; never say none
+   are pending without it showing none), overall status, suggested review path.
 2. **Revision identity**: repository, PR URL, current head SHA, tracked worktree status.
 3. **Exploration**: coverage-floor results, the budget and rationale, what was exercised, what was
    found, and the named list of what was not exercised. For each limitation attributed to a failed run,
@@ -268,7 +273,10 @@ Then write `<evidence-directory>/acceptance-handoff.md`:
 4. **CI**: status and durable links. Say plainly when no automated-validation evidence was supplied.
 5. **Visual and client evidence**: screenshot metadata, text equivalents, and practical review steps.
 6. **Human-only obligations**: applicable `HT-*` items as instructions, with no execution outcome.
-7. **Assumptions**: ledger path and a concise summary of each unresolved item.
+7. **Assumptions**: the ledger path, then each unresolved decision named by its ledger heading with its
+   options and consequence, each material limitation the ledger, findings, or log record, and each risky
+   or notable assumption in the implementation session report. A count or a pointer alone does not
+   carry a decision.
 
 Before reporting ready, confirm every referenced path exists, that any scratch folder created by this
 skill was removed, and that no persisted evidence exposes secrets, credentials, or private data. Report
