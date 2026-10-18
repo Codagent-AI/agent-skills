@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.15.3
+
+### Patch Changes
+
+- Experiment branch, to be renumbered if kept: `implement-change` has the implementor act as orchestrator, building the scaffolding itself and delegating well-specified, independent pieces to sub-agents on the cheapest capable model, each owning its own files and checklist rows.
+
 ## 0.15.1
 
 ### Patch Changes
