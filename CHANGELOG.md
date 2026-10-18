@@ -1,11 +1,16 @@
 # agent-skills
 
-## 0.15.2
+## 0.15.3
 
 ### Patch Changes
 
 - prepare-acceptance triggers each failure or error scenario as a coverage-floor item, names the evidence file for each reproduction its ledger entries report, and writes a handoff that names every unresolved decision, material limitation, and risky or notable assumption instead of giving a count or a pointer alone.
 
+## 0.15.2
+
+### Patch Changes
+
+- verify-behavior plans the fastest check that would catch each break, adds no integration or end-to-end tests beyond the test plan's, reruns only the checks a change affects, and mentions no acceptance or human-only test IDs; implement-change keeps tests fast and never repeats the broader run after a failure.
 
 ## 0.15.1
 

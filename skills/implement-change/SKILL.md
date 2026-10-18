@@ -18,6 +18,9 @@ may use sub-agents if they would help, but you are not required to.
 - Work in increments you choose, writing each increment's code and tests together in whatever order
   suits it. Do not follow test-driven development as a method unless the project's instructions
   require it.
+- Keep tests fast. Prefer unit and component tests, and write integration or end-to-end tests only
+  where the test plan or checklist calls for them. In those, share expensive setup, such as a
+  production build, a server, or a browser, across a file's cases instead of repeating it per test.
 - Write automated tests for code only, never for prompts. Do not write a test that checks whether a
   prompt, such as a `SKILL.md`, contains certain text.
 
@@ -33,7 +36,8 @@ nothing relevant has changed since it ran.
    minutes. If a run times out, run a smaller set.
 2. A broader run: the whole suite, or a subset you choose that includes the integration and
    end-to-end tests relevant to the change. Run it once, when the work is ready, within 15 minutes.
-   If it times out, run a smaller set.
+   If it times out, run a smaller set. If tests fail, fix them and rerun only the failing tests and
+   those covering what you changed; do not repeat the broader run.
 3. Anything beyond that is left to CI. Do not run it, even if project instructions ask for the full
    suite, and name the tests you left unrun.
 
