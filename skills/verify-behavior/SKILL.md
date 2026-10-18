@@ -38,6 +38,8 @@ After building, add the columns Code, Evidence, and Status.
   `verified`, `failed`, or `not verified`, and nothing else. For `failed`, Evidence says what
   fails; for `not verified`, it says why you could not run the check.
 - Never mark a behavior verified unless you ran its check.
+- Mention no acceptance (`AT-`) or human-only (`HT-`) test ID anywhere in the checklist, not even to
+  say a behavior is left to acceptance testing.
 - Evidence can come from the one broader test run and from targeted runs of single tests; never
   rerun a whole suite only to refresh evidence.
 - After any change to code or files a row depends on, rerun that row's check alone and update its

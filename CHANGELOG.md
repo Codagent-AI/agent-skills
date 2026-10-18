@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- verify-behavior plans the fastest check that would catch each break, adds no integration or end-to-end tests beyond the test plan's, and reruns only the checks a change affects; implement-change keeps tests fast and never repeats the broader run after a failure.
+- verify-behavior plans the fastest check that would catch each break, adds no integration or end-to-end tests beyond the test plan's, reruns only the checks a change affects, and mentions no acceptance or human-only test IDs; implement-change keeps tests fast and never repeats the broader run after a failure.
 
 ## 0.15.1
 
