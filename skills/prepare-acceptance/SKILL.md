@@ -29,8 +29,8 @@ expect.
 
 Resolve from the caller: approved artifacts, the testing envelope naming authorized effects,
 credentials, sandboxes, cost, cleanup, and any `HT-*` obligations reserved for humans; an
-implementation summary; an evidence directory; and optional `scratch_dir`, the caller-provided scratch
-folder. If approved artifacts or the evidence directory are missing, report that and stop.
+implementation summary and any implementation session report; an evidence directory; and optional
+`scratch_dir`, the caller-provided scratch folder. If approved artifacts or the evidence directory are missing, report that and stop.
 
 Carry `HT-*` obligations forward as human-review instructions. Never execute them or claim evidence for
 them.
@@ -275,8 +275,8 @@ Then write `<evidence-directory>/acceptance-handoff.md`:
 6. **Human-only obligations**: applicable `HT-*` items as instructions, with no execution outcome.
 7. **Assumptions**: the ledger path, then each unresolved decision named by its ledger heading with its
    options and consequence, each material limitation the ledger, findings, or log record, and each risky
-   or notable assumption in the implementation session report. A count or a pointer alone does not
-   carry a decision.
+   or notable assumption in the implementation session report, if one was supplied. A count or a
+   pointer alone does not carry a decision.
 
 Before reporting ready, confirm every referenced path exists, that any scratch folder created by this
 skill was removed, and that no persisted evidence exposes secrets, credentials, or private data. Report
