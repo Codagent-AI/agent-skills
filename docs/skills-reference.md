@@ -66,7 +66,7 @@ Implements any well-specified change directly from its approved change artifacts
 
 ### `implement-change`
 
-Implements an approved change in one continuous session: an integrated path early, code and tests written together in increments, tests run in three tiers with default limits (affected unit tests within 3 minutes, a broader run within 15 minutes, anything longer left to CI), and a maintainability pass before finishing.
+Implements an approved change in one session as an orchestrator: it builds the scaffolding and an integrated path itself, delegates independent pieces to sub-agents on the cheapest capable model, writes code and tests together, runs tests in three tiers with default limits (affected unit tests within 3 minutes, a broader run within 15 minutes, anything longer left to CI), and a maintainability pass before finishing.
 
 ### `verify-behavior`
 

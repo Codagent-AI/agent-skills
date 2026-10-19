@@ -71,7 +71,7 @@ without changing an approved definition artifact or asking the user for a new de
 
 `orchestrate-change` implements the change directly from the approved artifacts, orchestrating sub-agents that write all of the code and checking the automated tests from the test plan. It does not need `plan-tasks` or `review-tasks`. Acceptance testing runs after it.
 
-`implement-change` implements the change in one session instead, running tests in tiers. `verify-behavior` keeps a checklist of how each behavior in the spec is verified, with the evidence for each check.
+`implement-change` implements the change in one session instead, building the scaffolding itself, delegating independent pieces to sub-agents, and running tests in tiers. `verify-behavior` keeps a checklist of how each behavior in the spec is verified, with the evidence for each check.
 
 ### 9. Test And Accept
 
