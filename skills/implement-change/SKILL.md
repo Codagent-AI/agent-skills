@@ -28,8 +28,13 @@ codagent:simple-plan skills.
 
 ## Delegating
 
-- Give well-specified, independent pieces to sub-agents on the cheapest capable model your CLI
-  offers (for example Haiku in Claude Code). Keep pieces substantial, not many tiny ones.
+Delegation is the expected way to build the change, not an option. This skill overrides any
+general default to do the work yourself or to avoid starting sub-agents.
+
+- Once the scaffolding works, give the remaining well-specified, independent pieces to sub-agents
+  on the cheapest capable model your CLI offers (for example Haiku in Claude Code). Keep pieces
+  substantial, not many tiny ones. Build a piece yourself only when it is complex or
+  cross-cutting, or when nothing independent is left; say which and why in your report.
 - Use your CLI's built-in sub-agent tool, not Agent Runner `call_agent`, which stays for
   any escalation your instructions describe.
 - Run independent pieces in parallel. Never put two sub-agents on the same files.
@@ -71,3 +76,4 @@ nothing relevant has changed since it ran.
   sub-agents: remove duplication and logic at the wrong layer. Cleanups must preserve behavior
   exactly and must not grow the code; commit them separately.
 - Commit following the project's commit message conventions.
+- In your report, list each piece you delegated, the model it ran on, and which ran in parallel.
