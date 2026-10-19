@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- `implement-change` has the implementor act as orchestrator, building the scaffolding itself and delegating well-specified, independent pieces to sub-agents on the cheapest capable model, each owning its own files and checklist rows. Delegation is expected rather than optional, overriding any general default against starting sub-agents, and the report lists what was delegated.
+- `implement-change` has the implementor act as orchestrator, building the scaffolding itself and delegating well-specified, independent pieces to sub-agents on the cheapest capable model, each owning its own files and checklist rows. Delegation is expected rather than optional, overriding any general default against starting sub-agents, and the report lists what was delegated. Every sub-agent runs on the cheapest capable model, with at most one on the implementor's own model for a piece needing design decisions.
 
 ## 0.15.3
 

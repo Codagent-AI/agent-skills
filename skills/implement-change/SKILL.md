@@ -17,7 +17,7 @@ codagent:simple-plan skills.
 - First build the scaffolding yourself: the seams, interfaces, shared types, and a working
   integrated path through the main interacting deliverables, so the remaining work splits into
   independent pieces. Do not polish any one piece before that path works.
-- Do the complex or cross-cutting pieces yourself, or give them to a sub-agent on your own model.
+- Do the cross-cutting pieces yourself.
 - Write each increment's code and tests together, in whatever order suits it. Do not follow
   test-driven development as a method unless the project's instructions require it.
 - Keep tests fast. Prefer unit and component tests, and write integration or end-to-end tests only
@@ -31,10 +31,14 @@ codagent:simple-plan skills.
 Delegation is the expected way to build the change, not an option. This skill overrides any
 general default to do the work yourself or to avoid starting sub-agents.
 
-- Once the scaffolding works, give the remaining well-specified, independent pieces to sub-agents
-  on the cheapest capable model your CLI offers (for example Haiku in Claude Code). Keep pieces
-  substantial, not many tiny ones. Build a piece yourself only when it is complex or
+- Once the scaffolding works, give the remaining well-specified, independent pieces to sub-agents.
+  Keep pieces substantial, not many tiny ones. Build a piece yourself only when it is
   cross-cutting, or when nothing independent is left; say which and why in your report.
+- Run every sub-agent on the cheapest capable model your CLI offers (for example Haiku in Claude
+  Code). Tests, scripts, templates, samples, and other work your scaffolding and brief define are
+  never too complex for it. Use your own model for at most one sub-agent, only for a piece that
+  needs design decisions the scaffolding and brief cannot settle, and give the reason in your
+  report.
 - Use your CLI's built-in sub-agent tool, not Agent Runner `call_agent`, which stays for
   any escalation your instructions describe.
 - Run independent pieces in parallel. Never put two sub-agents on the same files.
