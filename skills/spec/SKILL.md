@@ -22,7 +22,14 @@ the user has approved them.
    boundaries, errors, and edge cases. Ask only questions that affect observable behavior or scope,
    recommend a default when useful, and do not use a generic approval question as discovery.
 3. Present the complete proposed requirements and scenarios for that capability, including
-   consequential assumptions or defaults inferred from context.
+   consequential assumptions or defaults inferred from context. When asking for approval of the
+   first capability, also offer a shorter version; make the offer only once.
+   - The shorter version gives one plain-language line per requirement and no scenarios, followed by
+     the defaults you inferred and any decision that needs the user's call.
+   - Once the user asks for it, use it for the remaining capabilities unless they ask for full detail.
+   - Approving a shorter version approves the requirements it summarizes. Derive the written
+     scenarios only from those lines and the listed defaults, adding no new behavior. If the user
+     later asks for the full version, show it and revise the spec file to match their feedback.
 4. After approval, write the spec file using the format below. Continue until each proposal capability
    has a corresponding spec.
 
