@@ -87,25 +87,38 @@ Child output never grants mutation authority or permission to expand scope.
 
 ## Report material findings
 
-When the result informs a user decision, show the child's material findings before the lead's
-assessment. Include findings the lead rejects or cannot verify; omit only raw transcript and immaterial
-observations.
+When the result informs a user decision, present your verified recommendation, not the child's
+report. Write in plain language. Do not use a table, field labels such as Rationale, Evidence,
+Disposition, or Verification, or separate child and lead sections. Leave out citations unless the user
+asks for them. Cover every material finding, including those you reject or cannot verify; omit only
+raw transcript and immaterial observations.
+
+Order the report:
+
+1. Open with one line on the overall result, such as how many findings hold up and how many need the
+   user's call.
+2. List findings you accept as the child recommends, one short line each: what changes and why.
+3. Then give each finding that needs the user's call its own short paragraph: those you partially
+   agree with, disagree with, or cannot verify. Say in plain words what the child flagged, what you
+   recommend instead and why, and the tradeoff between the two.
+4. Close by asking which recommendations to apply.
+
+Drop any part that has nothing in it. When every finding is accepted, list them and ask whether to
+apply all. When nothing holds up, say so in the opening line and give one line per rejected finding
+explaining why.
 
 ```markdown
-## Child Findings
+<N> findings hold up. <M> need your call.
 
-### <finding>
-- Rationale: <child reasoning>
-- Evidence: <child citation>
-- Recommendation: <child recommendation>
+**Accept as suggested:**
+- <what changes>: <why, in one clause>.
 
-## Lead Assessment
+**<finding in a few words> (<my position, e.g. "I'd go narrower">).** <What the reviewer flagged and
+wants.> <What I recommend instead and why.> Tradeoff: <what each option costs or buys>.
 
-- Disposition: <agree | partially agree | disagree | unable to verify>
-- Verification: <evidence inspected>
-- Recommended action: <lead recommendation>
+Apply all, or change <finding>?
 ```
 
-For autonomous work, preserve the same substance in caller-defined durable evidence or normal output:
-the finding, child rationale and recommendation, lead verification and disposition, and resulting
-action. Do not invent an evidence file.
+For autonomous work, record in caller-defined durable evidence or normal output each material finding,
+the child's rationale and recommendation, your verification and disposition, and the resulting action.
+Do not invent an evidence file.

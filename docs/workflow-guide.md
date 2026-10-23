@@ -123,8 +123,9 @@ the lightweight flow does not need a formal acceptance-status protocol.
 `call-agent` is the orchestration helper for workflow steps that explicitly receive Agent Runner's
 `call_agent` tool. Proposal, approach, task-plan, and acceptance workflows use it to construct a
 standalone bounded child prompt, make one safe profile or named-session call, preserve structured
-failures, independently verify consequential findings, and report child findings separately from the
-lead's assessment. Material findings remain visible even when the lead rejects or cannot verify them.
+failures, independently verify consequential findings, and report the lead's recommendation on each
+one in plain language, with straightforward accepts summarized first and the findings that need the
+user's call after them. Material findings remain visible even when the lead rejects or cannot verify them.
 It does not provision the tool itself and never substitutes another delegation
 mechanism when the tool is unavailable.
 

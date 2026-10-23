@@ -124,8 +124,9 @@ Runs the full push, wait, fix, retry loop. It stops when CI and comments are cle
 
 Safely invokes one Runner-owned child through a profile or declared named session. It builds a
 standalone bounded prompt, preserves call budgets and structured failures, independently verifies
-consequential findings, and reports each material child finding—including its rationale, evidence,
-recommendation, lead disposition, and resulting action—even when the lead rejects or cannot verify it. It reports a
+consequential findings, and reports the lead's recommendation on every material finding in plain
+language: findings it accepts as one-line summaries first, then the ones it partially agrees with,
+disagrees with, or cannot verify, each with its tradeoff. It reports a
 clear blocker when the enclosing Agent Runner step did not provision `call_agent` and never substitutes
 another delegation mechanism.
 
