@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.15.4
+
+### Patch Changes
+
+- [#83](https://github.com/Codagent-AI/agent-skills/pull/83) `spec` offers, once with the first capability, a shorter version of its proposed requirements: one plain-language line per requirement plus inferred defaults and open decisions, used for the remaining capabilities once requested.
+
 ## 0.15.3
 
 ### Patch Changes
