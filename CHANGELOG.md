@@ -4,6 +4,7 @@
 
 ### Patch Changes
 
+- [#82](https://github.com/Codagent-AI/agent-skills/pull/82) `call-agent` presents crosscheck findings as the lead's plain-language recommendation, with straightforward accepts first as one-liners and each finding that needs the user's call after them with its tradeoff, instead of a formal child-findings and lead-assessment template.
 - [#83](https://github.com/Codagent-AI/agent-skills/pull/83) `spec` offers, once with the first capability, a shorter version of its proposed requirements: one plain-language line per requirement plus inferred defaults and open decisions, used for the remaining capabilities once requested.
 
 ## 0.15.3
