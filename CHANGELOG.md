@@ -1,5 +1,11 @@
 # agent-skills
 
+## 0.15.5
+
+### Patch Changes
+
+- `propose` asks about the expected visual style and quality when a change produces something people look at, and treats dropping something the user will judge the result by, such as its visual design, as a decision to ask about rather than a caveat or an Out of Scope entry; `spec` resolves a capability's intended look and how it will be checked, not only legibility limits.
+
 ## 0.15.4
 
 ### Patch Changes
