@@ -24,7 +24,10 @@ Do not implement, scaffold, or invoke an implementation skill before the user ap
    obvious, patterned solution.
 4. Present a design scaled to the change's complexity. Cover the important components, interactions,
    decisions, risks, verification strategy, and any resulting specification implications; use diagrams
-   when they clarify the design.
+   when they clarify the design. When the change produces something people look at, also cover its
+   visual design: the visual style, the quality it must reach, and how that will be checked, not only
+   legibility limits such as minimum text size or overlap. Ask the user about visual style choices the
+   proposal and specifications leave open.
 5. After approval, write `design.md` and apply any specification changes revealed by the design,
    including completing deferred scenarios, only when those implications were presented with the
    approved design. Return to the user for a newly discovered behavioral or scope decision. Keep
@@ -56,6 +59,10 @@ Omit sections that do not apply.
 ## Approach
 
 <!-- Components, interfaces, interactions, data flow, and failure behavior. -->
+
+## Visual Design
+
+<!-- For something people look at: visual style, quality bar, and how they are checked. -->
 
 ## Decisions
 

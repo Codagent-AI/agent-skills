@@ -21,9 +21,6 @@ the user has approved them.
 2. Work through capabilities one at a time. Use `codagent:ask-questions` to resolve material behavior,
    boundaries, errors, and edge cases. Ask only questions that affect observable behavior or scope,
    recommend a default when useful, and do not use a generic approval question as discovery.
-   When a capability produces something people look at, its intended look is observable behavior:
-   resolve the visual style and quality it must reach and how that will be checked, not only
-   legibility limits such as minimum text size or overlap.
 3. Present the complete proposed requirements and scenarios for that capability, including
    consequential assumptions or defaults inferred from context. When asking for approval of the
    first capability, also offer a shorter version; make the offer only once.
