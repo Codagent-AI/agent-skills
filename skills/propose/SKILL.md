@@ -19,7 +19,9 @@ detailed architecture belongs in `design.md`.
 
 Use `codagent:ask-questions` when the problem, audience, desired outcome, success criteria, constraints,
 or scope boundaries are unclear. Do not draft from a rough idea when an answer would materially change
-the proposal.
+the proposal. When the change produces something people look at, such as a user interface, a
+presentation, or a generated document, how it should look is part of the desired outcome: ask about
+the expected visual style and quality unless the user has already described them.
 
 Ground the evaluation in available evidence:
 
@@ -41,6 +43,10 @@ For a viable idea, identify the minimum useful scope, affected capabilities, arc
 technical decisions, and material risks. When real alternatives exist, recommend one and explain the
 important trade-off; ask the user only when the choice changes product scope or direction. Decide
 low-risk implementation defaults from repository context.
+
+An exclusion that drops something the user is likely to judge the result by, such as the visual design
+of something people look at, changes product scope. Ask the user about it as a decision; do not list it
+as a caveat or move it to Out of Scope on your own.
 
 Keep this intentionally lighter than design. Use a diagram or comparison only when it clarifies an
 important relationship or decision.
